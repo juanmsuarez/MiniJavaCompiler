@@ -53,6 +53,10 @@ public class LexicalAnalyzer {
             updateLexeme();
             advanceCurrentChar();
             return varMetIdState();
+        } else if (CharacterUtils.isDigit(currentChar)) {
+            updateLexeme();
+            advanceCurrentChar();
+            return intLitState();
         } else if (fileManager.hasReachedEOF()) {
             return eofState();
         } else {
@@ -88,6 +92,16 @@ public class LexicalAnalyzer {
             } else {
                 return new Token("varMetId", currentLexeme, fileManager.getLineNumber());
             }
+        }
+    }
+
+    private Token intLitState() throws IOException {
+        if (CharacterUtils.isDigit(currentChar)) {
+            updateLexeme();
+            advanceCurrentChar();
+            return intLitState();
+        } else {
+            return new Token("intLit", currentLexeme, fileManager.getLineNumber());
         }
     }
 
