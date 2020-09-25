@@ -1,6 +1,10 @@
 package com.minijava.compiler.lexicalanalyzer;
 
 public class CharacterUtils {
+    public static boolean isWhiteSpace(Character character) {
+        return character != null && (character == ' ' || character == '\t' || character == '\n');
+    }
+
     public static boolean isUnderscore(Character character) {
         return character != null && character == '_';
     }

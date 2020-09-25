@@ -4,6 +4,7 @@ import java.io.*;
 
 public class FileManager implements AutoCloseable {
     private LineNumberReader reader;
+    private int lineNumber;
     private boolean reachedEOF = false;
 
     public FileManager(String path) throws FileNotFoundException  {
@@ -14,6 +15,7 @@ public class FileManager implements AutoCloseable {
     }
 
     public Character nextChar() throws IOException {
+        lineNumber = reader.getLineNumber() + 1;
         int r = reader.read();
 
         if (r == -1) {
@@ -24,11 +26,11 @@ public class FileManager implements AutoCloseable {
         }
     }
 
-    public int currentLineNumber() {
-        return reader.getLineNumber();
+    public int getLineNumber() {
+        return lineNumber;
     }
 
-    public boolean reachedEOF() {
+    public boolean hasReachedEOF() {
         return reachedEOF;
     }
 

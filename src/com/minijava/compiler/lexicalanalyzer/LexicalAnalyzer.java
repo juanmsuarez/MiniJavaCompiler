@@ -30,7 +30,10 @@ public class LexicalAnalyzer {
     }
 
     private Token initialState() throws IOException, LexicalException {
-        if (CharacterUtils.isUpperCase(currentChar)) {
+        if (CharacterUtils.isWhiteSpace(currentChar)) {
+            advanceCurrentChar();
+            return initialState();
+        } else if (CharacterUtils.isUpperCase(currentChar)) {
             updateLexeme();
             advanceCurrentChar();
             return classIdState();
@@ -38,11 +41,11 @@ public class LexicalAnalyzer {
             updateLexeme();
             advanceCurrentChar();
             return varMetIdState();
-        } else if (fileManager.reachedEOF()) {
+        } else if (fileManager.hasReachedEOF()) {
             return eofState();
         } else {
             updateLexeme();
-            throw new GenericLexicalException(currentLexeme, fileManager.currentLineNumber());
+            throw new GenericLexicalException(currentLexeme, fileManager.getLineNumber());
         }
     }
 
@@ -53,7 +56,7 @@ public class LexicalAnalyzer {
             advanceCurrentChar();
             return classIdState();
         } else {
-            return new Token("classId", currentLexeme, fileManager.currentLineNumber());
+            return new Token("classId", currentLexeme, fileManager.getLineNumber());
         }
     }
 
@@ -62,13 +65,13 @@ public class LexicalAnalyzer {
                 || CharacterUtils.isUnderscore(currentChar)) {
             updateLexeme();
             advanceCurrentChar();
-            return classIdState();
+            return varMetIdState();
         } else {
-            return new Token("varMetId", currentLexeme, fileManager.currentLineNumber());
+            return new Token("varMetId", currentLexeme, fileManager.getLineNumber());
         }
     }
 
     private Token eofState() {
-        return new Token("EOF", currentLexeme, fileManager.currentLineNumber());
+        return new Token("EOF", currentLexeme, fileManager.getLineNumber());
     }
 }
