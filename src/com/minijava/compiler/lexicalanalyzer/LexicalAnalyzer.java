@@ -5,8 +5,20 @@ import com.minijava.compiler.lexicalanalyzer.exceptions.GenericLexicalException;
 import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LexicalAnalyzer {
+    private static final String[] KEYWORDS = new String[] {
+            "class", "extends", "static", "dynamic", "public", "private", "this", "new", "null",
+            "void", "boolean", "char", "int", "String", "true", "false",
+            "if", "else", "while", "return"
+    };
+
+    private static final Set<String> KEYWORDS_SET = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(KEYWORDS)));
+
     private FileManager fileManager;
     private Character currentChar;
     private String currentLexeme;
@@ -56,7 +68,11 @@ public class LexicalAnalyzer {
             advanceCurrentChar();
             return classIdState();
         } else {
-            return new Token("classId", currentLexeme, fileManager.getLineNumber());
+            if (KEYWORDS_SET.contains(currentLexeme)) {
+                return new Token("kw" + StringUtils.capitalize(currentLexeme), currentLexeme, fileManager.getLineNumber());
+            } else {
+                return new Token("classId", currentLexeme, fileManager.getLineNumber());
+            }
         }
     }
 
@@ -67,7 +83,11 @@ public class LexicalAnalyzer {
             advanceCurrentChar();
             return varMetIdState();
         } else {
-            return new Token("varMetId", currentLexeme, fileManager.getLineNumber());
+            if (KEYWORDS_SET.contains(currentLexeme)) {
+                return new Token("kw" + StringUtils.capitalize(currentLexeme), currentLexeme, fileManager.getLineNumber());
+            } else {
+                return new Token("varMetId", currentLexeme, fileManager.getLineNumber());
+            }
         }
     }
 

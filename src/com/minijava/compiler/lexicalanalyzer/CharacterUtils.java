@@ -1,6 +1,6 @@
 package com.minijava.compiler.lexicalanalyzer;
 
-public class CharacterUtils {
+class CharacterUtils {
     public static boolean isWhiteSpace(Character character) {
         return character != null && (character == ' ' || character == '\t' || character == '\n');
     }
