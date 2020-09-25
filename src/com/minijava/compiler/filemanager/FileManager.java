@@ -1,6 +1,7 @@
 package com.minijava.compiler.filemanager;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class FileManager implements AutoCloseable {
     private LineNumberReader reader;
@@ -10,7 +11,7 @@ public class FileManager implements AutoCloseable {
     public FileManager(String path) throws FileNotFoundException  {
         File file = new File(path);
         InputStream inputStream = new FileInputStream(file);
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         reader = new LineNumberReader(inputStreamReader);
     }
 
