@@ -4,8 +4,10 @@ import com.minijava.compiler.filemanager.FileManager;
 import com.minijava.compiler.lexicalanalyzer.exceptions.InvalidSymbolException;
 import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
 import com.minijava.compiler.lexicalanalyzer.exceptions.MalformedCharException;
+import com.minijava.compiler.lexicalanalyzer.exceptions.MalformedStringException;
 
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -63,8 +65,10 @@ public class LexicalAnalyzer {
             return transition(this::varMetIdState);
         } else if (CharacterUtils.isDigit(currentChar)) {
             return transition(this::intLitState);
-        } else if (CharacterUtils.isQuote(currentChar)) {
+        } else if (CharacterUtils.isSingleQuote(currentChar)) {
             return transition(this::charLitOpenedState);
+        } else if (CharacterUtils.isDoubleQuote(currentChar)) {
+            return transition(this::stringLitOpenedState);
         } else if (CharacterUtils.isEOF(currentChar)) {
             return eofState();
         } else {
@@ -110,7 +114,7 @@ public class LexicalAnalyzer {
 
     private Token charLitOpenedState() throws IOException, LexicalException {
         if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)
-                || CharacterUtils.isQuote(currentChar)) {
+                || CharacterUtils.isSingleQuote(currentChar)) {
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else if (CharacterUtils.isBackslash(currentChar)) {
             return transition(this::escapedCharLitState);
@@ -128,12 +132,24 @@ public class LexicalAnalyzer {
     }
 
     private Token charLitToCloseState() throws IOException, LexicalException {
-        if (!CharacterUtils.isQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')?
+        if (!CharacterUtils.isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')? Estos dos serían diferentes errores o puede ser todo literal malformado?
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else {
             updateLexeme();
             advanceCurrentChar();
             return buildToken("charLit");
+        }
+    }
+
+    private Token stringLitOpenedState() throws IOException, LexicalException {
+        if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)) {
+            throw new MalformedStringException(currentLexeme, fileManager.getLineNumber());
+        } else if (!CharacterUtils.isDoubleQuote(currentChar)) {
+            return transition(this::stringLitOpenedState);
+        } else {
+            updateLexeme();
+            advanceCurrentChar();
+            return buildToken("stringLit");
         }
     }
 

@@ -33,8 +33,12 @@ class CharacterUtils {
         return character != null && character >= 'a' && character <= 'z';
     }
 
-    public static boolean isQuote(Character character) {
+    public static boolean isSingleQuote(Character character) {
         return character != null && character == '\'';
+    }
+
+    public static boolean isDoubleQuote(Character character) {
+        return character != null && character == '"';
     }
 
     public static boolean isBackslash(Character character) {
