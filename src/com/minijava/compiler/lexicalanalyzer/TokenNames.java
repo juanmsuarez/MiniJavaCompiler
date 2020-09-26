@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenNames {
+    // KEYWORDS
     public static final String CLASS_KW = "classKw";
     public static final String EXTENDS_KW = "extendsKw";
     public static final String STATIC_KW = "static";
@@ -25,7 +26,6 @@ public class TokenNames {
     public static final String ELSE_KW = "elseKw";
     public static final String WHILE_KW = "whileKw";
     public static final String RETURN_KW = "returnKw";
-
     public static final Map<String, String> KEYWORDS = Collections.unmodifiableMap(
             new HashMap<String, String>() {{
                 put("class", CLASS_KW);
@@ -50,10 +50,34 @@ public class TokenNames {
                 put("return", RETURN_KW);
             }});
 
+    // IDs
     public static final String CLASS_ID = "classId";
     public static final String VAR_MET_ID = "varMetId";
+
+    // LITERALS
     public static final String INT_LIT = "intLit";
     public static final String CHAR_LIT = "charLit";
     public static final String STRING_LIT = "stringLit";
+
+    // PUNCTUATION
+    public static final String OPEN_PARENTHESIS = "openParenthesis";
+    public static final String CLOSE_PARENTHESIS = "closeParenthesis";
+    public static final String OPEN_BRACES = "openBraces";
+    public static final String CLOSE_BRACES = "closeBraces";
+    public static final String SEMICOLON = "semicolon";
+    public static final String COMMA = "comma";
+    public static final String DOT = "dot";
+    public static final Map<String, String> PUNCTUATION = Collections.unmodifiableMap(
+            new HashMap<String, String>() {{
+                put("(", OPEN_PARENTHESIS);
+                put(")", CLOSE_PARENTHESIS);
+                put("{", OPEN_BRACES);
+                put("}", CLOSE_BRACES);
+                put(";", SEMICOLON);
+                put(",", COMMA);
+                put(".", DOT);
+            }});
+
+    // OTHERS
     public static final String EOF = "EOF";
 }

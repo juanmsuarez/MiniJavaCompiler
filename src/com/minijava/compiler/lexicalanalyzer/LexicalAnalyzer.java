@@ -58,6 +58,8 @@ public class LexicalAnalyzer {
             return transition(this::charLitOpenedState);
         } else if (CharacterUtils.isDoubleQuote(currentChar)) {
             return transition(this::stringLitOpenedState);
+        } else if (CharacterUtils.isPunctuation(currentChar)) {
+            return transition(this::punctuationState);
         } else if (CharacterUtils.isEOF(currentChar)) {
             return eofState();
         } else {
@@ -132,6 +134,10 @@ public class LexicalAnalyzer {
             advanceCurrentChar();
             return buildToken(STRING_LIT);
         }
+    }
+
+    private Token punctuationState() {
+        return buildToken(PUNCTUATION.get(currentLexeme));
     }
 
     private Token eofState() {

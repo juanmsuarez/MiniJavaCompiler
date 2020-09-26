@@ -44,4 +44,8 @@ class CharacterUtils {
     public static boolean isBackslash(Character character) {
         return character != null && character == '\\';
     }
+
+    public static boolean isPunctuation(Character character) {
+        return character != null && "(){};,.".contains(character.toString());
+    }
 }
