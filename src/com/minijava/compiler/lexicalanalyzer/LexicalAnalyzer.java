@@ -36,6 +36,10 @@ public class LexicalAnalyzer {
         currentLexeme = currentLexeme + currentChar;
     }
 
+    private Token buildToken(String name) {
+        return new Token(name, currentLexeme, fileManager.getLineNumber());
+    }
+
     public Token nextToken() throws IOException, LexicalException {
         currentLexeme = "";
         return initialState();
@@ -73,9 +77,9 @@ public class LexicalAnalyzer {
             return classIdState();
         } else {
             if (KEYWORDS_SET.contains(currentLexeme)) {
-                return new Token("kw" + StringUtils.capitalize(currentLexeme), currentLexeme, fileManager.getLineNumber());
+                return buildToken("kw" + StringUtils.capitalize(currentLexeme));
             } else {
-                return new Token("classId", currentLexeme, fileManager.getLineNumber());
+                return buildToken("classId");
             }
         }
     }
@@ -88,9 +92,9 @@ public class LexicalAnalyzer {
             return varMetIdState();
         } else {
             if (KEYWORDS_SET.contains(currentLexeme)) {
-                return new Token("kw" + StringUtils.capitalize(currentLexeme), currentLexeme, fileManager.getLineNumber());
+                return buildToken("kw" + StringUtils.capitalize(currentLexeme));
             } else {
-                return new Token("varMetId", currentLexeme, fileManager.getLineNumber());
+                return buildToken("varMetId");
             }
         }
     }
@@ -101,7 +105,7 @@ public class LexicalAnalyzer {
             advanceCurrentChar();
             return intLitState();
         } else {
-            return new Token("intLit", currentLexeme, fileManager.getLineNumber());
+            return buildToken("intLit");
         }
     }
 
