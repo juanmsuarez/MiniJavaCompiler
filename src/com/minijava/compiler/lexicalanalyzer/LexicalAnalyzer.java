@@ -34,13 +34,18 @@ public class LexicalAnalyzer {
     }
 
     private void updateLexeme() {
-        if (!CharacterUtils.isEOF(currentChar)) { // TODO: el EOF no se muestra como parte del lexema no?
-            currentLexeme = currentLexeme + currentChar;
-        }
+        currentLexeme = currentLexeme + currentChar;
     }
 
     private Token buildToken(String name) {
         return new Token(name, currentLexeme, fileManager.getLineNumber());
+    }
+
+    // Updates current lexeme, advances current char and executes State
+    private Token transition(State state) throws IOException, LexicalException {
+        updateLexeme();
+        advanceCurrentChar();
+        return state.execute();
     }
 
     public Token nextToken() throws IOException, LexicalException {
@@ -53,35 +58,26 @@ public class LexicalAnalyzer {
             advanceCurrentChar();
             return initialState();
         } else if (CharacterUtils.isUpperCase(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return classIdState();
+            return transition(this::classIdState);
         } else if (CharacterUtils.isLowerCase(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return varMetIdState();
+            return transition(this::varMetIdState);
         } else if (CharacterUtils.isDigit(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return intLitState();
+            return transition(this::intLitState);
         } else if (CharacterUtils.isQuote(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return charLitOpenedState();
+            return transition(this::charLitOpenedState);
         } else if (CharacterUtils.isEOF(currentChar)) {
             return eofState();
         } else {
             updateLexeme();
+            advanceCurrentChar();
             throw new InvalidSymbolException(currentLexeme, fileManager.getLineNumber());
         }
     }
 
-    private Token classIdState() throws IOException {
+    private Token classIdState() throws IOException, LexicalException {
         if (CharacterUtils.isLetter(currentChar) || CharacterUtils.isDigit(currentChar)
                 || CharacterUtils.isUnderscore(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return classIdState();
+            return transition(this::classIdState);
         } else {
             if (KEYWORDS_SET.contains(currentLexeme)) {
                 return buildToken("kw" + StringUtils.capitalize(currentLexeme));
@@ -91,12 +87,10 @@ public class LexicalAnalyzer {
         }
     }
 
-    private Token varMetIdState() throws IOException {
+    private Token varMetIdState() throws IOException, LexicalException {
         if (CharacterUtils.isLetter(currentChar) || CharacterUtils.isDigit(currentChar)
                 || CharacterUtils.isUnderscore(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return varMetIdState();
+            return transition(this::varMetIdState);
         } else {
             if (KEYWORDS_SET.contains(currentLexeme)) {
                 return buildToken("kw" + StringUtils.capitalize(currentLexeme));
@@ -106,42 +100,34 @@ public class LexicalAnalyzer {
         }
     }
 
-    private Token intLitState() throws IOException {
+    private Token intLitState() throws IOException, LexicalException {
         if (CharacterUtils.isDigit(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return intLitState();
+            return transition(this::intLitState);
         } else {
             return buildToken("intLit");
         }
     }
 
-    private Token charLitOpenedState() throws IOException, MalformedCharException {
+    private Token charLitOpenedState() throws IOException, LexicalException {
         if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)
                 || CharacterUtils.isQuote(currentChar)) {
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else if (CharacterUtils.isBackslash(currentChar)) {
-            updateLexeme();
-            advanceCurrentChar();
-            return escapedCharLitState();
+            return transition(this::escapedCharLitState);
         } else {
-            updateLexeme();
-            advanceCurrentChar();
-            return charLitToCloseState();
+            return transition(this::charLitToCloseState);
         }
     }
 
-    private Token escapedCharLitState() throws IOException, MalformedCharException {
+    private Token escapedCharLitState() throws IOException, LexicalException {
         if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)) {
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else {
-            updateLexeme();
-            advanceCurrentChar();
-            return charLitToCloseState();
+            return transition(this::charLitToCloseState);
         }
     }
 
-    private Token charLitToCloseState() throws IOException, MalformedCharException {
+    private Token charLitToCloseState() throws IOException, LexicalException {
         if (!CharacterUtils.isQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')?
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else {
