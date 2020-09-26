@@ -7,21 +7,10 @@ import com.minijava.compiler.lexicalanalyzer.exceptions.MalformedCharException;
 import com.minijava.compiler.lexicalanalyzer.exceptions.MalformedStringException;
 
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+
+import static com.minijava.compiler.lexicalanalyzer.TokenNames.*;
 
 public class LexicalAnalyzer {
-    private static final String[] KEYWORDS = new String[] {
-            "class", "extends", "static", "dynamic", "public", "private", "this", "new", "null",
-            "void", "boolean", "char", "int", "String", "true", "false",
-            "if", "else", "while", "return"
-    };
-
-    private static final Set<String> KEYWORDS_SET = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(KEYWORDS)));
-
     private FileManager fileManager;
     private Character currentChar;
     private String currentLexeme;
@@ -83,11 +72,7 @@ public class LexicalAnalyzer {
                 || CharacterUtils.isUnderscore(currentChar)) {
             return transition(this::classIdState);
         } else {
-            if (KEYWORDS_SET.contains(currentLexeme)) {
-                return buildToken("kw" + StringUtils.capitalize(currentLexeme));
-            } else {
-                return buildToken("classId");
-            }
+            return buildToken(KEYWORDS.getOrDefault(currentLexeme, CLASS_ID));
         }
     }
 
@@ -96,11 +81,7 @@ public class LexicalAnalyzer {
                 || CharacterUtils.isUnderscore(currentChar)) {
             return transition(this::varMetIdState);
         } else {
-            if (KEYWORDS_SET.contains(currentLexeme)) {
-                return buildToken("kw" + StringUtils.capitalize(currentLexeme));
-            } else {
-                return buildToken("varMetId");
-            }
+            return buildToken(KEYWORDS.getOrDefault(currentLexeme, VAR_MET_ID));
         }
     }
 
@@ -108,7 +89,7 @@ public class LexicalAnalyzer {
         if (CharacterUtils.isDigit(currentChar)) {
             return transition(this::intLitState);
         } else {
-            return buildToken("intLit");
+            return buildToken(INT_LIT);
         }
     }
 
@@ -137,7 +118,7 @@ public class LexicalAnalyzer {
         } else {
             updateLexeme();
             advanceCurrentChar();
-            return buildToken("charLit");
+            return buildToken(CHAR_LIT);
         }
     }
 
@@ -149,11 +130,11 @@ public class LexicalAnalyzer {
         } else {
             updateLexeme();
             advanceCurrentChar();
-            return buildToken("stringLit");
+            return buildToken(STRING_LIT);
         }
     }
 
     private Token eofState() {
-        return buildToken("EOF");
+        return buildToken(EOF);
     }
 }
