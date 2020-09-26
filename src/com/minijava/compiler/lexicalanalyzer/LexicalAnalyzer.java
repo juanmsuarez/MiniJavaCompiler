@@ -1,8 +1,9 @@
 package com.minijava.compiler.lexicalanalyzer;
 
 import com.minijava.compiler.filemanager.FileManager;
-import com.minijava.compiler.lexicalanalyzer.exceptions.GenericLexicalException;
+import com.minijava.compiler.lexicalanalyzer.exceptions.InvalidSymbolException;
 import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
+import com.minijava.compiler.lexicalanalyzer.exceptions.MalformedCharException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,7 +34,9 @@ public class LexicalAnalyzer {
     }
 
     private void updateLexeme() {
-        currentLexeme = currentLexeme + currentChar;
+        if (!CharacterUtils.isEOF(currentChar)) { // TODO: el EOF no se muestra como parte del lexema no?
+            currentLexeme = currentLexeme + currentChar;
+        }
     }
 
     private Token buildToken(String name) {
@@ -61,11 +64,15 @@ public class LexicalAnalyzer {
             updateLexeme();
             advanceCurrentChar();
             return intLitState();
-        } else if (fileManager.hasReachedEOF()) {
+        } else if (CharacterUtils.isQuote(currentChar)) {
+            updateLexeme();
+            advanceCurrentChar();
+            return charLitOpenedState();
+        } else if (CharacterUtils.isEOF(currentChar)) {
             return eofState();
         } else {
             updateLexeme();
-            throw new GenericLexicalException(currentLexeme, fileManager.getLineNumber());
+            throw new InvalidSymbolException(currentLexeme, fileManager.getLineNumber());
         }
     }
 
@@ -109,7 +116,42 @@ public class LexicalAnalyzer {
         }
     }
 
+    private Token charLitOpenedState() throws IOException, MalformedCharException {
+        if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)
+                || CharacterUtils.isQuote(currentChar)) {
+            throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
+        } else if (CharacterUtils.isBackslash(currentChar)) {
+            updateLexeme();
+            advanceCurrentChar();
+            return escapedCharLitState();
+        } else {
+            updateLexeme();
+            advanceCurrentChar();
+            return charLitToCloseState();
+        }
+    }
+
+    private Token escapedCharLitState() throws IOException, MalformedCharException {
+        if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)) {
+            throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
+        } else {
+            updateLexeme();
+            advanceCurrentChar();
+            return charLitToCloseState();
+        }
+    }
+
+    private Token charLitToCloseState() throws IOException, MalformedCharException {
+        if (!CharacterUtils.isQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')?
+            throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
+        } else {
+            updateLexeme();
+            advanceCurrentChar();
+            return buildToken("charLit");
+        }
+    }
+
     private Token eofState() {
-        return new Token("EOF", currentLexeme, fileManager.getLineNumber());
+        return buildToken("EOF");
     }
 }

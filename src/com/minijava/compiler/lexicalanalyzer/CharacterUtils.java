@@ -1,6 +1,14 @@
 package com.minijava.compiler.lexicalanalyzer;
 
 class CharacterUtils {
+    public static boolean isEOF(Character character) {
+        return character == null;
+    }
+
+    public static boolean isEOL(Character character) {
+        return character != null && character == '\n';
+    }
+
     public static boolean isWhiteSpace(Character character) {
         return character != null && (character == ' ' || character == '\t' || character == '\n');
     }
@@ -23,5 +31,13 @@ class CharacterUtils {
 
     public static boolean isLowerCase(Character character) {
         return character != null && character >= 'a' && character <= 'z';
+    }
+
+    public static boolean isQuote(Character character) {
+        return character != null && character == '\'';
+    }
+
+    public static boolean isBackslash(Character character) {
+        return character != null && character == '\\';
     }
 }
