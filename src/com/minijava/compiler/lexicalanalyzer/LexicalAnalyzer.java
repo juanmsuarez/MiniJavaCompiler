@@ -100,28 +100,30 @@ public class LexicalAnalyzer {
                 || CharacterUtils.isSingleQuote(currentChar)) {
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else if (CharacterUtils.isBackslash(currentChar)) {
-            return transition(this::escapedCharLitState);
+            return transition(this::escapedCharLitOpenedState);
         } else {
-            return transition(this::charLitToCloseState);
+            return transition(this::charLitPendingCloseState);
         }
     }
 
-    private Token escapedCharLitState() throws IOException, LexicalException {
+    private Token escapedCharLitOpenedState() throws IOException, LexicalException {
         if (CharacterUtils.isEOF(currentChar) || CharacterUtils.isEOL(currentChar)) {
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else {
-            return transition(this::charLitToCloseState);
+            return transition(this::charLitPendingCloseState);
         }
     }
 
-    private Token charLitToCloseState() throws IOException, LexicalException {
+    private Token charLitPendingCloseState() throws IOException, LexicalException {
         if (!CharacterUtils.isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')? Estos dos serían diferentes errores o puede ser todo literal malformado?
             throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
         } else {
-            updateLexeme();
-            advanceCurrentChar();
-            return buildToken(CHAR_LIT);
+            return transition(this::charLitClosedState);
         }
+    }
+
+    private Token charLitClosedState() {
+        return buildToken(CHAR_LIT);
     }
 
     private Token stringLitOpenedState() throws IOException, LexicalException {
@@ -130,10 +132,12 @@ public class LexicalAnalyzer {
         } else if (!CharacterUtils.isDoubleQuote(currentChar)) {
             return transition(this::stringLitOpenedState);
         } else {
-            updateLexeme();
-            advanceCurrentChar();
-            return buildToken(STRING_LIT);
+            return transition(this::stringLitClosedState);
         }
+    }
+
+    private Token stringLitClosedState() {
+        return buildToken(STRING_LIT);
     }
 
     private Token punctuationState() {
