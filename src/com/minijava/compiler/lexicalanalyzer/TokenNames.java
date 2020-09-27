@@ -123,6 +123,7 @@ public class TokenNames {
                 put("+=", ADD_ASSIGN);
                 put("-=", SUB_ASSIGN);
             }});
+
     // OTHERS
     public static final String EOF = "EOF";
 }

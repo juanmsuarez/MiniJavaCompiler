@@ -52,6 +52,14 @@ class CharacterUtils {
         return character != null && PUNCTUATION.contains(character.toString());
     }
 
+    public static boolean isSlash(Character character) {
+        return character != null && character == '/';
+    }
+
+    public static boolean isAsterisk(Character character) {
+        return character != null && character == '*';
+    }
+
     public static boolean isOperator(Character character) {
         return character != null && OPERATORS.contains(character.toString());
     }

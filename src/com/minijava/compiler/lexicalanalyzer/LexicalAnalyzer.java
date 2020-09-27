@@ -12,6 +12,7 @@ public class LexicalAnalyzer {
     private FileManager fileManager;
     private Character currentChar;
     private String currentLexeme;
+    private int lexemeStartLine;
 
     public LexicalAnalyzer(FileManager fileManager) throws IOException {
         this.fileManager = fileManager;
@@ -27,7 +28,7 @@ public class LexicalAnalyzer {
     }
 
     private Token buildToken(String name) {
-        return new Token(name, currentLexeme, fileManager.getLineNumber());
+        return new Token(name, currentLexeme, lexemeStartLine);
     }
 
     // Updates current lexeme, advances current char and executes State
@@ -37,15 +38,20 @@ public class LexicalAnalyzer {
         return state.execute();
     }
 
-    public Token nextToken() throws IOException, LexicalException {
+    private void resetLexeme() {
         currentLexeme = "";
+        lexemeStartLine = fileManager.getLineNumber();
+    }
+
+    public Token nextToken() throws IOException, LexicalException {
         return initialState();
     }
 
     private Token initialState() throws IOException, LexicalException {
+        resetLexeme();
+
         if (isWhiteSpace(currentChar)) {
-            advanceCurrentChar();
-            return initialState();
+            return transition(this::initialState);
         } else if (isUpperCase(currentChar)) {
             return transition(this::classIdState);
         } else if (isLowerCase(currentChar)) {
@@ -58,6 +64,8 @@ public class LexicalAnalyzer {
             return transition(this::stringLitOpenedState);
         } else if (isPunctuation(currentChar)) {
             return transition(this::punctuationState);
+        } else if (isSlash(currentChar)) {
+            return transition(this::divOpOrCommentState);
         } else if (isOperator(currentChar)) {
             return transition(this::operatorState);
         } else if (isEOF(currentChar)) {
@@ -65,7 +73,7 @@ public class LexicalAnalyzer {
         } else {
             updateLexeme();
             advanceCurrentChar();
-            throw new InvalidSymbolException(currentLexeme, fileManager.getLineNumber());
+            throw new InvalidSymbolException(currentLexeme, lexemeStartLine);
         }
     }
 
@@ -95,7 +103,7 @@ public class LexicalAnalyzer {
 
     private Token charLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar) || isSingleQuote(currentChar)) {
-            throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
+            throw new MalformedCharException(currentLexeme, lexemeStartLine);
         } else if (isBackslash(currentChar)) {
             return transition(this::escapedCharLitOpenedState);
         } else {
@@ -105,7 +113,7 @@ public class LexicalAnalyzer {
 
     private Token escapedCharLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
-            throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
+            throw new MalformedCharException(currentLexeme, lexemeStartLine);
         } else {
             return transition(this::charLitPendingCloseState);
         }
@@ -113,7 +121,7 @@ public class LexicalAnalyzer {
 
     private Token charLitPendingCloseState() throws IOException, LexicalException {
         if (!isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')? Estos dos serían diferentes errores o puede ser todo literal malformado?
-            throw new MalformedCharException(currentLexeme, fileManager.getLineNumber());
+            throw new UnclosedCharException(currentLexeme, lexemeStartLine);
         } else {
             return transition(this::charLitClosedState);
         }
@@ -125,7 +133,7 @@ public class LexicalAnalyzer {
 
     private Token stringLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
-            throw new MalformedStringException(currentLexeme, fileManager.getLineNumber());
+            throw new UnclosedStringException(currentLexeme, lexemeStartLine);
         } else if (!isDoubleQuote(currentChar)) {
             return transition(this::stringLitOpenedState);
         } else {
@@ -141,13 +149,54 @@ public class LexicalAnalyzer {
         return buildToken(PUNCTUATION.get(currentLexeme));
     }
 
+    private Token divOpOrCommentState() throws IOException, LexicalException {
+        if (isSlash(currentChar)) {
+            return transition(this::lineCommentState);
+        } else if (isAsterisk(currentChar)) {
+            return transition(this::blockCommentOpenedState);
+        } else {
+            return buildToken(DIV);
+        }
+    }
+
+    private Token lineCommentState() throws IOException, LexicalException {
+        if (!isEOF(currentChar) && !isEOL(currentChar)) {
+            return transition(this::lineCommentState);
+        } else {
+            return initialState();
+        }
+    }
+
+    // TODO: los errores de comment se muestran con enters en el medio?
+    private Token blockCommentOpenedState() throws IOException, LexicalException { // TODO: fixear el nro de línea
+        if (isAsterisk(currentChar)) {
+            return blockCommentToCloseState();
+        } else if (!isEOF(currentChar)) {
+            return transition(this::blockCommentOpenedState);
+        } else {
+            throw new UnclosedCommentException(currentLexeme, lexemeStartLine);
+        }
+    }
+
+    private Token blockCommentToCloseState() throws IOException, LexicalException {
+        if (isSlash(currentChar)) {
+            return transition(this::initialState);
+        } else if (isAsterisk(currentChar)) {
+            return transition(this::blockCommentToCloseState);
+        } else if (!isEOF(currentChar)) {
+            return transition(this::blockCommentOpenedState);
+        } else {
+            throw new UnclosedCommentException(currentLexeme, lexemeStartLine);
+        }
+    }
+
     private Token operatorState() throws IOException, LexicalException {
         if (!isEOF(currentChar) && OPERATORS.containsKey(currentLexeme + currentChar)) {
             return transition(this::operatorState);
         } else if (OPERATORS.containsKey(currentLexeme)) {
             return buildToken(OPERATORS.get(currentLexeme));
         } else {
-            throw new MalformedOperatorException(currentLexeme, fileManager.getLineNumber());
+            throw new MalformedOperatorException(currentLexeme, lexemeStartLine);
         }
     }
 
