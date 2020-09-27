@@ -1,6 +1,9 @@
 package com.minijava.compiler.lexicalanalyzer;
 
 class CharacterUtils {
+    private static final String PUNCTUATION = "(){};,.";
+    private static final String OPERATORS = "!&|=+-*/%><";
+
     public static boolean isEOF(Character character) {
         return character == null;
     }
@@ -46,6 +49,10 @@ class CharacterUtils {
     }
 
     public static boolean isPunctuation(Character character) {
-        return character != null && "(){};,.".contains(character.toString());
+        return character != null && PUNCTUATION.contains(character.toString());
+    }
+
+    public static boolean isOperator(Character character) {
+        return character != null && OPERATORS.contains(character.toString());
     }
 }
