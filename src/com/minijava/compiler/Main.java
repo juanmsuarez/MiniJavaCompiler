@@ -2,8 +2,8 @@ package com.minijava.compiler;
 
 import com.minijava.compiler.filemanager.FileManager;
 import com.minijava.compiler.lexicalanalyzer.LexicalAnalyzer;
-import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
 import com.minijava.compiler.lexicalanalyzer.Token;
+import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,19 +20,27 @@ class Main {
         try (FileManager fileManager = new FileManager(path)) {
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
 
-            Token currentToken;
+            boolean errorOccurred = false;
+            Token currentToken = null;
             do {
-                currentToken = lexicalAnalyzer.nextToken();
-                System.out.println(currentToken.toString());
-            } while (!currentToken.getName().equals("EOF"));
+                try {
+                    currentToken = lexicalAnalyzer.nextToken();
+                    System.out.println(currentToken.toString());
+                } catch (LexicalException exception) {
+                    System.err.println(exception.toString());
+                    errorOccurred = true;
+                }
+            } while (currentToken == null || !currentToken.getName().equals("EOF"));
 
-            System.out.println("El análisis léxico terminó con éxito.");
+            if (!errorOccurred) {
+                System.out.println("El análisis léxico finalizó con éxito.");
+            } else {
+                System.out.println("El análisis léxico finalizó con errores.");
+            }
         } catch (FileNotFoundException exception) {
             System.err.println("No fue posible abrir el archivo fuente indicado.");
         } catch (IOException exception) {
             System.err.println("Ocurrió un error durante la lectura del archivo fuente.");
-        } catch (LexicalException exception) {
-            System.err.println(exception.toString());
         }
     }
 }

@@ -120,7 +120,7 @@ public class LexicalAnalyzer {
     }
 
     private Token charLitPendingCloseState() throws IOException, LexicalException {
-        if (!isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas ('')? Estos dos serían diferentes errores o puede ser todo literal malformado?
+        if (!isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas (''), consumimos? Estos dos serían diferentes errores o puede ser todo literal malformado?
             throw new UnclosedCharException(currentLexeme, lexemeStartLine);
         } else {
             return transition(this::charLitClosedState);
@@ -168,7 +168,7 @@ public class LexicalAnalyzer {
     }
 
     // TODO: los errores de comment se muestran con enters en el medio?
-    private Token blockCommentOpenedState() throws IOException, LexicalException { // TODO: fixear el nro de línea
+    private Token blockCommentOpenedState() throws IOException, LexicalException {
         if (isAsterisk(currentChar)) {
             return blockCommentToCloseState();
         } else if (!isEOF(currentChar)) {

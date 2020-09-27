@@ -7,7 +7,7 @@ public class MalformedCharException extends LexicalException {
 
     @Override
     public String toString() {
-        return String.format("Error léxico en línea %d: %s no es un literal de carácter válido.\n", lineNumber, lexeme)
-                + super.toString();
+        return String.format("Error léxico en línea %d: %s no sé encontró un carácter válido luego de la apertura del " +
+                "literal.\n", lineNumber, lexeme) + super.toString();
     }
 }
