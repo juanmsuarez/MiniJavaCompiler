@@ -66,8 +66,9 @@ class Lexemes {
                 put("-=", SUB_ASSIGN);
             }});
 
-    // STRINGS
-    static final String STRING_OPEN = "\"";
+    // LITERALS
+    static final String CHAR_DELIMITER = "'";
+    static final String STRING_DELIMITER = "\"";
     static final String EMPTY_STRING_LITERAL = "\"\"";
     static final String TEXT_BLOCK_OPEN = "\"\"\"\n";
     static final String TEXT_BLOCK_CLOSE = "\n\"\"\"";

@@ -29,7 +29,7 @@ public class FileManager implements AutoCloseable {
         }
 
         charPosition++;
-        return charPosition < line.length() ? line.charAt(charPosition) : '\n'; // TODO: al agregar el \n nosotros no diferenciamos entre un enter en la última línea o no
+        return charPosition < line.length() ? line.charAt(charPosition) : '\n';
     }
 
     public String getLine() {

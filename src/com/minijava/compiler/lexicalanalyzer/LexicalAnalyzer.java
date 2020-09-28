@@ -37,7 +37,7 @@ public class LexicalAnalyzer {
     }
 
     // Updates current lexeme, advances current char and executes State
-    private Token transition(State state) throws IOException, LexicalException { // TODO: no pasa nada si tira lexical en todos?
+    private Token transition(State state) throws IOException, LexicalException {
         updateLexeme();
         advanceCurrentChar();
         return state.execute();
@@ -127,7 +127,7 @@ public class LexicalAnalyzer {
     }
 
     private Token charLitPendingCloseState() throws IOException, LexicalException {
-        if (!isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas (''), consumimos? Estos dos serían diferentes errores o puede ser todo literal malformado?
+        if (!isSingleQuote(currentChar)) {
             throw new UnclosedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         } else {
             return transition(this::charLitClosedState);
@@ -135,13 +135,16 @@ public class LexicalAnalyzer {
     }
 
     private Token charLitClosedState() {
+        int border = CHAR_DELIMITER.length();
+        currentLexeme = currentLexeme.substring(border, currentLexeme.length() - border);
+
         return buildToken(CHAR_LITERAL);
     }
 
-    private Token stringLitOpeningState() throws IOException, LexicalException { // TODO: Para el lexema borramos la apertura pero para los errores no? La idea no es encodear los \n cierto? Sin embargo, podemos encodearlos para el output?
+    private Token stringLitOpeningState() throws IOException, LexicalException {
         if (!isEOF(currentChar) && TEXT_BLOCK_OPEN.startsWith(currentLexeme + currentChar)) {
             return transition(this::stringLitOpeningState);
-        } else if (currentLexeme.equals(STRING_OPEN)) {
+        } else if (currentLexeme.equals(STRING_DELIMITER)) {
             return stringLitOpenedState();
         } else if (currentLexeme.equals(EMPTY_STRING_LITERAL)) {
             return stringLitClosedState();
@@ -153,7 +156,8 @@ public class LexicalAnalyzer {
     }
 
     private Token textBlockOpenedState() throws IOException, LexicalException {
-        if (currentLexeme.length() >= 2 * TEXT_BLOCK_OPEN.length() && currentLexeme.endsWith(TEXT_BLOCK_CLOSE)) {
+        if (currentLexeme.length() >= TEXT_BLOCK_OPEN.length() + TEXT_BLOCK_CLOSE.length()
+                && currentLexeme.endsWith(TEXT_BLOCK_CLOSE)) {
             return stringLitClosedState();
         } else if (isEOF(currentChar)) {
             throw new UnclosedTextBlockException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
@@ -173,8 +177,9 @@ public class LexicalAnalyzer {
     }
 
     private Token stringLitClosedState() {
-        int border = currentLexeme.startsWith(TEXT_BLOCK_OPEN) ? TEXT_BLOCK_OPEN.length() : STRING_OPEN.length();
-        currentLexeme = currentLexeme.substring(border, currentLexeme.length() - border);
+        int prefix = currentLexeme.startsWith(TEXT_BLOCK_OPEN) ? TEXT_BLOCK_OPEN.length() : STRING_DELIMITER.length();
+        int suffix = currentLexeme.startsWith(TEXT_BLOCK_OPEN) ? TEXT_BLOCK_CLOSE.length() : STRING_DELIMITER.length();
+        currentLexeme = currentLexeme.substring(prefix, currentLexeme.length() - suffix);
 
         return buildToken(STRING_LITERAL);
     }
@@ -201,7 +206,6 @@ public class LexicalAnalyzer {
         }
     }
 
-    // TODO: los errores de comment se muestran con enters en el medio?
     private Token blockCommentOpenedState() throws IOException, LexicalException {
         if (isAsterisk(currentChar)) {
             return blockCommentToCloseState();
