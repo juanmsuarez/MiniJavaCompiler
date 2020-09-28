@@ -1,13 +1,9 @@
 package com.minijava.compiler.lexicalanalyzer.exceptions;
 
 public class MalformedOperatorException extends LexicalException {
-    public MalformedOperatorException(String lexeme, int lineNumber) {
-        super(lexeme, lineNumber);
-    }
+    private static final String ERROR_MESSAGE = "%s no es un operador válido.";
 
-    @Override
-    public String toString() {
-        return String.format("Error léxico en línea %d: %s no es un operador válido.\n", lineNumber, lexeme)
-                + super.toString();
+    public MalformedOperatorException(int lineNumber, String lexeme, String line, int lexemePosition) {
+        super(lineNumber, String.format(ERROR_MESSAGE, lexeme), lexeme, line, lexemePosition);
     }
 }

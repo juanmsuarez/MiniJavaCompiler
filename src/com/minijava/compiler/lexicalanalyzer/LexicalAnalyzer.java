@@ -10,9 +10,13 @@ import static com.minijava.compiler.lexicalanalyzer.TokenNames.*;
 
 public class LexicalAnalyzer {
     private FileManager fileManager;
+
     private Character currentChar;
+
     private String currentLexeme;
-    private int lexemeStartLine;
+    private int lexemeStartLineNumber;
+    private String lexemeStartLine;
+    private int lexemeStartPosition;
 
     public LexicalAnalyzer(FileManager fileManager) throws IOException {
         this.fileManager = fileManager;
@@ -28,7 +32,7 @@ public class LexicalAnalyzer {
     }
 
     private Token buildToken(String name) {
-        return new Token(name, currentLexeme, lexemeStartLine);
+        return new Token(name, currentLexeme, lexemeStartLineNumber);
     }
 
     // Updates current lexeme, advances current char and executes State
@@ -40,7 +44,9 @@ public class LexicalAnalyzer {
 
     private void resetLexeme() {
         currentLexeme = "";
-        lexemeStartLine = fileManager.getLineNumber();
+        lexemeStartLineNumber = fileManager.getLineNumber();
+        lexemeStartLine = fileManager.getLine();
+        lexemeStartPosition = fileManager.getCharPosition();
     }
 
     public Token nextToken() throws IOException, LexicalException {
@@ -73,7 +79,7 @@ public class LexicalAnalyzer {
         } else {
             updateLexeme();
             advanceCurrentChar();
-            throw new InvalidSymbolException(currentLexeme, lexemeStartLine);
+            throw new InvalidSymbolException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         }
     }
 
@@ -103,7 +109,7 @@ public class LexicalAnalyzer {
 
     private Token charLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar) || isSingleQuote(currentChar)) {
-            throw new MalformedCharException(currentLexeme, lexemeStartLine);
+            throw new MalformedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         } else if (isBackslash(currentChar)) {
             return transition(this::escapedCharLitOpenedState);
         } else {
@@ -113,7 +119,7 @@ public class LexicalAnalyzer {
 
     private Token escapedCharLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
-            throw new MalformedCharException(currentLexeme, lexemeStartLine);
+            throw new MalformedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         } else {
             return transition(this::charLitPendingCloseState);
         }
@@ -121,7 +127,7 @@ public class LexicalAnalyzer {
 
     private Token charLitPendingCloseState() throws IOException, LexicalException {
         if (!isSingleQuote(currentChar)) { // TODO: no mostramos este caracter que apareció en lugar de la comilla ('xy), cierto? Y si son solo 2 comillas (''), consumimos? Estos dos serían diferentes errores o puede ser todo literal malformado?
-            throw new UnclosedCharException(currentLexeme, lexemeStartLine);
+            throw new UnclosedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         } else {
             return transition(this::charLitClosedState);
         }
@@ -133,7 +139,7 @@ public class LexicalAnalyzer {
 
     private Token stringLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
-            throw new UnclosedStringException(currentLexeme, lexemeStartLine);
+            throw new UnclosedStringException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         } else if (!isDoubleQuote(currentChar)) {
             return transition(this::stringLitOpenedState);
         } else {
@@ -174,7 +180,7 @@ public class LexicalAnalyzer {
         } else if (!isEOF(currentChar)) {
             return transition(this::blockCommentOpenedState);
         } else {
-            throw new UnclosedCommentException(currentLexeme, lexemeStartLine);
+            throw new UnclosedCommentException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         }
     }
 
@@ -186,7 +192,7 @@ public class LexicalAnalyzer {
         } else if (!isEOF(currentChar)) {
             return transition(this::blockCommentOpenedState);
         } else {
-            throw new UnclosedCommentException(currentLexeme, lexemeStartLine);
+            throw new UnclosedCommentException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         }
     }
 
@@ -196,7 +202,7 @@ public class LexicalAnalyzer {
         } else if (OPERATORS.containsKey(currentLexeme)) {
             return buildToken(OPERATORS.get(currentLexeme));
         } else {
-            throw new MalformedOperatorException(currentLexeme, lexemeStartLine);
+            throw new MalformedOperatorException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
         }
     }
 

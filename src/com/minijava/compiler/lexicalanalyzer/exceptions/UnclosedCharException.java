@@ -1,13 +1,9 @@
 package com.minijava.compiler.lexicalanalyzer.exceptions;
 
 public class UnclosedCharException extends LexicalException {
-    public UnclosedCharException(String lexeme, int lineNumber) {
-        super(lexeme, lineNumber);
-    }
+    private static final String ERROR_MESSAGE = "el literal de carácter %s no fue cerrado correctamente.";
 
-    @Override
-    public String toString() {
-        return String.format("Error léxico en línea %d: el literal de carácter %s no fue cerrado correctamente.\n", lineNumber, lexeme)
-                + super.toString();
+    public UnclosedCharException(int lineNumber, String lexeme, String line, int lexemePosition) {
+        super(lineNumber, String.format(ERROR_MESSAGE, lexeme), lexeme, line, lexemePosition);
     }
 }

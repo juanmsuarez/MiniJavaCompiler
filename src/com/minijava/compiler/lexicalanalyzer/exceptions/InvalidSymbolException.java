@@ -1,14 +1,9 @@
 package com.minijava.compiler.lexicalanalyzer.exceptions;
 
 public class InvalidSymbolException extends LexicalException {
+    private static final String ERROR_MESSAGE = "%s no es un símbolo válido.";
 
-    public InvalidSymbolException(String lexeme, int lineNumber) {
-        super(lexeme, lineNumber);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Error léxico en línea %d: %s no es un símbolo válido.\n", lineNumber, lexeme)
-                + super.toString();
+    public InvalidSymbolException(int lineNumber, String lexeme, String line, int lexemePosition) {
+        super(lineNumber, String.format(ERROR_MESSAGE, lexeme), lexeme, line, lexemePosition);
     }
 }

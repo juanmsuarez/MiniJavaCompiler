@@ -1,13 +1,10 @@
 package com.minijava.compiler.lexicalanalyzer.exceptions;
 
 public class UnclosedCommentException extends LexicalException {
-    public UnclosedCommentException(String lexeme, int lineNumber) {
-        super(lexeme, lineNumber);
-    }
+    private static final String ERROR_MESSAGE = "comentario sin cerrar %s";
 
-    @Override
-    public String toString() {
-        return String.format("Error léxico en línea %d: comentario sin cerrar %s \n", lineNumber, lexeme)
-                + super.toString();
+    public UnclosedCommentException(int lineNumber, String lexeme, String line, int lexemePosition) {
+        super(lineNumber, String.format(ERROR_MESSAGE, lexeme), lexeme, line, lexemePosition);
+
     }
 }
