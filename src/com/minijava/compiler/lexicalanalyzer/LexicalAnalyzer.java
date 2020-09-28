@@ -6,6 +6,7 @@ import com.minijava.compiler.lexicalanalyzer.exceptions.*;
 import java.io.IOException;
 
 import static com.minijava.compiler.lexicalanalyzer.CharacterUtils.*;
+import static com.minijava.compiler.lexicalanalyzer.Lexemes.*;
 import static com.minijava.compiler.lexicalanalyzer.TokenNames.*;
 
 public class LexicalAnalyzer {
@@ -67,7 +68,7 @@ public class LexicalAnalyzer {
         } else if (isSingleQuote(currentChar)) {
             return transition(this::charLitOpenedState);
         } else if (isDoubleQuote(currentChar)) {
-            return transition(this::stringLitOpenedState);
+            return transition(this::stringLitOpeningState);
         } else if (isPunctuation(currentChar)) {
             return transition(this::punctuationState);
         } else if (isSlash(currentChar)) {
@@ -137,6 +138,30 @@ public class LexicalAnalyzer {
         return buildToken(CHAR_LITERAL);
     }
 
+    private Token stringLitOpeningState() throws IOException, LexicalException { // TODO: Para el lexema borramos la apertura pero para los errores no? La idea no es encodear los \n cierto? Sin embargo, podemos encodearlos para el output?
+        if (!isEOF(currentChar) && TEXT_BLOCK_OPEN.startsWith(currentLexeme + currentChar)) {
+            return transition(this::stringLitOpeningState);
+        } else if (currentLexeme.equals(STRING_OPEN)) {
+            return stringLitOpenedState();
+        } else if (currentLexeme.equals(EMPTY_STRING_LITERAL)) {
+            return stringLitClosedState();
+        } else if (currentLexeme.equals(TEXT_BLOCK_OPEN)) {
+            return textBlockOpenedState();
+        } else {
+            throw new MalformedTextBlockException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+        }
+    }
+
+    private Token textBlockOpenedState() throws IOException, LexicalException {
+        if (currentLexeme.length() >= 2 * TEXT_BLOCK_OPEN.length() && currentLexeme.endsWith(TEXT_BLOCK_CLOSE)) {
+            return stringLitClosedState();
+        } else if (isEOF(currentChar)) {
+            throw new UnclosedTextBlockException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+        } else {
+            return transition(this::textBlockOpenedState);
+        }
+    }
+
     private Token stringLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
             throw new UnclosedStringException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
@@ -148,6 +173,9 @@ public class LexicalAnalyzer {
     }
 
     private Token stringLitClosedState() {
+        int border = currentLexeme.startsWith(TEXT_BLOCK_OPEN) ? TEXT_BLOCK_OPEN.length() : STRING_OPEN.length();
+        currentLexeme = currentLexeme.substring(border, currentLexeme.length() - border);
+
         return buildToken(STRING_LITERAL);
     }
 
