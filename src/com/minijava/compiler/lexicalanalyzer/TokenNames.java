@@ -4,7 +4,7 @@ public class TokenNames {
     // KEYWORDS
     public static final String CLASS_KW = "classKw";
     public static final String EXTENDS_KW = "extendsKw";
-    public static final String STATIC_KW = "static";
+    public static final String STATIC_KW = "staticKw";
     public static final String DYNAMIC_KW = "dynamicKw";
     public static final String PUBLIC_KW = "publicKw";
     public static final String PRIVATE_KW = "privateKw";
@@ -35,8 +35,8 @@ public class TokenNames {
     // PUNCTUATION
     public static final String OPEN_PARENTHESIS = "openParenthesis";
     public static final String CLOSE_PARENTHESIS = "closeParenthesis";
-    public static final String OPEN_BRACES = "openBraces";
-    public static final String CLOSE_BRACES = "closeBraces";
+    public static final String OPEN_BRACES = "openBrace";
+    public static final String CLOSE_BRACES = "closeBrace";
     public static final String SEMICOLON = "semicolon";
     public static final String COMMA = "comma";
     public static final String DOT = "dot";
