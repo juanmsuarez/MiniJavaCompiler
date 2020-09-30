@@ -1,4 +1,4 @@
-package com.minijava.compiler.lexicalanalyzer.exceptions;
+package com.minijava.compiler.lexical.exceptions;
 
 public class UnclosedCommentException extends LexicalException {
     private static final String ERROR_MESSAGE = "comentario sin cerrar, comenzando con %s";

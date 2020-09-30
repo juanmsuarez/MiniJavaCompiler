@@ -1,13 +1,14 @@
-package com.minijava.compiler.lexicalanalyzer;
+package com.minijava.compiler.lexical.analyzer;
 
 import com.minijava.compiler.filemanager.FileManager;
-import com.minijava.compiler.lexicalanalyzer.exceptions.*;
+import com.minijava.compiler.lexical.exceptions.*;
+import com.minijava.compiler.lexical.models.Token;
 
 import java.io.IOException;
 
-import static com.minijava.compiler.lexicalanalyzer.CharacterUtils.*;
-import static com.minijava.compiler.lexicalanalyzer.Lexemes.*;
-import static com.minijava.compiler.lexicalanalyzer.TokenNames.*;
+import static com.minijava.compiler.lexical.analyzer.CharacterUtils.*;
+import static com.minijava.compiler.lexical.analyzer.Lexemes.*;
+import static com.minijava.compiler.lexical.models.TokenNames.*;
 
 public class LexicalAnalyzer {
     private FileManager fileManager;

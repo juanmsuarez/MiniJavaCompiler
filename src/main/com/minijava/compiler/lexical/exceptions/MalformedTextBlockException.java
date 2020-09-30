@@ -1,4 +1,4 @@
-package com.minijava.compiler.lexicalanalyzer.exceptions;
+package com.minijava.compiler.lexical.exceptions;
 
 public class MalformedTextBlockException extends LexicalException {
     private static final String ERROR_MESSAGE = "el bloque de texto %s no fue abierto correctamente.";

@@ -1,4 +1,4 @@
-package com.minijava.compiler.lexicalanalyzer.exceptions;
+package com.minijava.compiler.lexical.exceptions;
 
 public abstract class LexicalException extends Exception {
     private static final String ERROR_DESC = "Error léxico en línea %d: %s\n";

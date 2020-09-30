@@ -1,9 +1,9 @@
 package com.minijava.compiler;
 
 import com.minijava.compiler.filemanager.FileManager;
-import com.minijava.compiler.lexicalanalyzer.LexicalAnalyzer;
-import com.minijava.compiler.lexicalanalyzer.Token;
-import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
+import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
+import com.minijava.compiler.lexical.exceptions.LexicalException;
+import com.minijava.compiler.lexical.models.Token;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

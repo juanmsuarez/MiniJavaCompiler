@@ -1,6 +1,6 @@
-package com.minijava.compiler.lexicalanalyzer;
+package com.minijava.compiler.lexical;
 
-import com.minijava.compiler.lexicalanalyzer.exceptions.LexicalException;
+import com.minijava.compiler.lexical.exceptions.LexicalException;
 import org.junit.jupiter.api.Test;
 
 class LexicalAnalyzerSuccessfulTests extends LexicalAnalyzerTests {

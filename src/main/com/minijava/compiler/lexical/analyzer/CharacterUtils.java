@@ -1,4 +1,4 @@
-package com.minijava.compiler.lexicalanalyzer;
+package com.minijava.compiler.lexical.analyzer;
 
 class CharacterUtils {
     private static final String PUNCTUATION = "(){};,.";

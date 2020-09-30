@@ -1,10 +1,10 @@
-package com.minijava.compiler.lexicalanalyzer;
+package com.minijava.compiler.lexical.analyzer;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.minijava.compiler.lexicalanalyzer.TokenNames.*;
+import static com.minijava.compiler.lexical.models.TokenNames.*;
 
 class Lexemes {
     // KEYWORDS

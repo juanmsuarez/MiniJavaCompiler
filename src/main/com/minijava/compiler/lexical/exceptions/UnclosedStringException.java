@@ -1,4 +1,4 @@
-package com.minijava.compiler.lexicalanalyzer.exceptions;
+package com.minijava.compiler.lexical.exceptions;
 
 public class UnclosedStringException extends LexicalException {
     private static final String ERROR_MESSAGE = "el literal de String %s no fue cerrado correctamente.";

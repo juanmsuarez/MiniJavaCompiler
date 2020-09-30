@@ -1,4 +1,4 @@
-package com.minijava.compiler.lexicalanalyzer.exceptions;
+package com.minijava.compiler.lexical.exceptions;
 
 public class InvalidSymbolException extends LexicalException {
     private static final String ERROR_MESSAGE = "%s no es un símbolo válido.";
