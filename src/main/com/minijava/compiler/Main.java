@@ -33,14 +33,14 @@ class Main {
             } while (currentToken == null || !currentToken.getName().equals("EOF"));
 
             if (!errorOccurred) {
-                System.out.println("El análisis léxico finalizó con éxito.");
+                System.out.println("El análisis léxico finalizó: no se encontraron errores.");
             } else {
-                System.out.println("El análisis léxico finalizó con errores.");
+                System.out.println("El análisis léxico finalizó: se encontraron errores.");
             }
         } catch (FileNotFoundException exception) {
-            System.err.println("No fue posible abrir el archivo fuente indicado.");
+            System.err.println("No pudo realizarse el análisis léxico: no fue posible abrir el archivo fuente indicado.");
         } catch (IOException exception) {
-            System.err.println("Ocurrió un error durante la lectura del archivo fuente.");
+            System.err.println("No pudo realizarse el análisis léxico: ocurrió un error durante la lectura del archivo fuente.");
         }
     }
 }
