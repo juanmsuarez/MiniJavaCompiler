@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class MainTests extends ResourceReader {
+class MainTests extends ResourceReader { // TODO: este test es muy básico, podría borrarse
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;

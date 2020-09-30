@@ -4,6 +4,7 @@ import com.minijava.compiler.filemanager.FileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
+import com.minijava.compiler.lexical.models.TokenNames;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,7 +31,7 @@ class Main {
                     System.err.println(exception.toString());
                     errorOccurred = true;
                 }
-            } while (currentToken == null || !currentToken.getName().equals("EOF"));
+            } while (currentToken == null || !currentToken.getName().equals(TokenNames.EOF));
 
             if (!errorOccurred) {
                 System.out.println("El análisis léxico finalizó: no se encontraron errores.");
