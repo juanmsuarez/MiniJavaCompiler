@@ -241,4 +241,9 @@ public class LexicalAnalyzer {
     private Token eofState() {
         return buildToken(EOF);
     }
+
+    private interface State {
+        Token execute() throws IOException, LexicalException;
+    }
 }
+
