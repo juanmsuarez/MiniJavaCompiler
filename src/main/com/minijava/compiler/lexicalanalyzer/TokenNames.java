@@ -35,8 +35,8 @@ public class TokenNames {
     // PUNCTUATION
     public static final String OPEN_PARENTHESIS = "openParenthesis";
     public static final String CLOSE_PARENTHESIS = "closeParenthesis";
-    public static final String OPEN_BRACES = "openBrace";
-    public static final String CLOSE_BRACES = "closeBrace";
+    public static final String OPEN_BRACE = "openBrace";
+    public static final String CLOSE_BRACE = "closeBrace";
     public static final String SEMICOLON = "semicolon";
     public static final String COMMA = "comma";
     public static final String DOT = "dot";

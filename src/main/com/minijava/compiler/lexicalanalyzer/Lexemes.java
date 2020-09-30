@@ -37,8 +37,8 @@ class Lexemes {
             new HashMap<String, String>() {{
                 put("(", OPEN_PARENTHESIS);
                 put(")", CLOSE_PARENTHESIS);
-                put("{", OPEN_BRACES);
-                put("}", CLOSE_BRACES);
+                put("{", OPEN_BRACE);
+                put("}", CLOSE_BRACE);
                 put(";", SEMICOLON);
                 put(",", COMMA);
                 put(".", DOT);
