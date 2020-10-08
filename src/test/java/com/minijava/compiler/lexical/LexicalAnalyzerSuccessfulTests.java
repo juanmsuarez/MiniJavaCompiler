@@ -1,56 +1,33 @@
 package com.minijava.compiler.lexical;
 
 import com.minijava.compiler.lexical.exceptions.LexicalException;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 class LexicalAnalyzerSuccessfulTests extends LexicalAnalyzerTests {
-    @Test
-    void keywords() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/keywords.java"));
+    private static Stream<Arguments> provideExceptionArguments() {
+        return Stream.of(
+                Arguments.of("successful_tests/keywords.java"),
+                Arguments.of("successful_tests/identifiers.java"),
+                Arguments.of("successful_tests/comments.java"),
+                Arguments.of("successful_tests/literals.java"),
+                Arguments.of("successful_tests/punctuation.java"),
+                Arguments.of("successful_tests/operators.java"),
+                Arguments.of("successful_tests/assignments.java"),
+                Arguments.of("successful_tests/empty_file.java"),
+                Arguments.of("successful_tests/hello_world.java"),
+                Arguments.of("successful_tests/misc.java")
+        );
     }
 
-    @Test
-    void identifiers() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/identifiers.java"));
-    }
+    @ParameterizedTest
+    @MethodSource("provideExceptionArguments")
+    <T extends Throwable> void fileShouldBeProcessedSuccessfully(String path) throws LexicalException {
+        System.out.println("Running test. File: " + path + " should be processed successfully.");
 
-    @Test
-    void comments() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/comments.java"));
-    }
-
-    @Test
-    void literals() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/literals.java"));
-    }
-
-    @Test
-    void punctuation() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/punctuation.java"));
-    }
-
-    @Test
-    void operators() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/operators.java"));
-    }
-
-    @Test
-    void assignments() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/assignments.java"));
-    }
-
-    @Test
-    void emptyFile() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/empty_file.java"));
-    }
-
-    @Test
-    void helloWorld() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/hello_world.java"));
-    }
-
-    @Test
-    void misc() throws LexicalException {
-        runAnalyzer(getPath("successful_tests/misc.java"));
+        runAnalyzer(getPath(path));
     }
 }

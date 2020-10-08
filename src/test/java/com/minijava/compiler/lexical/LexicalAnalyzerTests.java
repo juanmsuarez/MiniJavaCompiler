@@ -11,7 +11,6 @@ import java.io.IOException;
 
 class LexicalAnalyzerTests extends ResourceReader {
     protected void runAnalyzer(String path) throws LexicalException {
-        System.out.println("Running test file: " + path);
         try (FileManager fileManager = new FileManager(path)) {
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
 
@@ -31,6 +30,4 @@ class LexicalAnalyzerTests extends ResourceReader {
             System.err.println("Ocurrió un error durante la lectura del archivo fuente.");
         }
     }
-
-
 }

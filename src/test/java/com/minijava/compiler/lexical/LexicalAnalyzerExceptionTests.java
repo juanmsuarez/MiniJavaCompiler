@@ -2,98 +2,36 @@ package com.minijava.compiler.lexical;
 
 import com.minijava.compiler.lexical.exceptions.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 class LexicalAnalyzerExceptionTests extends LexicalAnalyzerTests {
-    @Test
-    void invalidSymbol() {
-        Assertions.assertThrows(InvalidSymbolException.class, () ->
-                runAnalyzer(getPath("exception_tests/invalid_symbol.java"))
+    private static Stream<Arguments> provideExceptionArguments() {
+        return Stream.of(
+                Arguments.of("exception_tests/invalid_symbol.java", InvalidSymbolException.class),
+                Arguments.of("exception_tests/invalid_symbol_misc.java", InvalidSymbolException.class),
+                Arguments.of("exception_tests/malformed_char.java", MalformedCharException.class),
+                Arguments.of("exception_tests/malformed_char_misc.java", MalformedCharException.class),
+                Arguments.of("exception_tests/malformed_operator.java", MalformedOperatorException.class),
+                Arguments.of("exception_tests/malformed_operator_misc.java", MalformedOperatorException.class),
+                Arguments.of("exception_tests/malformed_text_block.java", MalformedTextBlockException.class),
+                Arguments.of("exception_tests/unclosed_char.java", UnclosedCharException.class),
+                Arguments.of("exception_tests/unclosed_char_misc.java", UnclosedCharException.class),
+                Arguments.of("exception_tests/unclosed_comment.java", UnclosedCommentException.class),
+                Arguments.of("exception_tests/unclosed_comment_misc.java", UnclosedCommentException.class),
+                Arguments.of("exception_tests/unclosed_string.java", UnclosedStringException.class),
+                Arguments.of("exception_tests/unclosed_text_block.java", UnclosedTextBlockException.class)
         );
     }
 
-    @Test
-    void invalidSymbolMisc() {
-        Assertions.assertThrows(InvalidSymbolException.class, () ->
-                runAnalyzer(getPath("exception_tests/invalid_symbol_misc.java"))
-        );
-    }
+    @ParameterizedTest
+    @MethodSource("provideExceptionArguments")
+    <T extends Throwable> void fileShouldProduceException(String path, Class<T> exception) {
+        System.out.println("Running test. File: " + path + " should produce " + exception.toString() + ".");
 
-    @Test
-    void malformedChar() {
-        Assertions.assertThrows(MalformedCharException.class, () ->
-                runAnalyzer(getPath("exception_tests/malformed_char.java"))
-        );
-    }
-
-    @Test
-    void malformedCharMisc() {
-        Assertions.assertThrows(MalformedCharException.class, () ->
-                runAnalyzer(getPath("exception_tests/malformed_char_misc.java"))
-        );
-    }
-
-    @Test
-    void malformedOperator() {
-        Assertions.assertThrows(MalformedOperatorException.class, () ->
-                runAnalyzer(getPath("exception_tests/malformed_operator.java"))
-        );
-    }
-
-    @Test
-    void malformedOperatorMisc() {
-        Assertions.assertThrows(MalformedOperatorException.class, () ->
-                runAnalyzer(getPath("exception_tests/malformed_operator_misc.java"))
-        );
-    }
-
-    @Test
-    void malformedTextBlock() {
-        Assertions.assertThrows(MalformedTextBlockException.class, () ->
-                runAnalyzer(getPath("exception_tests/malformed_text_block.java"))
-        );
-    }
-
-    @Test
-    void unclosedChar() {
-        Assertions.assertThrows(UnclosedCharException.class, () ->
-                runAnalyzer(getPath("exception_tests/unclosed_char.java"))
-        );
-    }
-
-    @Test
-    void unclosedCharMisc() {
-        Assertions.assertThrows(UnclosedCharException.class, () ->
-                runAnalyzer(getPath("exception_tests/unclosed_char_misc.java"))
-        );
-    }
-
-    @Test
-    void unclosedComment() {
-        Assertions.assertThrows(UnclosedCommentException.class, () ->
-                runAnalyzer(getPath("exception_tests/unclosed_comment.java"))
-        );
-    }
-
-
-    @Test
-    void unclosedCommentMisc() {
-        Assertions.assertThrows(UnclosedCommentException.class, () ->
-                runAnalyzer(getPath("exception_tests/unclosed_comment_misc.java"))
-        );
-    }
-
-    @Test
-    void unclosedString() {
-        Assertions.assertThrows(UnclosedStringException.class, () ->
-                runAnalyzer(getPath("exception_tests/unclosed_string.java"))
-        );
-    }
-
-    @Test
-    void unclosedTextBlock() {
-        Assertions.assertThrows(UnclosedTextBlockException.class, () ->
-                runAnalyzer(getPath("exception_tests/unclosed_text_block.java"))
-        );
+        Assertions.assertThrows(exception, () -> runAnalyzer(getPath(path)));
     }
 }
