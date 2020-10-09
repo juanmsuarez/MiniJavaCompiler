@@ -15,6 +15,14 @@ public class Token {
         return name;
     }
 
+    public String getLexeme() {
+        return lexeme;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
     @Override
     public String toString() {
         return String.format("(%s,%s,%d)", name, lexeme, lineNumber + 1);
