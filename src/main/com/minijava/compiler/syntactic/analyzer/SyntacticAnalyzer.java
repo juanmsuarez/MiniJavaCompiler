@@ -10,6 +10,7 @@ import java.util.Set;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 import static com.minijava.compiler.syntactic.analyzer.FirstSets.*;
+import static com.minijava.compiler.syntactic.exceptions.ErrorCodes.EXPECTED_METHOD_TYPE;
 import static com.minijava.compiler.syntactic.exceptions.ErrorCodes.EXPECTED_TYPE;
 
 public class SyntacticAnalyzer {
@@ -96,7 +97,7 @@ public class SyntacticAnalyzer {
         } else if (canMatch(FIRST_CONSTRUCTOR)) {
             constructorNT();
         } else if (canMatch(FIRST_METHOD)) {
-            // methodNT();
+            methodNT();
         } else {
             throw new IllegalStateException(); // TODO: para estados no alcanzables no tiene sentido crear una excepción y un mensaje de error particular, tiro IllegalStateExc?
         }
@@ -110,9 +111,7 @@ public class SyntacticAnalyzer {
     }
 
     private void visibilityNT() throws CompilerException, IOException {
-        if (canMatch(PUBLIC_KW)) {
-            matchCurrent();
-        } else if (canMatch(PRIVATE_KW)) {
+        if (canMatch(FIRST_VISIBILITY)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -182,6 +181,32 @@ public class SyntacticAnalyzer {
     private void formalArgNT() throws CompilerException, IOException {
         typeNT();
         match(VAR_MET_ID);
+    }
+
+    private void methodNT() throws CompilerException, IOException {
+        methodFormNT();
+        methodTypeNT();
+        match(VAR_MET_ID);
+        formalArgsNT();
+        blockNT();
+    }
+
+    private void methodFormNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_METHOD_FORM)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void methodTypeNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_TYPE)) {
+            typeNT();
+        } else if (canMatch(VOID_KW)) {
+            matchCurrent();
+        } else {
+            throw buildException(EXPECTED_METHOD_TYPE);
+        }
     }
 
     private void blockNT() throws CompilerException, IOException {

@@ -8,9 +8,14 @@ import java.util.Set;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 
 class FirstSets {
-    static final Set<String> FIRST_ATTRIBUTE = buildSet(PUBLIC_KW, PRIVATE_KW);
+    static final Set<String> FIRST_VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
+    static final Set<String> FIRST_ATTRIBUTE = FIRST_VISIBILITY;
+
     static final Set<String> FIRST_CONSTRUCTOR = buildSet(CLASS_ID);
-    static final Set<String> FIRST_METHOD = buildSet(STATIC_KW, DYNAMIC_KW);
+
+    static final Set<String> FIRST_METHOD_FORM = buildSet(STATIC_KW, DYNAMIC_KW);
+    static final Set<String> FIRST_METHOD = FIRST_METHOD_FORM;
+
     static final Set<String> FIRST_MEMBER = buildSet(FIRST_ATTRIBUTE, FIRST_CONSTRUCTOR, FIRST_METHOD);
 
     static final Set<String> FIRST_PRIMITIVE_TYPE = buildSet(BOOLEAN_KW, CHAR_KW, INT_KW, STRING_KW);
