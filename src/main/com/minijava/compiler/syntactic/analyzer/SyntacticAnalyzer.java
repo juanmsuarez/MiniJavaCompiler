@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
-import static com.minijava.compiler.syntactic.analyzer.FirstSets.*;
-import static com.minijava.compiler.syntactic.exceptions.ErrorCodes.EXPECTED_METHOD_TYPE;
-import static com.minijava.compiler.syntactic.exceptions.ErrorCodes.EXPECTED_TYPE;
+import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
 
 public class SyntacticAnalyzer {
     private LexicalAnalyzer lexicalAnalyzer;
@@ -111,7 +109,7 @@ public class SyntacticAnalyzer {
     }
 
     private void visibilityNT() throws CompilerException, IOException {
-        if (canMatch(FIRST_VISIBILITY)) {
+        if (canMatch(FIRST_VISIBILITY)) { // TODO: para el árbol sintáctico hace falta diferenciar entre los primeros de un NT? matchear sin mirar exactamente cuál es no molesta?
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -124,7 +122,7 @@ public class SyntacticAnalyzer {
         } else if (canMatch(CLASS_ID)) {
             matchCurrent();
         } else {
-            throw buildException(EXPECTED_TYPE);
+            throw buildException(TYPE);
         }
     }
 
@@ -205,7 +203,7 @@ public class SyntacticAnalyzer {
         } else if (canMatch(VOID_KW)) {
             matchCurrent();
         } else {
-            throw buildException(EXPECTED_METHOD_TYPE);
+            throw buildException(METHOD_TYPE);
         }
     }
 

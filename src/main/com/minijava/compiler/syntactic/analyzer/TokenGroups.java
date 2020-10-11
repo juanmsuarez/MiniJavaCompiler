@@ -7,7 +7,12 @@ import java.util.Set;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 
-class FirstSets {
+public class TokenGroups {
+    // NAMES
+    public static final String TYPE = "type";
+    public static final String METHOD_TYPE = "method_type";
+
+    // FIRSTS
     static final Set<String> FIRST_VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
     static final Set<String> FIRST_ATTRIBUTE = FIRST_VISIBILITY;
 
