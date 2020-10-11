@@ -25,6 +25,14 @@ public class LexicalAnalyzer {
         advanceCurrentChar();
     }
 
+    public String getLexemeStartLine() {
+        return lexemeStartLine;
+    }
+
+    public int getLexemeStartPosition() {
+        return lexemeStartPosition;
+    }
+
     private void advanceCurrentChar() throws IOException {
         currentChar = fileManager.nextChar();
     }

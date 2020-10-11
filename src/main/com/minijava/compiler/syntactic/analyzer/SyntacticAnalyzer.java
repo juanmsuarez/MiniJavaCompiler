@@ -18,16 +18,25 @@ public class SyntacticAnalyzer {
         this.lexicalAnalyzer = lexicalAnalyzer;
     }
 
-    public void analyze() throws CompilerException, IOException { // TODO: para recuperarse de un error, los tokens de sincronización se definen para cada NT o solo para inicial? hace falta guardar el NT en el que nos encontramos?
-        currentToken = lexicalAnalyzer.nextToken(); // TODO: ya no hace falta imprimir los tokens del léxico cierto?
+    public void analyze() throws CompilerException, IOException {
+        currentToken = lexicalAnalyzer.nextToken();
         initialNT();
+    }
+
+    private boolean canMatch(String tokenName) {
+        return tokenName.equals(currentToken.getName());
+    }
+
+    private SyntacticException buildException(String expectedTokenName) {
+        return new SyntacticException(currentToken, expectedTokenName, lexicalAnalyzer.getLexemeStartLine(),
+                lexicalAnalyzer.getLexemeStartPosition());
     }
 
     private void match(String expectedTokenName) throws CompilerException, IOException {
         if (expectedTokenName.equals(currentToken.getName())) {
             currentToken = lexicalAnalyzer.nextToken();
         } else {
-            throw new SyntacticException(currentToken, expectedTokenName);
+            throw buildException(expectedTokenName);
         }
     }
 
@@ -42,7 +51,7 @@ public class SyntacticAnalyzer {
     }
 
     private void classesListSuffixOrEmptyNT() throws CompilerException, IOException {
-        if (CLASS_KW.equals(currentToken.getName())) {
+        if (canMatch(CLASS_KW)) {
             classesListNT();
         }
     }
@@ -50,20 +59,63 @@ public class SyntacticAnalyzer {
     private void classNT() throws CompilerException, IOException {
         match(CLASS_KW);
         match(CLASS_ID);
-        inheritanceNT();
+        inheritanceOrEmptyNT();
         match(OPEN_BRACE);
-        membersListNT();
+        // membersListOrEmptyNT();
         match(CLOSE_BRACE);
     }
 
-    private void inheritanceNT() throws CompilerException, IOException {
-        if (EXTENDS_KW.equals(currentToken.getName())) {
+    private void inheritanceOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(EXTENDS_KW)) {
             match(EXTENDS_KW);
             match(CLASS_ID);
         }
     }
-
-    private void membersListNT() throws CompilerException, IOException {
-
+/*
+    private void membersListOrEmptyNT() throws CompilerException, IOException {
+        if () {
+            memberNT();
+            membersListOrEmptyNT();
+        }
     }
+
+    private void memberNT() throws CompilerException, IOException {
+        if () {
+
+        } else if () {
+
+        } else if () {
+
+        } else {
+            throw ;
+        }
+    }
+
+    private void attributeNT() throws CompilerException, IOException {
+        visibilityNT();
+    }
+
+    private void visibilityNT() throws CompilerException, IOException {
+        if (canMatch(PUBLIC_KW)) {
+            match(PUBLIC_KW);
+        } else if (canMatch(PRIVATE_KW)) {
+            match(PRIVATE_KW);
+        } else {
+            // throw new SyntacticException();
+        }
+    }
+
+    private void typeNT() throws CompilerException, IOException {
+        if ()
+    }
+
+    private void primitiveTypeNT() throws CompilerException, IOException {
+        if (canMatch(BOOLEAN_KW)) {
+            match(BOOLEAN_KW);
+        } else if (canMatch(CHAR_KW)) {
+            // ...
+        } // else if ...
+    }
+
+ */
 }

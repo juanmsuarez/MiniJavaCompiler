@@ -2,7 +2,6 @@ package com.minijava.compiler;
 
 import com.minijava.compiler.filemanager.FileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
-import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
 
 import java.io.FileNotFoundException;
@@ -24,17 +23,7 @@ class MiniJavaCompiler {
 
             boolean errorOccurred = false;
             try {
-                boolean inErrorState;
-                do {
-                    try {
-                        syntacticAnalyzer.analyze();
-                        inErrorState = false;
-                    } catch (LexicalException exception) {
-                        System.out.println(exception.toString());
-                        errorOccurred = true;
-                        inErrorState = true;
-                    }
-                } while (inErrorState);
+                syntacticAnalyzer.analyze();
             } catch (CompilerException exception) {
                 System.out.println(exception.toString());
                 errorOccurred = true;
