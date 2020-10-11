@@ -6,8 +6,11 @@ import com.minijava.compiler.lexical.models.Token;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
+import java.util.Set;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
+import static com.minijava.compiler.syntactic.analyzer.FirstSets.*;
+import static com.minijava.compiler.syntactic.exceptions.ErrorCodes.EXPECTED_TYPE;
 
 public class SyntacticAnalyzer {
     private LexicalAnalyzer lexicalAnalyzer;
@@ -27,6 +30,10 @@ public class SyntacticAnalyzer {
         return tokenName.equals(currentToken.getName());
     }
 
+    private boolean canMatch(Set<String> tokenNames) {
+        return tokenNames.contains(currentToken.getName());
+    }
+
     private SyntacticException buildException(String expectedTokenName) {
         return new SyntacticException(currentToken, expectedTokenName, lexicalAnalyzer.getLexemeStartLine(),
                 lexicalAnalyzer.getLexemeStartPosition());
@@ -38,6 +45,10 @@ public class SyntacticAnalyzer {
         } else {
             throw buildException(expectedTokenName);
         }
+    }
+
+    private void matchCurrent() throws CompilerException, IOException {
+        match(currentToken.getName());
     }
 
     private void initialNT() throws CompilerException, IOException {
@@ -61,61 +72,80 @@ public class SyntacticAnalyzer {
         match(CLASS_ID);
         inheritanceOrEmptyNT();
         match(OPEN_BRACE);
-        // membersListOrEmptyNT();
+        membersListOrEmptyNT();
         match(CLOSE_BRACE);
     }
 
     private void inheritanceOrEmptyNT() throws CompilerException, IOException {
         if (canMatch(EXTENDS_KW)) {
-            match(EXTENDS_KW);
+            matchCurrent();
             match(CLASS_ID);
         }
     }
-/*
+
     private void membersListOrEmptyNT() throws CompilerException, IOException {
-        if () {
+        if (canMatch(FIRST_MEMBER)) {
             memberNT();
             membersListOrEmptyNT();
         }
     }
 
     private void memberNT() throws CompilerException, IOException {
-        if () {
-
-        } else if () {
-
-        } else if () {
-
+        if (canMatch(FIRST_ATTRIBUTE)) {
+            attributeNT();
+        } else if (canMatch(FIRST_CONSTRUCTOR)) {
+            // constructorNT();
+        } else if (canMatch(FIRST_METHOD)) {
+            // methodNT();
         } else {
-            throw ;
+            throw new IllegalStateException(); // TODO: para estados no alcanzables no tiene sentido crear una excepción y un mensaje de error particular, tiro IllegalStateExc?
         }
     }
 
     private void attributeNT() throws CompilerException, IOException {
         visibilityNT();
+        typeNT();
+        attrsDecList();
+        match(SEMICOLON);
     }
 
     private void visibilityNT() throws CompilerException, IOException {
         if (canMatch(PUBLIC_KW)) {
-            match(PUBLIC_KW);
+            matchCurrent();
         } else if (canMatch(PRIVATE_KW)) {
-            match(PRIVATE_KW);
+            matchCurrent();
         } else {
-            // throw new SyntacticException();
+            throw new IllegalStateException();
         }
     }
 
     private void typeNT() throws CompilerException, IOException {
-        if ()
+        if (canMatch(FIRST_PRIMITIVE_TYPE)) {
+            primitiveTypeNT();
+        } else if (canMatch(CLASS_ID)) {
+            matchCurrent();
+        } else {
+            throw buildException(EXPECTED_TYPE);
+        }
     }
 
     private void primitiveTypeNT() throws CompilerException, IOException {
-        if (canMatch(BOOLEAN_KW)) {
-            match(BOOLEAN_KW);
-        } else if (canMatch(CHAR_KW)) {
-            // ...
-        } // else if ...
+        if (canMatch(FIRST_PRIMITIVE_TYPE)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
- */
+    private void attrsDecList() throws CompilerException, IOException {
+        match(VAR_MET_ID);
+        attrsDecListSuffixOrEmpty();
+    }
+
+    private void attrsDecListSuffixOrEmpty() throws CompilerException, IOException {
+        if (canMatch(COMMA)) {
+            matchCurrent();
+            attrsDecList();
+        }
+    }
 }
