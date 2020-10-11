@@ -94,7 +94,7 @@ public class SyntacticAnalyzer {
         if (canMatch(FIRST_ATTRIBUTE)) {
             attributeNT();
         } else if (canMatch(FIRST_CONSTRUCTOR)) {
-            // constructorNT();
+            constructorNT();
         } else if (canMatch(FIRST_METHOD)) {
             // methodNT();
         } else {
@@ -105,7 +105,7 @@ public class SyntacticAnalyzer {
     private void attributeNT() throws CompilerException, IOException {
         visibilityNT();
         typeNT();
-        attrsDecList();
+        attrsDecListNT();
         match(SEMICOLON);
     }
 
@@ -137,15 +137,56 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void attrsDecList() throws CompilerException, IOException {
+    private void attrsDecListNT() throws CompilerException, IOException {
         match(VAR_MET_ID);
-        attrsDecListSuffixOrEmpty();
+        attrsDecListSuffixOrEmptyNT();
     }
 
-    private void attrsDecListSuffixOrEmpty() throws CompilerException, IOException {
+    private void attrsDecListSuffixOrEmptyNT() throws CompilerException, IOException {
         if (canMatch(COMMA)) {
             matchCurrent();
-            attrsDecList();
+            attrsDecListNT();
         }
+    }
+
+    private void constructorNT() throws CompilerException, IOException {
+        match(CLASS_ID);
+        formalArgsNT();
+        blockNT();
+    }
+
+    private void formalArgsNT() throws CompilerException, IOException {
+        match(OPEN_PARENTHESIS);
+        formalArgsListOrEmptyNT();
+        match(CLOSE_PARENTHESIS);
+    }
+
+    private void formalArgsListOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_FORMAL_ARGS)) {
+            formalArgsListNT();
+        }
+    }
+
+    private void formalArgsListNT() throws CompilerException, IOException {
+        formalArgNT();
+        formalArgsListSuffixOrEmptyNT();
+    }
+
+    private void formalArgsListSuffixOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(COMMA)) {
+            matchCurrent();
+            formalArgsListNT();
+        }
+    }
+
+    private void formalArgNT() throws CompilerException, IOException {
+        typeNT();
+        match(VAR_MET_ID);
+    }
+
+    private void blockNT() throws CompilerException, IOException {
+        match(OPEN_BRACE);
+        // sentencesList()
+        match(CLOSE_BRACE);
     }
 }

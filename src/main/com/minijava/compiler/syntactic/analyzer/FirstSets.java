@@ -16,6 +16,8 @@ class FirstSets {
     static final Set<String> FIRST_PRIMITIVE_TYPE = buildSet(BOOLEAN_KW, CHAR_KW, INT_KW, STRING_KW);
     static final Set<String> FIRST_TYPE = buildSet(FIRST_PRIMITIVE_TYPE, buildSet(CLASS_ID));
 
+    static final Set<String> FIRST_FORMAL_ARGS = FIRST_TYPE;
+
     private static Set<String> buildSet(String... tokens) {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(tokens)));
     }
