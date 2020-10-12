@@ -209,7 +209,106 @@ public class SyntacticAnalyzer {
 
     private void blockNT() throws CompilerException, IOException {
         match(OPEN_BRACE);
-        // sentencesList()
+        sentencesListOrEmptyNT();
         match(CLOSE_BRACE);
     }
+
+    private void sentencesListOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_SENTENCE)) {
+            sentenceNT();
+            sentencesListOrEmptyNT();
+        }
+    }
+
+    private void sentenceNT() throws CompilerException, IOException {
+        if (canMatch(SEMICOLON)) {
+            matchCurrent();
+        } else if (canMatch(FIRST_CALL_OR_ASSIGNMENT)) {
+            callOrAssignmentNT();
+        } else if (canMatch(FIRST_DECLARATION)) {
+            typeNT();
+            varsDecListNT();
+            match(SEMICOLON);
+        } else if (canMatch(FIRST_IF)) {
+            matchCurrent();
+            match(OPEN_PARENTHESIS);
+            expressionNT();
+            match(CLOSE_PARENTHESIS);
+            sentenceNT();
+            elseOrEmptyNT();
+        } else if (canMatch(FIRST_WHILE)) {
+            matchCurrent();
+            match(OPEN_PARENTHESIS);
+            expressionNT();
+            match(CLOSE_PARENTHESIS);
+            sentenceNT();
+        } else if (canMatch(FIRST_BLOCK)) {
+            blockNT();
+        } else if (canMatch(FIRST_RETURN)) {
+            matchCurrent();
+            expressionOrEmptyNT();
+            match(SEMICOLON);
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void varsDecListNT() throws CompilerException, IOException {
+        match(VAR_MET_ID);
+        varsDecListSuffixOrEmptyNT();
+    }
+
+    private void varsDecListSuffixOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(COMMA)) {
+            matchCurrent();
+            varsDecListNT();
+        }
+    }
+
+    private void callOrAssignmentNT() throws CompilerException, IOException {
+        accessNT();
+        assignmentOrSentenceEndNT();
+    }
+
+    private void assignmentOrSentenceEndNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_ASSIGNMENT_TYPE)) {
+            assignmentTypeNT();
+            expressionNT();
+            match(SEMICOLON);
+        } else if (canMatch(SEMICOLON)) {
+            matchCurrent();
+        } else {
+            throw buildException(ASSIGNMENT_OR_SENTENCE_END);
+        }
+    }
+
+    private void assignmentTypeNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_ASSIGNMENT_TYPE)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void elseOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(ELSE_KW)) {
+            matchCurrent();
+            sentenceNT();
+        }
+    }
+
+    private void expressionOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_EXPRESSION)) {
+            expressionNT();
+        }
+    }
+
+    private void expressionNT() throws CompilerException, IOException {
+
+    }
+
+    private void accessNT() throws CompilerException, IOException {
+
+    }
+
 }
