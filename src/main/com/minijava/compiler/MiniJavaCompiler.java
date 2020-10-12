@@ -21,19 +21,17 @@ class MiniJavaCompiler {
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
             SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
 
-            boolean errorOccurred = false;
-            try {
-                syntacticAnalyzer.analyze();
-            } catch (CompilerException exception) {
-                System.out.println(exception.toString());
-                errorOccurred = true;
-            }
+            syntacticAnalyzer.analyze();
 
-            if (!errorOccurred) {
+            boolean success = syntacticAnalyzer.getExceptions().isEmpty();
+            if (success) {
                 System.out.println("El análisis finalizó: no se encontraron errores.");
                 System.out.println(SUCCESS_CODE);
             } else {
                 System.out.println("El análisis finalizó: se encontraron errores.");
+                for (Exception exception : syntacticAnalyzer.getExceptions()) {
+                    System.out.println(exception.toString());
+                }
             }
         } catch (FileNotFoundException exception) {
             System.out.println("No pudo realizarse el análisis: no fue posible abrir el archivo fuente indicado.");

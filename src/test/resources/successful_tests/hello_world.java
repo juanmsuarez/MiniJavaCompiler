@@ -4,6 +4,6 @@
  */
 class HelloWorldApp {
     static void main(String arg) {
-        System.out.println("Hello World!"); //Display the string.
+        static System.out.println("Hello World!"); //Display the string.
     }
 }
