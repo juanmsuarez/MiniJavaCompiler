@@ -12,6 +12,8 @@ public class TokenGroups {
     public static final String TYPE = "type";
     public static final String METHOD_TYPE = "method_type";
     public static final String ASSIGNMENT_OR_SENTENCE_END = "assignment_or_sentence_end";
+    public static final String EXPRESSION = "expression";
+    public static final String OPERAND = "operand";
 
     // FIRSTS
     static final Set<String> FIRST_VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
@@ -44,6 +46,8 @@ public class TokenGroups {
     static final Set<String> FIRST_ASSIGNMENT_TYPE = buildSet(ASSIGN, ADD_ASSIGN, SUB_ASSIGN);
 
     static final Set<String> FIRST_UNARY_OPERATOR = buildSet(ADD, SUB, NOT);
+    static final Set<String> FIRST_BINARY_OPERATOR = buildSet(OR, AND, EQUALS, NOT_EQUALS, LESS, GREATER, LESS_OR_EQ,
+            GREATER_OR_EQ, ADD, SUB, MUL, DIV, MOD);
     static final Set<String> FIRST_LITERAL = buildSet(NULL_KW, TRUE_KW, FALSE_KW, INT_LITERAL, CHAR_LITERAL, STRING_LITERAL);
     static final Set<String> FIRST_OPERAND = buildSet(FIRST_LITERAL, FIRST_ACCESS);
     static final Set<String> FIRST_EXPRESSION = buildSet(FIRST_UNARY_OPERATOR, FIRST_OPERAND);

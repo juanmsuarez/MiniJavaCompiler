@@ -304,7 +304,61 @@ public class SyntacticAnalyzer {
     }
 
     private void expressionNT() throws CompilerException, IOException {
+        unaryExpressionNT();
+        expressionSuffixOrEmptyNT();
+    }
 
+    private void unaryExpressionNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_UNARY_OPERATOR)) {
+            unaryOperatorNT();
+            operandNT();
+        } else if (canMatch(FIRST_OPERAND)) {
+            operandNT();
+        } else {
+            throw buildException(EXPRESSION);
+        }
+    }
+
+    private void unaryOperatorNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_UNARY_OPERATOR)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void operandNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_LITERAL)) {
+            literalNT();
+        } else if (canMatch(FIRST_ACCESS)) {
+            accessNT();
+        } else {
+            throw buildException(OPERAND);
+        }
+    }
+
+    private void literalNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_LITERAL)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void expressionSuffixOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR)) {
+            binaryOperatorNT();
+            unaryExpressionNT();
+            expressionSuffixOrEmptyNT();
+        }
+    }
+
+    private void binaryOperatorNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     private void accessNT() throws CompilerException, IOException {
