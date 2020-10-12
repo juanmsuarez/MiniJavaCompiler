@@ -17,7 +17,7 @@ public class TokenGroups {
     static final Set<String> FIRST_VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
     static final Set<String> FIRST_ATTRIBUTE = FIRST_VISIBILITY;
 
-    static final Set<String> FIRST_CONSTRUCTOR = buildSet(CLASS_ID);
+    private static final Set<String> FIRST_CONSTRUCTOR = buildSet(CLASS_ID);
 
     static final Set<String> FIRST_METHOD_FORM = buildSet(STATIC_KW, DYNAMIC_KW);
     static final Set<String> FIRST_METHOD = FIRST_METHOD_FORM;
@@ -25,19 +25,19 @@ public class TokenGroups {
     static final Set<String> FIRST_MEMBER = buildSet(FIRST_ATTRIBUTE, FIRST_CONSTRUCTOR, FIRST_METHOD);
 
     static final Set<String> FIRST_PRIMITIVE_TYPE = buildSet(BOOLEAN_KW, CHAR_KW, INT_KW, STRING_KW);
-    static final Set<String> FIRST_CLASS_TYPE = buildSet(CLASS_ID);
+    private static final Set<String> FIRST_CLASS_TYPE = buildSet(CLASS_ID);
     static final Set<String> FIRST_TYPE = buildSet(FIRST_PRIMITIVE_TYPE, FIRST_CLASS_TYPE);
 
     static final Set<String> FIRST_FORMAL_ARGS = FIRST_TYPE;
 
-    static final Set<String> FIRST_EMPTY_SENTENCE = buildSet(SEMICOLON);
+    private static final Set<String> FIRST_EMPTY_SENTENCE = buildSet(SEMICOLON);
     static final Set<String> FIRST_ACCESS = buildSet(THIS_KW, VAR_MET_ID, STATIC_KW, NEW_KW, OPEN_PARENTHESIS);
     static final Set<String> FIRST_CALL_OR_ASSIGNMENT = FIRST_ACCESS;
     static final Set<String> FIRST_DECLARATION = FIRST_TYPE;
-    static final Set<String> FIRST_IF = buildSet(IF_KW);
-    static final Set<String> FIRST_WHILE = buildSet(WHILE_KW);
-    static final Set<String> FIRST_BLOCK = buildSet(OPEN_BRACE);
-    static final Set<String> FIRST_RETURN = buildSet(RETURN_KW);
+    private static final Set<String> FIRST_IF = buildSet(IF_KW);
+    private static final Set<String> FIRST_WHILE = buildSet(WHILE_KW);
+    private static final Set<String> FIRST_BLOCK = buildSet(OPEN_BRACE);
+    private static final Set<String> FIRST_RETURN = buildSet(RETURN_KW);
     static final Set<String> FIRST_SENTENCE = buildSet(FIRST_EMPTY_SENTENCE, FIRST_CALL_OR_ASSIGNMENT, FIRST_DECLARATION,
             FIRST_IF, FIRST_WHILE, FIRST_BLOCK, FIRST_RETURN);
 

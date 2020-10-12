@@ -92,7 +92,7 @@ public class SyntacticAnalyzer {
     private void memberNT() throws CompilerException, IOException {
         if (canMatch(FIRST_ATTRIBUTE)) {
             attributeNT();
-        } else if (canMatch(FIRST_CONSTRUCTOR)) {
+        } else if (canMatch(CLASS_ID)) {
             constructorNT();
         } else if (canMatch(FIRST_METHOD)) {
             methodNT();
@@ -229,22 +229,22 @@ public class SyntacticAnalyzer {
             typeNT();
             varsDecListNT();
             match(SEMICOLON);
-        } else if (canMatch(FIRST_IF)) {
+        } else if (canMatch(IF_KW)) {
             matchCurrent();
             match(OPEN_PARENTHESIS);
             expressionNT();
             match(CLOSE_PARENTHESIS);
             sentenceNT();
             elseOrEmptyNT();
-        } else if (canMatch(FIRST_WHILE)) {
+        } else if (canMatch(WHILE_KW)) {
             matchCurrent();
             match(OPEN_PARENTHESIS);
             expressionNT();
             match(CLOSE_PARENTHESIS);
             sentenceNT();
-        } else if (canMatch(FIRST_BLOCK)) {
+        } else if (canMatch(OPEN_BRACE)) {
             blockNT();
-        } else if (canMatch(FIRST_RETURN)) {
+        } else if (canMatch(RETURN_KW)) {
             matchCurrent();
             expressionOrEmptyNT();
             match(SEMICOLON);
