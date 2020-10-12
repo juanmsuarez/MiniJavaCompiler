@@ -362,7 +362,95 @@ public class SyntacticAnalyzer {
     }
 
     private void accessNT() throws CompilerException, IOException {
-
+        primaryAccessNT();
+        chainedAccessOrEmptyNT();
     }
 
+    private void primaryAccessNT() throws CompilerException, IOException {
+        if (canMatch(THIS_KW)) {
+            thisAccessNT();
+        } else if (canMatch(VAR_MET_ID)) {
+            varMetAccessNT();
+        } else if (canMatch(STATIC_KW)) {
+            staticAccessNT();
+        } else if (canMatch(NEW_KW)) {
+            constructorAccessNT();
+        } else if (canMatch(OPEN_PARENTHESIS)) {
+            matchCurrent();
+            expressionNT();
+            match(CLOSE_PARENTHESIS);
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void thisAccessNT() throws CompilerException, IOException {
+        match(THIS_KW);
+    }
+
+    private void varMetAccessNT() throws CompilerException, IOException {
+        match(VAR_MET_ID);
+        actualArgsOrEmptyNT();
+    }
+
+    private void actualArgsOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(OPEN_PARENTHESIS)) {
+            actualArgsNT();
+        }
+    }
+
+    private void actualArgsNT() throws CompilerException, IOException {
+        match(OPEN_PARENTHESIS);
+        expressionsListOrEmptyNT();
+        match(CLOSE_PARENTHESIS);
+    }
+
+    private void expressionsListOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(FIRST_EXPRESSION)) {
+            expressionsListNT();
+        }
+    }
+
+    private void expressionsListNT() throws CompilerException, IOException {
+        expressionNT();
+        expressionsListSuffixOrEmpty();
+    }
+
+    private void expressionsListSuffixOrEmpty() throws CompilerException, IOException {
+        if (canMatch(COMMA)) {
+            matchCurrent();
+            expressionsListNT();
+        }
+    }
+
+    private void staticAccessNT() throws CompilerException, IOException {
+        match(STATIC_KW);
+        match(CLASS_ID);
+        match(DOT);
+        methodAccessNT();
+    }
+
+    private void methodAccessNT() throws CompilerException, IOException {
+        match(VAR_MET_ID);
+        actualArgsNT();
+    }
+
+    private void constructorAccessNT() throws CompilerException, IOException {
+        match(NEW_KW);
+        match(CLASS_ID);
+        actualArgsNT();
+    }
+
+    private void chainedAccessOrEmptyNT() throws CompilerException, IOException {
+        if (canMatch(DOT)) {
+            varMetChainedNT();
+            chainedAccessOrEmptyNT();
+        }
+    }
+
+    private void varMetChainedNT() throws CompilerException, IOException {
+        match(DOT);
+        match(VAR_MET_ID);
+        actualArgsOrEmptyNT();
+    }
 }
