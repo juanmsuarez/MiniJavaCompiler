@@ -179,7 +179,15 @@ public class SyntacticAnalyzer {
 
     private void attrsDecListNT() throws SyntacticException, IOException {
         match(VAR_MET_ID);
+        inlineAssignmentOrEmpty();
         attrsDecListSuffixOrEmptyNT();
+    }
+
+    private void inlineAssignmentOrEmpty() throws SyntacticException, IOException {
+        if (canMatch(ASSIGN)) {
+            matchCurrent();
+            expressionNT();
+        }
     }
 
     private void attrsDecListSuffixOrEmptyNT() throws SyntacticException, IOException {
@@ -314,6 +322,7 @@ public class SyntacticAnalyzer {
 
     private void varsDecListNT() throws SyntacticException, IOException {
         match(VAR_MET_ID);
+        inlineAssignmentOrEmpty();
         varsDecListSuffixOrEmptyNT();
     }
 
