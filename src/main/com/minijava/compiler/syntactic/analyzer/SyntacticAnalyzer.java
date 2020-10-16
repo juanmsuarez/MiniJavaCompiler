@@ -65,7 +65,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void matchIfPossible(String expectedTokenName) throws IOException {
+    private void matchIfPossible(String expectedTokenName) throws IOException { // TODO: ver si se usa
         if (expectedTokenName.equals(currentToken.getName())) {
             advanceCurrentToken();
         }
@@ -75,7 +75,7 @@ public class SyntacticAnalyzer {
         advanceCurrentToken();
     }
 
-    private void recover(Set<String> recoveryTokens) throws IOException {
+    private void recover(Set<String> recoveryTokens) throws IOException { // TODO: ver si se usa
         while (!canMatch(recoveryTokens)) {
             advanceCurrentToken();
         }
@@ -87,8 +87,6 @@ public class SyntacticAnalyzer {
             match(EOF);
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_INITIAL);
-            matchIfPossible(EOF);
         }
     }
 
@@ -113,8 +111,6 @@ public class SyntacticAnalyzer {
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_CLASS);
-            matchIfPossible(CLOSE_BRACE);
         }
     }
 
@@ -140,7 +136,7 @@ public class SyntacticAnalyzer {
         } else if (canMatch(FIRST_METHOD)) {
             methodNT();
         } else {
-            throw new IllegalStateException(); // TODO: para estados no alcanzables no tiene sentido crear una excepción y un mensaje de error particular, tiro IllegalStateExc?
+            throw new IllegalStateException();
         }
     }
 
@@ -152,13 +148,11 @@ public class SyntacticAnalyzer {
             match(SEMICOLON);
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_ATTRIBUTE);
-            matchIfPossible(SEMICOLON);
         }
     }
 
     private void visibilityNT() throws IOException {
-        if (canMatch(FIRST_VISIBILITY)) { // TODO: para el árbol sintáctico hace falta diferenciar entre los primeros de un NT? matchear sin mirar exactamente cuál es no molesta?
+        if (canMatch(FIRST_VISIBILITY)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -202,8 +196,6 @@ public class SyntacticAnalyzer {
             blockNT();
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_CONSTRUCTOR);
-            matchIfPossible(CLOSE_BRACE);
         }
     }
 
@@ -245,8 +237,6 @@ public class SyntacticAnalyzer {
             blockNT();
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_METHOD);
-            matchIfPossible(CLOSE_BRACE); // TODO: está bien la estrategia de: tokens de recuperación son el último de cada NT, encuentro uno pero solo matcheo si es el mío, sin tirar excepción, total no pueden continuar?
         }
     }
 
@@ -275,8 +265,6 @@ public class SyntacticAnalyzer {
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_BLOCK);
-            matchIfPossible(CLOSE_BRACE);
         }
     }
 
@@ -297,7 +285,7 @@ public class SyntacticAnalyzer {
                 typeNT();
                 varsDecListNT();
                 match(SEMICOLON);
-            } else if (canMatch(IF_KW)) { // TODO: hace falta recuperar expresiones? qué es lo esperado si if () { } else { }? En mi caso (recupero todas las sentencias con ; o con } del bloque que contiene) la llave del if se usa para el bloque que los contiene y la del else para el siguiente bloque (poco intuitivo)
+            } else if (canMatch(IF_KW)) {
                 matchCurrent();
                 match(OPEN_PARENTHESIS);
                 expressionNT();
@@ -321,8 +309,6 @@ public class SyntacticAnalyzer {
             }
         } catch (SyntacticException exception) {
             exceptions.add(exception);
-            recover(RECOVERY_SENTENCE);
-            matchIfPossible(SEMICOLON);
         }
     }
 

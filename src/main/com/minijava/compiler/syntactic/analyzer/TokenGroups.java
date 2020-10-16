@@ -53,6 +53,7 @@ public class TokenGroups {
     static final Set<String> FIRST_EXPRESSION = buildSet(FIRST_UNARY_OPERATOR, FIRST_OPERAND);
 
     // RECOVERY
+    /* TODO: ver si se usa
     static final Set<String> RECOVERY_INITIAL = buildSet(EOF);
     static final Set<String> RECOVERY_CLASS = buildSet(RECOVERY_INITIAL, buildSet(CLOSE_BRACE));
     static final Set<String> RECOVERY_ATTRIBUTE = buildSet(RECOVERY_CLASS, buildSet(SEMICOLON));
@@ -60,6 +61,7 @@ public class TokenGroups {
     static final Set<String> RECOVERY_CONSTRUCTOR = RECOVERY_BLOCK;
     static final Set<String> RECOVERY_METHOD = RECOVERY_BLOCK;
     static final Set<String> RECOVERY_SENTENCE = buildSet(RECOVERY_BLOCK, buildSet(SEMICOLON));
+     */
 
     // HELPERS
     private static Set<String> buildSet(String... tokens) {
