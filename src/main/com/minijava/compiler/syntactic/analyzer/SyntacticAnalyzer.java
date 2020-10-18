@@ -119,6 +119,7 @@ public class SyntacticAnalyzer {
         try {
             match(CLASS_KW);
             match(CLASS_ID);
+            genericTypeOrEmpty();
             inheritanceOrEmptyNT();
             match(OPEN_BRACE);
             membersListOrEmptyNT();
@@ -128,10 +129,19 @@ public class SyntacticAnalyzer {
         }
     }
 
+    private void genericTypeOrEmpty() throws SyntacticException, IOException {
+        if (canMatch(LESS)) {
+            matchCurrent();
+            match(CLASS_ID);
+            match(GREATER);
+        }
+    }
+
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
             match(CLASS_ID);
+            genericTypeOrEmpty();
         }
     }
 
@@ -185,6 +195,7 @@ public class SyntacticAnalyzer {
             primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
             matchCurrent();
+            genericTypeOrEmpty();
         } else {
             throw buildException(TYPE);
         }
@@ -523,6 +534,7 @@ public class SyntacticAnalyzer {
     private void constructorAccessNT() throws SyntacticException, IOException {
         match(NEW_KW);
         match(CLASS_ID);
+        genericTypeOrEmpty();
         actualArgsNT();
     }
 
