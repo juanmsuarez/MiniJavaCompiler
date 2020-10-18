@@ -15,24 +15,34 @@ import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
 
 public class SyntacticAnalyzer {
     private LexicalAnalyzer lexicalAnalyzer;
-    private Token currentToken;
+    private Token currentToken, nextToken;
     private List<Exception> exceptions = new ArrayList<>();
 
     public SyntacticAnalyzer(LexicalAnalyzer lexicalAnalyzer) {
         this.lexicalAnalyzer = lexicalAnalyzer;
     }
 
-    private void advanceCurrentToken() throws IOException {
-        boolean errorOccurred;
+    private Token nextValidToken() throws IOException {
+        Token nextValidToken = null;
+
         do {
             try {
-                currentToken = lexicalAnalyzer.nextToken();
-                errorOccurred = false;
+                nextValidToken = lexicalAnalyzer.nextToken();
             } catch (LexicalException exception) {
                 exceptions.add(exception);
-                errorOccurred = true;
             }
-        } while (errorOccurred);
+        } while (nextValidToken == null);
+
+        return nextValidToken;
+    }
+
+    private void advanceCurrentToken() throws IOException {
+        if (nextToken == null) {
+            nextToken = nextValidToken();
+        }
+
+        currentToken = nextToken;
+        nextToken = nextValidToken();
     }
 
     public void analyze() throws IOException {
@@ -46,6 +56,10 @@ public class SyntacticAnalyzer {
 
     private boolean canMatch(String tokenName) {
         return tokenName.equals(currentToken.getName());
+    }
+
+    private boolean canMatchNext(String tokenName) {
+        return tokenName.equals(nextToken.getName());
     }
 
     private boolean canMatch(Set<String> tokenNames) {
@@ -143,6 +157,7 @@ public class SyntacticAnalyzer {
     private void attributeNT() throws IOException {
         try {
             visibilityNT();
+            staticOrEmpty();
             typeNT();
             attrsDecListNT();
             match(SEMICOLON);
@@ -156,6 +171,12 @@ public class SyntacticAnalyzer {
             matchCurrent();
         } else {
             throw new IllegalStateException();
+        }
+    }
+
+    private void staticOrEmpty() throws IOException {
+        if (canMatch(STATIC_KW)) {
+            matchCurrent();
         }
     }
 
@@ -287,7 +308,8 @@ public class SyntacticAnalyzer {
         try {
             if (canMatch(SEMICOLON)) {
                 matchCurrent();
-            } else if (canMatch(FIRST_CALL_OR_ASSIGNMENT)) {
+            } else if (canMatch(FIRST_EXPLICIT_CALL_OR_ASSIGNMENT)
+                    || (canMatch(FIRST_IMPLICIT_CALL_OR_ASSIGNMENT) && canMatchNext(SECOND_IMPLICIT_CALL_OR_ASSIGNMENT))) {
                 callOrAssignmentNT();
             } else if (canMatch(FIRST_DECLARATION)) {
                 typeNT();
@@ -439,7 +461,7 @@ public class SyntacticAnalyzer {
             thisAccessNT();
         } else if (canMatch(VAR_MET_ID)) {
             varMetAccessNT();
-        } else if (canMatch(STATIC_KW)) {
+        } else if (canMatch(FIRST_STATIC_ACCESS)) {
             staticAccessNT();
         } else if (canMatch(NEW_KW)) {
             constructorAccessNT();
@@ -492,15 +514,10 @@ public class SyntacticAnalyzer {
     }
 
     private void staticAccessNT() throws SyntacticException, IOException {
-        match(STATIC_KW);
+        staticOrEmpty();
         match(CLASS_ID);
         match(DOT);
-        methodAccessNT();
-    }
-
-    private void methodAccessNT() throws SyntacticException, IOException {
-        match(VAR_MET_ID);
-        actualArgsNT();
+        varMetAccessNT();
     }
 
     private void constructorAccessNT() throws SyntacticException, IOException {

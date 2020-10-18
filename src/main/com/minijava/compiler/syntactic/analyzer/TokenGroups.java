@@ -33,8 +33,19 @@ public class TokenGroups {
     static final Set<String> FIRST_FORMAL_ARGS = FIRST_TYPE;
 
     private static final Set<String> FIRST_EMPTY_SENTENCE = buildSet(SEMICOLON);
-    static final Set<String> FIRST_ACCESS = buildSet(THIS_KW, VAR_MET_ID, STATIC_KW, NEW_KW, OPEN_PARENTHESIS);
-    static final Set<String> FIRST_CALL_OR_ASSIGNMENT = FIRST_ACCESS;
+
+    static final String FIRST_IMPLICIT_STATIC_ACCESS = CLASS_ID; // TODO: mejorar organización
+    static final String SECOND_IMPLICIT_STATIC_ACCESS = DOT;
+    static final String FIRST_EXPLICIT_STATIC_ACCESS = STATIC_KW;
+    static final Set<String> FIRST_STATIC_ACCESS = buildSet(FIRST_IMPLICIT_STATIC_ACCESS, FIRST_EXPLICIT_STATIC_ACCESS);
+    static final String FIRST_IMPLICIT_ACCESS = FIRST_IMPLICIT_STATIC_ACCESS;
+    static final String SECOND_IMPLICIT_ACCESS = SECOND_IMPLICIT_STATIC_ACCESS;
+    static final Set<String> FIRST_EXPLICIT_ACCESS = buildSet(THIS_KW, VAR_MET_ID, FIRST_EXPLICIT_STATIC_ACCESS, NEW_KW, OPEN_PARENTHESIS);
+    static final Set<String> FIRST_ACCESS = buildSet(buildSet(FIRST_IMPLICIT_ACCESS), FIRST_EXPLICIT_ACCESS);
+    static final Set<String> FIRST_EXPLICIT_CALL_OR_ASSIGNMENT = FIRST_EXPLICIT_ACCESS;
+    static final String FIRST_IMPLICIT_CALL_OR_ASSIGNMENT = FIRST_IMPLICIT_ACCESS;
+    static final String SECOND_IMPLICIT_CALL_OR_ASSIGNMENT = SECOND_IMPLICIT_ACCESS;
+    static final Set<String> FIRST_CALL_OR_ASSIGNMENT = buildSet(FIRST_EXPLICIT_CALL_OR_ASSIGNMENT, buildSet(FIRST_IMPLICIT_CALL_OR_ASSIGNMENT));
     static final Set<String> FIRST_DECLARATION = FIRST_TYPE;
     private static final Set<String> FIRST_IF = buildSet(IF_KW);
     private static final Set<String> FIRST_WHILE = buildSet(WHILE_KW);
