@@ -93,19 +93,27 @@ public class SyntacticAnalyzer {
         advanceCurrentToken();
     }
 
-    private void recoverAndMatch(Set<String> recoveryTokens) throws IOException {
+    private void recover(Set<String> recoveryTokens) throws IOException {
         while (!canMatch(recoveryTokens)) {
             advanceCurrentToken();
         }
+    }
+
+    private void recoverAndMatch(Set<String> recoveryTokens) throws IOException {
+        recover(recoveryTokens);
 
         matchCurrent();
     }
 
-    private void recoverAndMatchIfPossible(Set<String> lastTokens, String lastOfCurrent, Set<String> nextTokens,
-                                           SyntacticException exception) throws IOException, SyntacticException {
+    private void recover(Set<String> lastTokens, Set<String> nextTokens) throws IOException {
         while (!canMatch(lastTokens) && !canMatch(nextTokens)) {
             advanceCurrentToken();
         }
+    }
+
+    private void recoverAndMatchIfPossible(Set<String> lastTokens, String lastOfCurrent, Set<String> nextTokens,
+                                           SyntacticException exception) throws IOException, SyntacticException {
+        recover(lastTokens, nextTokens);
 
         if (!canMatch(nextTokens)) {
             if (canMatch(lastOfCurrent)) {
@@ -118,7 +126,7 @@ public class SyntacticAnalyzer {
 
     private void initialNT() throws IOException {
         try {
-            classesListNT();
+            classesAndInterfacesListNT();
             match(EOF);
         } catch (SyntacticException exception) {
             recoverAndMatch(LAST_INITIAL);
@@ -126,14 +134,29 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void classesListNT() throws SyntacticException, IOException {
-        classNT();
-        classesListSuffixOrEmptyNT();
+    private void classesAndInterfacesListNT() throws SyntacticException, IOException {
+        classOrInterfaceNT();
+        classesAndInterfacesListSuffixOrEmptyNT();
     }
 
-    private void classesListSuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(CLASS_KW)) {
-            classesListNT();
+    private void classOrInterfaceNT() throws IOException {
+        try {
+            if (canMatch(CLASS_KW)) {
+                classNT();
+            } else if (canMatch(INTERFACE_KW)) {
+                interfaceNT();
+            } else {
+                throw buildException(CLASS_OR_INTERFACE);
+            }
+        } catch (SyntacticException exception) {
+            recover(LAST_CLASS_OR_INTERFACE, NEXT_CLASS_OR_INTERFACE);
+            exceptions.add(exception);
+        }
+    }
+
+    private void classesAndInterfacesListSuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_CLASS_OR_INTERFACE)) {
+            classesAndInterfacesListNT();
         }
     }
 
@@ -143,9 +166,10 @@ public class SyntacticAnalyzer {
             match(CLASS_ID);
             genericTypeOrEmpty();
             inheritanceOrEmptyNT();
+            implementationOrEmptyNT();
             match(OPEN_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_SIGNATURE, OPEN_BRACE, NEXT_CLASS_SIGNATURE, exception);
+            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, NEXT_CLASS_SIGNATURE, exception);
             exceptions.add(exception);
         }
 
@@ -153,7 +177,7 @@ public class SyntacticAnalyzer {
             membersListOrEmptyNT();
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_BODY, CLOSE_BRACE, NEXT_CLASS_BODY, exception);
+            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, NEXT_CLASS_OR_INTERFACE_BODY, exception);
             exceptions.add(exception);
         }
     }
@@ -171,6 +195,25 @@ public class SyntacticAnalyzer {
             matchCurrent();
             match(CLASS_ID);
             genericTypeOrEmpty();
+        }
+    }
+
+    private void implementationOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(IMPLEMENTS_KW)) {
+            matchCurrent();
+            interfaceNamesListNT();
+        }
+    }
+
+    private void interfaceNamesListNT() throws SyntacticException, IOException {
+        match(CLASS_ID); // TODO: generic
+        interfaceNamesListSuffixOrEmptyNT();
+    }
+
+    private void interfaceNamesListSuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(COMMA)) {
+            matchCurrent();
+            interfaceNamesListNT();
         }
     }
 
@@ -264,7 +307,7 @@ public class SyntacticAnalyzer {
             match(CLASS_ID);
             formalArgsNT();
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_METHOD_SIGNATURE, CLOSE_PARENTHESIS, NEXT_METHOD_SIGNATURE, exception);
+            recoverAndMatchIfPossible(LAST_CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, NEXT_CLASS_METHOD_SIGNATURE, exception);
             exceptions.add(exception);
         }
 
@@ -302,16 +345,19 @@ public class SyntacticAnalyzer {
 
     private void methodNT() throws SyntacticException, IOException {
         try {
-            methodFormNT();
-            methodTypeNT();
-            match(VAR_MET_ID);
-            formalArgsNT();
+            methodSignatureNT();
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_METHOD_SIGNATURE, CLOSE_PARENTHESIS, NEXT_METHOD_SIGNATURE, exception);
+            recoverAndMatchIfPossible(LAST_CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, NEXT_CLASS_METHOD_SIGNATURE, exception);
             exceptions.add(exception);
         }
-
         blockNT();
+    }
+
+    private void methodSignatureNT() throws SyntacticException, IOException {
+        methodFormNT();
+        methodTypeNT();
+        match(VAR_MET_ID);
+        formalArgsNT();
     }
 
     private void methodFormNT() throws IOException {
@@ -595,5 +641,54 @@ public class SyntacticAnalyzer {
         match(DOT);
         match(VAR_MET_ID);
         actualArgsOrEmptyNT();
+    }
+
+    private void interfaceNT() throws SyntacticException, IOException {
+        try {
+            match(INTERFACE_KW);
+            match(CLASS_ID);
+            // genericTypeOrEmpty(); TODO: generic
+            interfaceInheritanceOrEmptyNT();
+            match(OPEN_BRACE);
+        } catch (SyntacticException exception) {
+            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, NEXT_INTERFACE_SIGNATURE, exception);
+            exceptions.add(exception);
+        }
+
+        try {
+            interfaceMembersListOrEmptyNT();
+            match(CLOSE_BRACE);
+        } catch (SyntacticException exception) {
+            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, NEXT_CLASS_OR_INTERFACE_BODY, exception);
+            exceptions.add(exception);
+        }
+    }
+
+    private void interfaceInheritanceOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(EXTENDS_KW)) {
+            matchCurrent();
+            interfaceNamesListNT();
+        }
+    }
+
+    private void interfaceMembersListOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_INTERFACE_MEMBER)) {
+            interfaceMemberNT();
+            interfaceMembersListOrEmptyNT();
+        }
+    }
+
+    private void interfaceMemberNT() throws SyntacticException, IOException {
+        interfaceMethodNT();
+    }
+
+    private void interfaceMethodNT() throws SyntacticException, IOException {
+        try {
+            methodSignatureNT();
+            match(SEMICOLON);
+        } catch (SyntacticException exception) {
+            recoverAndMatchIfPossible(LAST_INTERFACE_METHOD_SIGNATURE, SEMICOLON, NEXT_INTERFACE_METHOD_SIGNATURE, exception);
+            exceptions.add(exception);
+        }
     }
 }

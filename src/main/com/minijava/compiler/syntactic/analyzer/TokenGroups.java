@@ -9,6 +9,7 @@ import static com.minijava.compiler.lexical.models.TokenNames.*;
 
 public class TokenGroups {
     // NAMES
+    public static final String CLASS_OR_INTERFACE = "class_or_interface";
     public static final String TYPE = "type";
     public static final String METHOD_TYPE = "method_type";
     public static final String ASSIGNMENT_OR_SENTENCE_END = "assignment_or_sentence_end";
@@ -16,6 +17,8 @@ public class TokenGroups {
     public static final String OPERAND = "operand";
 
     // FIRSTS
+    static final Set<String> FIRST_CLASS_OR_INTERFACE = buildSet(CLASS_KW, INTERFACE_KW);
+
     static final Set<String> FIRST_VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
     static final Set<String> FIRST_ATTRIBUTE = FIRST_VISIBILITY;
 
@@ -25,6 +28,7 @@ public class TokenGroups {
     static final Set<String> FIRST_METHOD = FIRST_METHOD_FORM;
 
     static final Set<String> FIRST_MEMBER = buildSet(FIRST_ATTRIBUTE, FIRST_CONSTRUCTOR, FIRST_METHOD);
+    static final Set<String> FIRST_INTERFACE_MEMBER = FIRST_METHOD;
 
     static final Set<String> FIRST_PRIMITIVE_TYPE = buildSet(BOOLEAN_KW, CHAR_KW, INT_KW, STRING_KW);
     private static final Set<String> FIRST_CLASS_TYPE = buildSet(CLASS_ID);
@@ -69,19 +73,25 @@ public class TokenGroups {
     // RECOVERY
     static final Set<String> LAST_INITIAL = buildSet(EOF);
 
-    static final Set<String> LAST_CLASS_SIGNATURE = buildSet(LAST_INITIAL, buildSet(OPEN_BRACE));
+    static final Set<String> LAST_CLASS_OR_INTERFACE = LAST_INITIAL;
+    static final Set<String> NEXT_CLASS_OR_INTERFACE = buildSet(FIRST_CLASS_OR_INTERFACE, buildSet(EOF));
+
+    static final Set<String> LAST_CLASS_OR_INTERFACE_SIGNATURE = buildSet(LAST_INITIAL, buildSet(OPEN_BRACE));
     static final Set<String> NEXT_CLASS_SIGNATURE = buildSet(FIRST_MEMBER, buildSet(CLOSE_BRACE));
+    static final Set<String> NEXT_INTERFACE_SIGNATURE = buildSet(FIRST_INTERFACE_MEMBER, buildSet(CLOSE_BRACE));
 
-    static final Set<String> LAST_CLASS_BODY = buildSet(LAST_INITIAL, buildSet(CLOSE_BRACE));
-    static final Set<String> NEXT_CLASS_BODY = buildSet(EOF);
+    static final Set<String> LAST_CLASS_OR_INTERFACE_BODY = buildSet(LAST_INITIAL, buildSet(CLOSE_BRACE));
+    static final Set<String> NEXT_CLASS_OR_INTERFACE_BODY = NEXT_CLASS_OR_INTERFACE;
 
-    static final Set<String> LAST_ATTRIBUTE = buildSet(LAST_CLASS_BODY, buildSet(SEMICOLON));
+    static final Set<String> LAST_ATTRIBUTE = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(SEMICOLON));
     static final Set<String> NEXT_ATTRIBUTE = buildSet(FIRST_MEMBER, buildSet(CLOSE_BRACE));
 
-    static final Set<String> LAST_METHOD_SIGNATURE = buildSet(LAST_CLASS_BODY, buildSet(CLOSE_PARENTHESIS));
-    static final Set<String> NEXT_METHOD_SIGNATURE = FIRST_BLOCK;
+    static final Set<String> LAST_CLASS_METHOD_SIGNATURE = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(CLOSE_PARENTHESIS));
+    static final Set<String> LAST_INTERFACE_METHOD_SIGNATURE = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(SEMICOLON));
+    static final Set<String> NEXT_CLASS_METHOD_SIGNATURE = FIRST_BLOCK;
+    static final Set<String> NEXT_INTERFACE_METHOD_SIGNATURE = FIRST_INTERFACE_MEMBER;
 
-    static final Set<String> LAST_BLOCK = buildSet(LAST_CLASS_BODY, buildSet(CLOSE_BRACE));
+    static final Set<String> LAST_BLOCK = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(CLOSE_BRACE));
     static final Set<String> NEXT_BLOCK = FIRST_MEMBER;
 
     static final Set<String> LAST_CONTROL_STRUCTURE = buildSet(LAST_BLOCK, buildSet(CLOSE_PARENTHESIS));

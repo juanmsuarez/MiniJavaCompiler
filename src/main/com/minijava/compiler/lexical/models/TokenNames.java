@@ -4,6 +4,8 @@ public class TokenNames {
     // KEYWORDS
     public static final String CLASS_KW = "classKw";
     public static final String EXTENDS_KW = "extendsKw";
+    public static final String INTERFACE_KW = "interfaceKw";
+    public static final String IMPLEMENTS_KW = "implementsKw";
     public static final String STATIC_KW = "staticKw";
     public static final String DYNAMIC_KW = "dynamicKw";
     public static final String PUBLIC_KW = "publicKw";

@@ -12,6 +12,8 @@ class Lexemes {
             new HashMap<String, String>() {{
                 put("class", CLASS_KW);
                 put("extends", EXTENDS_KW);
+                put("interface", INTERFACE_KW);
+                put("implements", IMPLEMENTS_KW);
                 put("static", STATIC_KW);
                 put("dynamic", DYNAMIC_KW);
                 put("public", PUBLIC_KW);
