@@ -38,14 +38,17 @@ public class TokenGroups {
     static final String SECOND_IMPLICIT_STATIC_ACCESS = DOT;
     static final String FIRST_EXPLICIT_STATIC_ACCESS = STATIC_KW;
     static final Set<String> FIRST_STATIC_ACCESS = buildSet(FIRST_IMPLICIT_STATIC_ACCESS, FIRST_EXPLICIT_STATIC_ACCESS);
+
     static final String FIRST_IMPLICIT_ACCESS = FIRST_IMPLICIT_STATIC_ACCESS;
     static final String SECOND_IMPLICIT_ACCESS = SECOND_IMPLICIT_STATIC_ACCESS;
     static final Set<String> FIRST_EXPLICIT_ACCESS = buildSet(THIS_KW, VAR_MET_ID, FIRST_EXPLICIT_STATIC_ACCESS, NEW_KW, OPEN_PARENTHESIS);
     static final Set<String> FIRST_ACCESS = buildSet(buildSet(FIRST_IMPLICIT_ACCESS), FIRST_EXPLICIT_ACCESS);
+
     static final Set<String> FIRST_EXPLICIT_CALL_OR_ASSIGNMENT = FIRST_EXPLICIT_ACCESS;
     static final String FIRST_IMPLICIT_CALL_OR_ASSIGNMENT = FIRST_IMPLICIT_ACCESS;
     static final String SECOND_IMPLICIT_CALL_OR_ASSIGNMENT = SECOND_IMPLICIT_ACCESS;
     static final Set<String> FIRST_CALL_OR_ASSIGNMENT = buildSet(FIRST_EXPLICIT_CALL_OR_ASSIGNMENT, buildSet(FIRST_IMPLICIT_CALL_OR_ASSIGNMENT));
+
     static final Set<String> FIRST_DECLARATION = FIRST_TYPE;
     private static final Set<String> FIRST_IF = buildSet(IF_KW);
     private static final Set<String> FIRST_WHILE = buildSet(WHILE_KW);
@@ -64,15 +67,28 @@ public class TokenGroups {
     static final Set<String> FIRST_EXPRESSION = buildSet(FIRST_UNARY_OPERATOR, FIRST_OPERAND);
 
     // RECOVERY
-    /* TODO: ver si se usa
-    static final Set<String> RECOVERY_INITIAL = buildSet(EOF);
-    static final Set<String> RECOVERY_CLASS = buildSet(RECOVERY_INITIAL, buildSet(CLOSE_BRACE));
-    static final Set<String> RECOVERY_ATTRIBUTE = buildSet(RECOVERY_CLASS, buildSet(SEMICOLON));
-    static final Set<String> RECOVERY_BLOCK = buildSet(RECOVERY_CLASS, buildSet(CLOSE_BRACE));
-    static final Set<String> RECOVERY_CONSTRUCTOR = RECOVERY_BLOCK;
-    static final Set<String> RECOVERY_METHOD = RECOVERY_BLOCK;
-    static final Set<String> RECOVERY_SENTENCE = buildSet(RECOVERY_BLOCK, buildSet(SEMICOLON));
-     */
+    static final Set<String> LAST_INITIAL = buildSet(EOF);
+
+    static final Set<String> LAST_CLASS_SIGNATURE = buildSet(LAST_INITIAL, buildSet(OPEN_BRACE));
+    static final Set<String> NEXT_CLASS_SIGNATURE = buildSet(FIRST_MEMBER, buildSet(CLOSE_BRACE));
+
+    static final Set<String> LAST_CLASS_BODY = buildSet(LAST_INITIAL, buildSet(CLOSE_BRACE));
+    static final Set<String> NEXT_CLASS_BODY = buildSet(EOF);
+
+    static final Set<String> LAST_ATTRIBUTE = buildSet(LAST_CLASS_BODY, buildSet(SEMICOLON));
+    static final Set<String> NEXT_ATTRIBUTE = buildSet(FIRST_MEMBER, buildSet(CLOSE_BRACE));
+
+    static final Set<String> LAST_METHOD_SIGNATURE = buildSet(LAST_CLASS_BODY, buildSet(CLOSE_PARENTHESIS));
+    static final Set<String> NEXT_METHOD_SIGNATURE = FIRST_BLOCK;
+
+    static final Set<String> LAST_BLOCK = buildSet(LAST_CLASS_BODY, buildSet(CLOSE_BRACE));
+    static final Set<String> NEXT_BLOCK = FIRST_MEMBER;
+
+    static final Set<String> LAST_CONTROL_STRUCTURE = buildSet(LAST_BLOCK, buildSet(CLOSE_PARENTHESIS));
+    static final Set<String> NEXT_CONTROL_STRUCTURE = FIRST_SENTENCE;
+
+    static final Set<String> LAST_SENTENCE = buildSet(LAST_BLOCK, buildSet(SEMICOLON));
+    static final Set<String> NEXT_SENTENCE = buildSet(FIRST_SENTENCE, buildSet(CLOSE_BRACE));
 
     // HELPERS
     private static Set<String> buildSet(String... tokens) {

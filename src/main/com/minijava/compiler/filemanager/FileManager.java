@@ -35,7 +35,7 @@ public class FileManager implements AutoCloseable {
     }
 
     public String getLine() {
-        return line;
+        return line == null ? "" : line;
     }
 
     public int getLineNumber() {
@@ -43,7 +43,7 @@ public class FileManager implements AutoCloseable {
     }
 
     public int getCharPosition() {
-        return charPosition;
+        return charPosition == -1 ? 0 : charPosition;
     }
 
     @Override
