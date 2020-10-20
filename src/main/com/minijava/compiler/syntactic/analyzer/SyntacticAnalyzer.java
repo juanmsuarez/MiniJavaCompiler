@@ -164,7 +164,7 @@ public class SyntacticAnalyzer {
         try {
             match(CLASS_KW);
             match(CLASS_ID);
-            genericTypeOrEmpty();
+            genericTypeOrEmptyNT();
             inheritanceOrEmptyNT();
             implementationOrEmptyNT();
             match(OPEN_BRACE);
@@ -182,7 +182,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void genericTypeOrEmpty() throws SyntacticException, IOException {
+    private void genericTypeOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(LESS)) {
             matchCurrent();
             match(CLASS_ID);
@@ -194,7 +194,7 @@ public class SyntacticAnalyzer {
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
             match(CLASS_ID);
-            genericTypeOrEmpty();
+            genericTypeOrEmptyNT();
         }
     }
 
@@ -206,7 +206,8 @@ public class SyntacticAnalyzer {
     }
 
     private void interfaceNamesListNT() throws SyntacticException, IOException {
-        match(CLASS_ID); // TODO: generic
+        match(CLASS_ID);
+        genericTypeOrEmptyNT();
         interfaceNamesListSuffixOrEmptyNT();
     }
 
@@ -268,7 +269,7 @@ public class SyntacticAnalyzer {
             primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
             matchCurrent();
-            genericTypeOrEmpty();
+            genericTypeOrEmptyNT();
         } else {
             throw buildException(TYPE);
         }
@@ -626,8 +627,22 @@ public class SyntacticAnalyzer {
     private void constructorAccessNT() throws SyntacticException, IOException {
         match(NEW_KW);
         match(CLASS_ID);
-        genericTypeOrEmpty();
+        optionalGenericTypeOrEmptyNT();
         actualArgsNT();
+    }
+
+    private void optionalGenericTypeOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(LESS)) {
+            matchCurrent();
+            classIdOrEmptyNT();
+            match(GREATER);
+        }
+    }
+
+    private void classIdOrEmptyNT() throws IOException {
+        if (canMatch(CLASS_ID)) {
+            matchCurrent();
+        }
     }
 
     private void chainedAccessOrEmptyNT() throws SyntacticException, IOException {
@@ -647,7 +662,7 @@ public class SyntacticAnalyzer {
         try {
             match(INTERFACE_KW);
             match(CLASS_ID);
-            // genericTypeOrEmpty(); TODO: generic
+            genericTypeOrEmptyNT();
             interfaceInheritanceOrEmptyNT();
             match(OPEN_BRACE);
         } catch (SyntacticException exception) {
