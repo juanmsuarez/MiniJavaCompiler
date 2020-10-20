@@ -15,6 +15,7 @@ public class TokenGroups {
     public static final String ASSIGNMENT_OR_SENTENCE_END = "assignment_or_sentence_end";
     public static final String EXPRESSION = "expression";
     public static final String OPERAND = "operand";
+    public static final String SENTENCE = "sentence";
 
     // FIRSTS
     static final Set<String> FIRST_CLASS_OR_INTERFACE = buildSet(CLASS_KW, INTERFACE_KW);

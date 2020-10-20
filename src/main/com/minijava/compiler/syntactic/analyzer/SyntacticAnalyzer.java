@@ -438,7 +438,7 @@ public class SyntacticAnalyzer {
                 expressionOrEmptyNT();
                 match(SEMICOLON);
             } else {
-                throw new IllegalStateException();
+                throw buildException(SENTENCE);
             }
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(LAST_SENTENCE, SEMICOLON, NEXT_SENTENCE, exception);

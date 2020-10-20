@@ -7,14 +7,22 @@ public class SyntacticException extends CompilerException {
     private static final String ERROR_TYPE = "sintáctico";
     private static final String ERROR_MESSAGE = "se esperaba %s pero se encontró %s";
 
+    private String expectedTokenName;
+
     public SyntacticException(Token foundToken, String expectedTokenName, String line, int lexemePosition) {
         super(ERROR_TYPE, foundToken.getLineNumber(), buildErrorMessage(expectedTokenName, foundToken),
                 foundToken.getLexeme(), line, lexemePosition);
+
+        this.expectedTokenName = expectedTokenName;
     }
 
     private static String buildErrorMessage(String expectedTokenName, Token foundToken) {
         return String.format(ERROR_MESSAGE,
                 ErrorMessages.TOKEN_DESCRIPTION.getOrDefault(expectedTokenName, expectedTokenName),
                 ErrorMessages.LEXEME_DESCRIPTION.getOrDefault(foundToken.getName(), "\"" + foundToken.getLexeme() + "\""));
+    }
+
+    public String getExpectedTokenName() {
+        return expectedTokenName;
     }
 }

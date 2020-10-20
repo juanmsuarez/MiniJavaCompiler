@@ -9,27 +9,31 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 class LexicalAnalyzerExceptionTests extends LexicalAnalyzerTests {
+    private static final String DIR = "lexical/exception_tests/";
+
     private static Stream<Arguments> provideExceptionArguments() {
         return Stream.of(
-                Arguments.of("exception_tests/invalid_symbol.java", InvalidSymbolException.class),
-                Arguments.of("exception_tests/invalid_symbol_misc.java", InvalidSymbolException.class),
-                Arguments.of("exception_tests/malformed_char.java", MalformedCharException.class),
-                Arguments.of("exception_tests/malformed_char_misc.java", MalformedCharException.class),
-                Arguments.of("exception_tests/malformed_operator.java", MalformedOperatorException.class),
-                Arguments.of("exception_tests/malformed_operator_misc.java", MalformedOperatorException.class),
-                Arguments.of("exception_tests/malformed_text_block.java", MalformedTextBlockException.class),
-                Arguments.of("exception_tests/unclosed_char.java", UnclosedCharException.class),
-                Arguments.of("exception_tests/unclosed_char_misc.java", UnclosedCharException.class),
-                Arguments.of("exception_tests/unclosed_comment.java", UnclosedCommentException.class),
-                Arguments.of("exception_tests/unclosed_comment_misc.java", UnclosedCommentException.class),
-                Arguments.of("exception_tests/unclosed_string.java", UnclosedStringException.class),
-                Arguments.of("exception_tests/unclosed_text_block.java", UnclosedTextBlockException.class)
+                Arguments.of("invalid_symbol", InvalidSymbolException.class),
+                Arguments.of("invalid_symbol_misc", InvalidSymbolException.class),
+                Arguments.of("malformed_char", MalformedCharException.class),
+                Arguments.of("malformed_char_misc", MalformedCharException.class),
+                Arguments.of("malformed_operator", MalformedOperatorException.class),
+                Arguments.of("malformed_operator_misc", MalformedOperatorException.class),
+                Arguments.of("malformed_text_block", MalformedTextBlockException.class),
+                Arguments.of("unclosed_char", UnclosedCharException.class),
+                Arguments.of("unclosed_char_misc", UnclosedCharException.class),
+                Arguments.of("unclosed_comment", UnclosedCommentException.class),
+                Arguments.of("unclosed_comment_misc", UnclosedCommentException.class),
+                Arguments.of("unclosed_string", UnclosedStringException.class),
+                Arguments.of("unclosed_text_block", UnclosedTextBlockException.class)
         );
     }
 
     @ParameterizedTest
     @MethodSource("provideExceptionArguments")
-    <T extends Throwable> void fileShouldProduceException(String path, Class<T> exception) {
+    <T extends Throwable> void fileShouldProduceException(String fileName, Class<T> exception) {
+        String path = DIR + fileName + ".java";
+
         System.out.println("Running test. File: " + path + " should produce " + exception.toString() + ".");
 
         Assertions.assertThrows(exception, () -> runAnalyzer(getPath(path)));

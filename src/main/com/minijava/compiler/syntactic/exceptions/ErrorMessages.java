@@ -26,6 +26,7 @@ class ErrorMessages {
                 put(CLOSE_PARENTHESIS, "un paréntesis de cierre");
                 put(DOT, "un punto para realizar un acceso");
                 put(GREATER, "un cierre de tipo genérico");
+                put(SENTENCE, "una sentencia");
             }}
     );
 
