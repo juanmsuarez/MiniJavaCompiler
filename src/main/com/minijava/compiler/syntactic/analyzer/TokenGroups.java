@@ -64,8 +64,13 @@ public class TokenGroups {
     static final Set<String> FIRST_ASSIGNMENT_TYPE = buildSet(ASSIGN, ADD_ASSIGN, SUB_ASSIGN);
 
     static final Set<String> FIRST_UNARY_OPERATOR = buildSet(ADD, SUB, NOT);
-    static final Set<String> FIRST_BINARY_OPERATOR = buildSet(OR, AND, EQUALS, NOT_EQUALS, LESS, GREATER, LESS_OR_EQ,
-            GREATER_OR_EQ, ADD, SUB, MUL, DIV, MOD);
+    static final Set<String> FIRST_BINARY_OPERATOR_1 = buildSet(OR);
+    static final Set<String> FIRST_BINARY_OPERATOR_2 = buildSet(AND);
+    static final Set<String> FIRST_BINARY_OPERATOR_3 = buildSet(EQUALS, NOT_EQUALS);
+    static final Set<String> FIRST_BINARY_OPERATOR_4 = buildSet(LESS, GREATER, LESS_OR_EQ, GREATER_OR_EQ);
+    static final Set<String> FIRST_BINARY_OPERATOR_5 = buildSet(ADD, SUB);
+    static final Set<String> FIRST_BINARY_OPERATOR_6 = buildSet(MUL, DIV, MOD);
+
     static final Set<String> FIRST_LITERAL = buildSet(NULL_KW, TRUE_KW, FALSE_KW, INT_LITERAL, CHAR_LITERAL, STRING_LITERAL);
     static final Set<String> FIRST_OPERAND = buildSet(FIRST_LITERAL, FIRST_ACCESS);
     static final Set<String> FIRST_EXPRESSION = buildSet(FIRST_UNARY_OPERATOR, FIRST_OPERAND);

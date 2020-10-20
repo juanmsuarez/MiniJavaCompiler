@@ -498,8 +498,127 @@ public class SyntacticAnalyzer {
     }
 
     private void expressionNT() throws SyntacticException, IOException {
+        expression1NT();
+    }
+
+    private void expression1NT() throws SyntacticException, IOException {
+        expression2NT();
+        expression1SuffixOrEmptyNT();
+    }
+
+    private void expression1SuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_1)) {
+            binaryOperator1NT();
+            expression1NT();
+        }
+    }
+
+    private void binaryOperator1NT() throws IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_1)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void expression2NT() throws SyntacticException, IOException {
+        expression3NT();
+        expression2SuffixOrEmptyNT();
+    }
+
+    private void expression2SuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_2)) {
+            binaryOperator2NT();
+            expression2NT();
+        }
+    }
+
+    private void binaryOperator2NT() throws IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_2)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void expression3NT() throws SyntacticException, IOException {
+        expression4NT();
+        expression3SuffixOrEmptyNT();
+    }
+
+    private void expression3SuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_3)) {
+            binaryOperator3NT();
+            expression3NT();
+        }
+    }
+
+    private void binaryOperator3NT() throws IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_3)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void expression4NT() throws SyntacticException, IOException {
+        expression5NT();
+        expression4SuffixOrEmptyNT();
+    }
+
+    private void expression4SuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_4)) {
+            binaryOperator4NT();
+            expression4NT();
+        }
+    }
+
+    private void binaryOperator4NT() throws IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_4)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void expression5NT() throws SyntacticException, IOException {
+        expression6NT();
+        expression5SuffixOrEmptyNT();
+    }
+
+    private void expression5SuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_5)) {
+            binaryOperator5NT();
+            expression5NT();
+        }
+    }
+
+    private void binaryOperator5NT() throws IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_5)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void expression6NT() throws SyntacticException, IOException {
         unaryExpressionNT();
-        expressionSuffixOrEmptyNT();
+        expression6SuffixOrEmptyNT();
+    }
+
+    private void expression6SuffixOrEmptyNT() throws SyntacticException, IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_6)) {
+            binaryOperator6NT();
+            expression6NT();
+        }
+    }
+
+    private void binaryOperator6NT() throws IOException {
+        if (canMatch(FIRST_BINARY_OPERATOR_6)) {
+            matchCurrent();
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     private void unaryExpressionNT() throws SyntacticException, IOException {
@@ -533,22 +652,6 @@ public class SyntacticAnalyzer {
 
     private void literalNT() throws IOException {
         if (canMatch(FIRST_LITERAL)) {
-            matchCurrent();
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    private void expressionSuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR)) {
-            binaryOperatorNT();
-            unaryExpressionNT();
-            expressionSuffixOrEmptyNT();
-        }
-    }
-
-    private void binaryOperatorNT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
