@@ -5,6 +5,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 class SyntacticAnalyzerSuccessfulTests extends SyntacticAnalyzerTests {
@@ -26,7 +27,11 @@ class SyntacticAnalyzerSuccessfulTests extends SyntacticAnalyzerTests {
                 Arguments.of("control_structures"),
                 Arguments.of("literals"),
                 Arguments.of("expressions"),
-                Arguments.of("misc_hello_world")
+                Arguments.of("misc_hello_world"),
+                Arguments.of("full_static"),
+                Arguments.of("interfaces"),
+                Arguments.of("generics"),
+                Arguments.of("inline_assignment")
         );
     }
 
@@ -38,6 +43,7 @@ class SyntacticAnalyzerSuccessfulTests extends SyntacticAnalyzerTests {
 
         runAnalyzer(getPath(path));
 
-        Assertions.assertTrue(syntacticAnalyzer.getExceptions().isEmpty());
+        List<Exception> occurredExceptions = syntacticAnalyzer.getExceptions();
+        Assertions.assertTrue(occurredExceptions.isEmpty());
     }
 }
