@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
-import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
+import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 
 class SyntacticAnalyzerExceptionTests extends SyntacticAnalyzerTests {
     private static final String DIR = "syntactic/exception_tests/";

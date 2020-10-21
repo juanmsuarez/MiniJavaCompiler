@@ -12,6 +12,7 @@ import java.util.Set;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
+import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 
 public class SyntacticAnalyzer {
     private LexicalAnalyzer lexicalAnalyzer;
@@ -129,7 +130,7 @@ public class SyntacticAnalyzer {
             classesAndInterfacesListNT();
             match(EOF);
         } catch (SyntacticException exception) {
-            recoverAndMatch(LAST_INITIAL);
+            recoverAndMatch(Last.INITIAL);
             exceptions.add(exception);
         }
     }
@@ -149,13 +150,13 @@ public class SyntacticAnalyzer {
                 throw buildException(CLASS_OR_INTERFACE);
             }
         } catch (SyntacticException exception) {
-            recover(LAST_CLASS_OR_INTERFACE, NEXT_CLASS_OR_INTERFACE);
+            recover(Last.CLASS_OR_INTERFACE, Next.CLASS_OR_INTERFACE);
             exceptions.add(exception);
         }
     }
 
     private void classesAndInterfacesListSuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_CLASS_OR_INTERFACE)) {
+        if (canMatch(Firsts.CLASS_OR_INTERFACE)) {
             classesAndInterfacesListNT();
         }
     }
@@ -169,7 +170,7 @@ public class SyntacticAnalyzer {
             implementationOrEmptyNT();
             match(OPEN_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, NEXT_CLASS_SIGNATURE, exception);
+            recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, Next.CLASS_SIGNATURE, exception);
             exceptions.add(exception);
         }
 
@@ -177,7 +178,7 @@ public class SyntacticAnalyzer {
             membersListOrEmptyNT();
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, NEXT_CLASS_OR_INTERFACE_BODY, exception);
+            recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, Next.CLASS_OR_INTERFACE_BODY, exception);
             exceptions.add(exception);
         }
     }
@@ -219,18 +220,18 @@ public class SyntacticAnalyzer {
     }
 
     private void membersListOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_MEMBER)) {
+        if (canMatch(Firsts.MEMBER)) {
             memberNT();
             membersListOrEmptyNT();
         }
     }
 
     private void memberNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_ATTRIBUTE)) {
+        if (canMatch(Firsts.ATTRIBUTE)) {
             attributeNT();
         } else if (canMatch(CLASS_ID)) {
             constructorNT();
-        } else if (canMatch(FIRST_METHOD)) {
+        } else if (canMatch(Firsts.METHOD)) {
             methodNT();
         } else {
             throw new IllegalStateException();
@@ -245,13 +246,13 @@ public class SyntacticAnalyzer {
             attrsDecListNT();
             match(SEMICOLON);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_ATTRIBUTE, SEMICOLON, NEXT_ATTRIBUTE, exception);
+            recoverAndMatchIfPossible(Last.ATTRIBUTE, SEMICOLON, Next.ATTRIBUTE, exception);
             exceptions.add(exception);
         }
     }
 
     private void visibilityNT() throws IOException {
-        if (canMatch(FIRST_VISIBILITY)) {
+        if (canMatch(Firsts.VISIBILITY)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -265,7 +266,7 @@ public class SyntacticAnalyzer {
     }
 
     private void typeNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_PRIMITIVE_TYPE)) {
+        if (canMatch(Firsts.PRIMITIVE_TYPE)) {
             primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
             matchCurrent();
@@ -276,7 +277,7 @@ public class SyntacticAnalyzer {
     }
 
     private void primitiveTypeNT() throws IOException {
-        if (canMatch(FIRST_PRIMITIVE_TYPE)) {
+        if (canMatch(Firsts.PRIMITIVE_TYPE)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -308,7 +309,7 @@ public class SyntacticAnalyzer {
             match(CLASS_ID);
             formalArgsNT();
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, NEXT_CLASS_METHOD_SIGNATURE, exception);
+            recoverAndMatchIfPossible(Last.CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, Next.CLASS_METHOD_SIGNATURE, exception);
             exceptions.add(exception);
         }
 
@@ -322,7 +323,7 @@ public class SyntacticAnalyzer {
     }
 
     private void formalArgsListOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_FORMAL_ARGS)) {
+        if (canMatch(Firsts.FORMAL_ARGS)) {
             formalArgsListNT();
         }
     }
@@ -348,7 +349,7 @@ public class SyntacticAnalyzer {
         try {
             methodSignatureNT();
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, NEXT_CLASS_METHOD_SIGNATURE, exception);
+            recoverAndMatchIfPossible(Last.CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, Next.CLASS_METHOD_SIGNATURE, exception);
             exceptions.add(exception);
         }
         blockNT();
@@ -362,7 +363,7 @@ public class SyntacticAnalyzer {
     }
 
     private void methodFormNT() throws IOException {
-        if (canMatch(FIRST_METHOD_FORM)) {
+        if (canMatch(Firsts.METHOD_FORM)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -370,7 +371,7 @@ public class SyntacticAnalyzer {
     }
 
     private void methodTypeNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_TYPE)) {
+        if (canMatch(Firsts.TYPE)) {
             typeNT();
         } else if (canMatch(VOID_KW)) {
             matchCurrent();
@@ -385,13 +386,13 @@ public class SyntacticAnalyzer {
             sentencesListOrEmptyNT();
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_BLOCK, CLOSE_BRACE, NEXT_BLOCK, exception);
+            recoverAndMatchIfPossible(Last.BLOCK, CLOSE_BRACE, Next.BLOCK, exception);
             exceptions.add(exception);
         }
     }
 
     private void sentencesListOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_SENTENCE)) {
+        if (canMatch(Firsts.SENTENCE)) {
             sentenceNT();
             sentencesListOrEmptyNT();
         }
@@ -401,10 +402,10 @@ public class SyntacticAnalyzer {
         try {
             if (canMatch(SEMICOLON)) {
                 matchCurrent();
-            } else if (canMatch(FIRST_EXPLICIT_CALL_OR_ASSIGNMENT)
-                    || (canMatch(FIRST_IMPLICIT_CALL_OR_ASSIGNMENT) && canMatchNext(SECOND_IMPLICIT_CALL_OR_ASSIGNMENT))) {
+            } else if (canMatch(Firsts.EXPLICIT_CALL_OR_ASSIGNMENT)
+                    || (canMatch(Firsts.IMPLICIT_CALL_OR_ASSIGNMENT) && canMatchNext(Seconds.IMPLICIT_CALL_OR_ASSIGNMENT))) {
                 callOrAssignmentNT();
-            } else if (canMatch(FIRST_DECLARATION)) {
+            } else if (canMatch(Firsts.DECLARATION)) {
                 typeNT();
                 varsDecListNT();
                 match(SEMICOLON);
@@ -415,7 +416,7 @@ public class SyntacticAnalyzer {
                     expressionNT();
                     match(CLOSE_PARENTHESIS);
                 } catch (SyntacticException exception) {
-                    recoverAndMatchIfPossible(LAST_CONTROL_STRUCTURE, CLOSE_PARENTHESIS, NEXT_CONTROL_STRUCTURE, exception);
+                    recoverAndMatchIfPossible(Last.CONTROL_STRUCTURE, CLOSE_PARENTHESIS, Next.CONTROL_STRUCTURE, exception);
                     exceptions.add(exception);
                 }
                 sentenceNT();
@@ -427,7 +428,7 @@ public class SyntacticAnalyzer {
                     expressionNT();
                     match(CLOSE_PARENTHESIS);
                 } catch (SyntacticException exception) {
-                    recoverAndMatchIfPossible(LAST_CONTROL_STRUCTURE, CLOSE_PARENTHESIS, NEXT_CONTROL_STRUCTURE, exception);
+                    recoverAndMatchIfPossible(Last.CONTROL_STRUCTURE, CLOSE_PARENTHESIS, Next.CONTROL_STRUCTURE, exception);
                     exceptions.add(exception);
                 }
                 sentenceNT();
@@ -441,7 +442,7 @@ public class SyntacticAnalyzer {
                 throw buildException(SENTENCE);
             }
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_SENTENCE, SEMICOLON, NEXT_SENTENCE, exception);
+            recoverAndMatchIfPossible(Last.SENTENCE, SEMICOLON, Next.SENTENCE, exception);
             exceptions.add(exception);
         }
     }
@@ -465,7 +466,7 @@ public class SyntacticAnalyzer {
     }
 
     private void assignmentOrSentenceEndNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_ASSIGNMENT_TYPE)) {
+        if (canMatch(Firsts.ASSIGNMENT_TYPE)) {
             assignmentTypeNT();
             expressionNT();
             match(SEMICOLON);
@@ -477,7 +478,7 @@ public class SyntacticAnalyzer {
     }
 
     private void assignmentTypeNT() throws IOException {
-        if (canMatch(FIRST_ASSIGNMENT_TYPE)) {
+        if (canMatch(Firsts.ASSIGNMENT_TYPE)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -492,7 +493,7 @@ public class SyntacticAnalyzer {
     }
 
     private void expressionOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_EXPRESSION)) {
+        if (canMatch(Firsts.EXPRESSION)) {
             expressionNT();
         }
     }
@@ -507,14 +508,14 @@ public class SyntacticAnalyzer {
     }
 
     private void expression1SuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_1)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_1)) {
             binaryOperator1NT();
             expression1NT();
         }
     }
 
     private void binaryOperator1NT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_1)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_1)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -527,14 +528,14 @@ public class SyntacticAnalyzer {
     }
 
     private void expression2SuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_2)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_2)) {
             binaryOperator2NT();
             expression2NT();
         }
     }
 
     private void binaryOperator2NT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_2)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_2)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -547,14 +548,14 @@ public class SyntacticAnalyzer {
     }
 
     private void expression3SuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_3)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_3)) {
             binaryOperator3NT();
             expression3NT();
         }
     }
 
     private void binaryOperator3NT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_3)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_3)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -567,14 +568,14 @@ public class SyntacticAnalyzer {
     }
 
     private void expression4SuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_4)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_4)) {
             binaryOperator4NT();
             expression4NT();
         }
     }
 
     private void binaryOperator4NT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_4)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_4)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -587,14 +588,14 @@ public class SyntacticAnalyzer {
     }
 
     private void expression5SuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_5)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_5)) {
             binaryOperator5NT();
             expression5NT();
         }
     }
 
     private void binaryOperator5NT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_5)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_5)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -607,14 +608,14 @@ public class SyntacticAnalyzer {
     }
 
     private void expression6SuffixOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_6)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_6)) {
             binaryOperator6NT();
             expression6NT();
         }
     }
 
     private void binaryOperator6NT() throws IOException {
-        if (canMatch(FIRST_BINARY_OPERATOR_6)) {
+        if (canMatch(Firsts.BINARY_OPERATOR_6)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -622,10 +623,10 @@ public class SyntacticAnalyzer {
     }
 
     private void unaryExpressionNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_UNARY_OPERATOR)) {
+        if (canMatch(Firsts.UNARY_OPERATOR)) {
             unaryOperatorNT();
             operandNT();
-        } else if (canMatch(FIRST_OPERAND)) {
+        } else if (canMatch(Firsts.OPERAND)) {
             operandNT();
         } else {
             throw buildException(EXPRESSION);
@@ -633,7 +634,7 @@ public class SyntacticAnalyzer {
     }
 
     private void unaryOperatorNT() throws IOException {
-        if (canMatch(FIRST_UNARY_OPERATOR)) {
+        if (canMatch(Firsts.UNARY_OPERATOR)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -641,9 +642,9 @@ public class SyntacticAnalyzer {
     }
 
     private void operandNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_LITERAL)) {
+        if (canMatch(Firsts.LITERAL)) {
             literalNT();
-        } else if (canMatch(FIRST_ACCESS)) {
+        } else if (canMatch(Firsts.ACCESS)) {
             accessNT();
         } else {
             throw buildException(OPERAND);
@@ -651,7 +652,7 @@ public class SyntacticAnalyzer {
     }
 
     private void literalNT() throws IOException {
-        if (canMatch(FIRST_LITERAL)) {
+        if (canMatch(Firsts.LITERAL)) {
             matchCurrent();
         } else {
             throw new IllegalStateException();
@@ -668,7 +669,7 @@ public class SyntacticAnalyzer {
             thisAccessNT();
         } else if (canMatch(VAR_MET_ID)) {
             varMetAccessNT();
-        } else if (canMatch(FIRST_STATIC_ACCESS)) {
+        } else if (canMatch(Firsts.STATIC_ACCESS)) {
             staticAccessNT();
         } else if (canMatch(NEW_KW)) {
             constructorAccessNT();
@@ -703,7 +704,7 @@ public class SyntacticAnalyzer {
     }
 
     private void expressionsListOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_EXPRESSION)) {
+        if (canMatch(Firsts.EXPRESSION)) {
             expressionsListNT();
         }
     }
@@ -769,7 +770,7 @@ public class SyntacticAnalyzer {
             interfaceInheritanceOrEmptyNT();
             match(OPEN_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, NEXT_INTERFACE_SIGNATURE, exception);
+            recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, Next.INTERFACE_SIGNATURE, exception);
             exceptions.add(exception);
         }
 
@@ -777,7 +778,7 @@ public class SyntacticAnalyzer {
             interfaceMembersListOrEmptyNT();
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, NEXT_CLASS_OR_INTERFACE_BODY, exception);
+            recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, Next.CLASS_OR_INTERFACE_BODY, exception);
             exceptions.add(exception);
         }
     }
@@ -790,7 +791,7 @@ public class SyntacticAnalyzer {
     }
 
     private void interfaceMembersListOrEmptyNT() throws SyntacticException, IOException {
-        if (canMatch(FIRST_INTERFACE_MEMBER)) {
+        if (canMatch(Firsts.INTERFACE_MEMBER)) {
             interfaceMemberNT();
             interfaceMembersListOrEmptyNT();
         }
@@ -805,7 +806,7 @@ public class SyntacticAnalyzer {
             methodSignatureNT();
             match(SEMICOLON);
         } catch (SyntacticException exception) {
-            recoverAndMatchIfPossible(LAST_INTERFACE_METHOD_SIGNATURE, SEMICOLON, NEXT_INTERFACE_METHOD_SIGNATURE, exception);
+            recoverAndMatchIfPossible(Last.INTERFACE_METHOD_SIGNATURE, SEMICOLON, Next.INTERFACE_METHOD_SIGNATURE, exception);
             exceptions.add(exception);
         }
     }

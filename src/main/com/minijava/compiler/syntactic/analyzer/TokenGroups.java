@@ -8,103 +8,103 @@ import java.util.Set;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 
 public class TokenGroups {
-    // NAMES
-    public static final String CLASS_OR_INTERFACE = "class_or_interface";
-    public static final String TYPE = "type";
-    public static final String METHOD_TYPE = "method_type";
-    public static final String ASSIGNMENT_OR_SENTENCE_END = "assignment_or_sentence_end";
-    public static final String EXPRESSION = "expression";
-    public static final String OPERAND = "operand";
-    public static final String SENTENCE = "sentence";
+    // FIRST
+    static class Firsts {
+        static final Set<String> CLASS_OR_INTERFACE = buildSet(CLASS_KW, INTERFACE_KW);
 
-    // FIRSTS
-    static final Set<String> FIRST_CLASS_OR_INTERFACE = buildSet(CLASS_KW, INTERFACE_KW);
+        static final Set<String> VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
+        static final Set<String> ATTRIBUTE = VISIBILITY;
 
-    static final Set<String> FIRST_VISIBILITY = buildSet(PUBLIC_KW, PRIVATE_KW);
-    static final Set<String> FIRST_ATTRIBUTE = FIRST_VISIBILITY;
+        private static final Set<String> CONSTRUCTOR = buildSet(CLASS_ID);
 
-    private static final Set<String> FIRST_CONSTRUCTOR = buildSet(CLASS_ID);
+        static final Set<String> METHOD_FORM = buildSet(STATIC_KW, DYNAMIC_KW);
+        static final Set<String> METHOD = METHOD_FORM;
 
-    static final Set<String> FIRST_METHOD_FORM = buildSet(STATIC_KW, DYNAMIC_KW);
-    static final Set<String> FIRST_METHOD = FIRST_METHOD_FORM;
+        static final Set<String> MEMBER = buildSet(ATTRIBUTE, CONSTRUCTOR, METHOD);
+        static final Set<String> INTERFACE_MEMBER = METHOD;
 
-    static final Set<String> FIRST_MEMBER = buildSet(FIRST_ATTRIBUTE, FIRST_CONSTRUCTOR, FIRST_METHOD);
-    static final Set<String> FIRST_INTERFACE_MEMBER = FIRST_METHOD;
+        static final Set<String> PRIMITIVE_TYPE = buildSet(BOOLEAN_KW, CHAR_KW, INT_KW, STRING_KW);
+        private static final Set<String> CLASS_TYPE = buildSet(CLASS_ID);
+        static final Set<String> TYPE = buildSet(PRIMITIVE_TYPE, CLASS_TYPE);
 
-    static final Set<String> FIRST_PRIMITIVE_TYPE = buildSet(BOOLEAN_KW, CHAR_KW, INT_KW, STRING_KW);
-    private static final Set<String> FIRST_CLASS_TYPE = buildSet(CLASS_ID);
-    static final Set<String> FIRST_TYPE = buildSet(FIRST_PRIMITIVE_TYPE, FIRST_CLASS_TYPE);
+        static final Set<String> FORMAL_ARGS = TYPE;
 
-    static final Set<String> FIRST_FORMAL_ARGS = FIRST_TYPE;
+        static final String IMPLICIT_STATIC_ACCESS = CLASS_ID;
+        static final String EXPLICIT_STATIC_ACCESS = STATIC_KW;
+        static final Set<String> STATIC_ACCESS = buildSet(IMPLICIT_STATIC_ACCESS, EXPLICIT_STATIC_ACCESS);
 
-    private static final Set<String> FIRST_EMPTY_SENTENCE = buildSet(SEMICOLON);
+        static final String IMPLICIT_ACCESS = IMPLICIT_STATIC_ACCESS;
+        static final Set<String> EXPLICIT_ACCESS = buildSet(THIS_KW, VAR_MET_ID, EXPLICIT_STATIC_ACCESS, NEW_KW, OPEN_PARENTHESIS);
+        static final Set<String> ACCESS = buildSet(buildSet(IMPLICIT_ACCESS), EXPLICIT_ACCESS);
 
-    static final String FIRST_IMPLICIT_STATIC_ACCESS = CLASS_ID; // TODO: mejorar organización
-    static final String SECOND_IMPLICIT_STATIC_ACCESS = DOT;
-    static final String FIRST_EXPLICIT_STATIC_ACCESS = STATIC_KW;
-    static final Set<String> FIRST_STATIC_ACCESS = buildSet(FIRST_IMPLICIT_STATIC_ACCESS, FIRST_EXPLICIT_STATIC_ACCESS);
+        static final String IMPLICIT_CALL_OR_ASSIGNMENT = IMPLICIT_ACCESS;
+        static final Set<String> EXPLICIT_CALL_OR_ASSIGNMENT = EXPLICIT_ACCESS;
+        static final Set<String> CALL_OR_ASSIGNMENT = buildSet(EXPLICIT_CALL_OR_ASSIGNMENT, buildSet(IMPLICIT_CALL_OR_ASSIGNMENT));
 
-    static final String FIRST_IMPLICIT_ACCESS = FIRST_IMPLICIT_STATIC_ACCESS;
-    static final String SECOND_IMPLICIT_ACCESS = SECOND_IMPLICIT_STATIC_ACCESS;
-    static final Set<String> FIRST_EXPLICIT_ACCESS = buildSet(THIS_KW, VAR_MET_ID, FIRST_EXPLICIT_STATIC_ACCESS, NEW_KW, OPEN_PARENTHESIS);
-    static final Set<String> FIRST_ACCESS = buildSet(buildSet(FIRST_IMPLICIT_ACCESS), FIRST_EXPLICIT_ACCESS);
+        private static final Set<String> EMPTY_SENTENCE = buildSet(SEMICOLON);
+        static final Set<String> DECLARATION = TYPE;
+        private static final Set<String> IF = buildSet(IF_KW);
+        private static final Set<String> WHILE = buildSet(WHILE_KW);
+        private static final Set<String> BLOCK = buildSet(OPEN_BRACE);
+        private static final Set<String> RETURN = buildSet(RETURN_KW);
+        static final Set<String> SENTENCE = buildSet(EMPTY_SENTENCE, CALL_OR_ASSIGNMENT, DECLARATION, IF, WHILE,
+                BLOCK, RETURN);
 
-    static final Set<String> FIRST_EXPLICIT_CALL_OR_ASSIGNMENT = FIRST_EXPLICIT_ACCESS;
-    static final String FIRST_IMPLICIT_CALL_OR_ASSIGNMENT = FIRST_IMPLICIT_ACCESS;
-    static final String SECOND_IMPLICIT_CALL_OR_ASSIGNMENT = SECOND_IMPLICIT_ACCESS;
-    static final Set<String> FIRST_CALL_OR_ASSIGNMENT = buildSet(FIRST_EXPLICIT_CALL_OR_ASSIGNMENT, buildSet(FIRST_IMPLICIT_CALL_OR_ASSIGNMENT));
+        static final Set<String> ASSIGNMENT_TYPE = buildSet(ASSIGN, ADD_ASSIGN, SUB_ASSIGN);
 
-    static final Set<String> FIRST_DECLARATION = FIRST_TYPE;
-    private static final Set<String> FIRST_IF = buildSet(IF_KW);
-    private static final Set<String> FIRST_WHILE = buildSet(WHILE_KW);
-    private static final Set<String> FIRST_BLOCK = buildSet(OPEN_BRACE);
-    private static final Set<String> FIRST_RETURN = buildSet(RETURN_KW);
-    static final Set<String> FIRST_SENTENCE = buildSet(FIRST_EMPTY_SENTENCE, FIRST_CALL_OR_ASSIGNMENT, FIRST_DECLARATION,
-            FIRST_IF, FIRST_WHILE, FIRST_BLOCK, FIRST_RETURN);
+        static final Set<String> UNARY_OPERATOR = buildSet(ADD, SUB, NOT);
+        static final Set<String> BINARY_OPERATOR_1 = buildSet(OR);
+        static final Set<String> BINARY_OPERATOR_2 = buildSet(AND);
+        static final Set<String> BINARY_OPERATOR_3 = buildSet(EQUALS, NOT_EQUALS);
+        static final Set<String> BINARY_OPERATOR_4 = buildSet(LESS, GREATER, LESS_OR_EQ, GREATER_OR_EQ);
+        static final Set<String> BINARY_OPERATOR_5 = buildSet(ADD, SUB);
+        static final Set<String> BINARY_OPERATOR_6 = buildSet(MUL, DIV, MOD);
 
-    static final Set<String> FIRST_ASSIGNMENT_TYPE = buildSet(ASSIGN, ADD_ASSIGN, SUB_ASSIGN);
+        static final Set<String> LITERAL = buildSet(NULL_KW, TRUE_KW, FALSE_KW, INT_LITERAL, CHAR_LITERAL, STRING_LITERAL);
+        static final Set<String> OPERAND = buildSet(LITERAL, ACCESS);
+        static final Set<String> EXPRESSION = buildSet(UNARY_OPERATOR, OPERAND);
+    }
 
-    static final Set<String> FIRST_UNARY_OPERATOR = buildSet(ADD, SUB, NOT);
-    static final Set<String> FIRST_BINARY_OPERATOR_1 = buildSet(OR);
-    static final Set<String> FIRST_BINARY_OPERATOR_2 = buildSet(AND);
-    static final Set<String> FIRST_BINARY_OPERATOR_3 = buildSet(EQUALS, NOT_EQUALS);
-    static final Set<String> FIRST_BINARY_OPERATOR_4 = buildSet(LESS, GREATER, LESS_OR_EQ, GREATER_OR_EQ);
-    static final Set<String> FIRST_BINARY_OPERATOR_5 = buildSet(ADD, SUB);
-    static final Set<String> FIRST_BINARY_OPERATOR_6 = buildSet(MUL, DIV, MOD);
-
-    static final Set<String> FIRST_LITERAL = buildSet(NULL_KW, TRUE_KW, FALSE_KW, INT_LITERAL, CHAR_LITERAL, STRING_LITERAL);
-    static final Set<String> FIRST_OPERAND = buildSet(FIRST_LITERAL, FIRST_ACCESS);
-    static final Set<String> FIRST_EXPRESSION = buildSet(FIRST_UNARY_OPERATOR, FIRST_OPERAND);
+    // SECOND
+    static class Seconds {
+        static final String IMPLICIT_STATIC_ACCESS = DOT;
+        static final String IMPLICIT_ACCESS = IMPLICIT_STATIC_ACCESS;
+        static final String IMPLICIT_CALL_OR_ASSIGNMENT = IMPLICIT_ACCESS;
+    }
 
     // RECOVERY
-    static final Set<String> LAST_INITIAL = buildSet(EOF);
+    static class Last {
+        static final Set<String> INITIAL = buildSet(EOF);
 
-    static final Set<String> LAST_CLASS_OR_INTERFACE = LAST_INITIAL;
-    static final Set<String> NEXT_CLASS_OR_INTERFACE = buildSet(FIRST_CLASS_OR_INTERFACE, buildSet(EOF));
+        static final Set<String> CLASS_OR_INTERFACE = INITIAL;
+        static final Set<String> CLASS_OR_INTERFACE_SIGNATURE = buildSet(INITIAL, buildSet(OPEN_BRACE));
+        static final Set<String> CLASS_OR_INTERFACE_BODY = buildSet(INITIAL, buildSet(CLOSE_BRACE));
 
-    static final Set<String> LAST_CLASS_OR_INTERFACE_SIGNATURE = buildSet(LAST_INITIAL, buildSet(OPEN_BRACE));
-    static final Set<String> NEXT_CLASS_SIGNATURE = buildSet(FIRST_MEMBER, buildSet(CLOSE_BRACE));
-    static final Set<String> NEXT_INTERFACE_SIGNATURE = buildSet(FIRST_INTERFACE_MEMBER, buildSet(CLOSE_BRACE));
+        static final Set<String> ATTRIBUTE = buildSet(CLASS_OR_INTERFACE_BODY, buildSet(SEMICOLON));
 
-    static final Set<String> LAST_CLASS_OR_INTERFACE_BODY = buildSet(LAST_INITIAL, buildSet(CLOSE_BRACE));
-    static final Set<String> NEXT_CLASS_OR_INTERFACE_BODY = NEXT_CLASS_OR_INTERFACE;
+        static final Set<String> CLASS_METHOD_SIGNATURE = buildSet(CLASS_OR_INTERFACE_BODY, buildSet(CLOSE_PARENTHESIS));
+        static final Set<String> INTERFACE_METHOD_SIGNATURE = buildSet(CLASS_OR_INTERFACE_BODY, buildSet(SEMICOLON));
 
-    static final Set<String> LAST_ATTRIBUTE = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(SEMICOLON));
-    static final Set<String> NEXT_ATTRIBUTE = buildSet(FIRST_MEMBER, buildSet(CLOSE_BRACE));
+        static final Set<String> BLOCK = buildSet(CLASS_OR_INTERFACE_BODY, buildSet(CLOSE_BRACE));
+        static final Set<String> CONTROL_STRUCTURE = buildSet(BLOCK, buildSet(CLOSE_PARENTHESIS));
+        static final Set<String> SENTENCE = buildSet(BLOCK, buildSet(SEMICOLON));
+    }
 
-    static final Set<String> LAST_CLASS_METHOD_SIGNATURE = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(CLOSE_PARENTHESIS));
-    static final Set<String> LAST_INTERFACE_METHOD_SIGNATURE = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(SEMICOLON));
-    static final Set<String> NEXT_CLASS_METHOD_SIGNATURE = FIRST_BLOCK;
-    static final Set<String> NEXT_INTERFACE_METHOD_SIGNATURE = FIRST_INTERFACE_MEMBER;
+    static class Next {
+        static final Set<String> CLASS_OR_INTERFACE = buildSet(Firsts.CLASS_OR_INTERFACE, buildSet(EOF));
+        static final Set<String> CLASS_SIGNATURE = buildSet(Firsts.MEMBER, buildSet(CLOSE_BRACE));
+        static final Set<String> INTERFACE_SIGNATURE = buildSet(Firsts.INTERFACE_MEMBER, buildSet(CLOSE_BRACE));
+        static final Set<String> CLASS_OR_INTERFACE_BODY = CLASS_OR_INTERFACE;
 
-    static final Set<String> LAST_BLOCK = buildSet(LAST_CLASS_OR_INTERFACE_BODY, buildSet(CLOSE_BRACE));
-    static final Set<String> NEXT_BLOCK = FIRST_MEMBER;
+        static final Set<String> ATTRIBUTE = buildSet(Firsts.MEMBER, buildSet(CLOSE_BRACE));
 
-    static final Set<String> LAST_CONTROL_STRUCTURE = buildSet(LAST_BLOCK, buildSet(CLOSE_PARENTHESIS));
-    static final Set<String> NEXT_CONTROL_STRUCTURE = FIRST_SENTENCE;
+        static final Set<String> CLASS_METHOD_SIGNATURE = Firsts.BLOCK;
+        static final Set<String> INTERFACE_METHOD_SIGNATURE = Firsts.INTERFACE_MEMBER;
 
-    static final Set<String> LAST_SENTENCE = buildSet(LAST_BLOCK, buildSet(SEMICOLON));
-    static final Set<String> NEXT_SENTENCE = buildSet(FIRST_SENTENCE, buildSet(CLOSE_BRACE));
+        static final Set<String> BLOCK = Firsts.MEMBER;
+        static final Set<String> CONTROL_STRUCTURE = Firsts.SENTENCE;
+        static final Set<String> SENTENCE = buildSet(Firsts.SENTENCE, buildSet(CLOSE_BRACE));
+    }
 
     // HELPERS
     private static Set<String> buildSet(String... tokens) {

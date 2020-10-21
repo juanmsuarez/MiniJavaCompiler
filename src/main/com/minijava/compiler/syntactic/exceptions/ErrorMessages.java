@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.minijava.compiler.lexical.models.TokenNames.*;
-import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
+import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 
 class ErrorMessages {
     static final Map<String, String> TOKEN_DESCRIPTION = Collections.unmodifiableMap(
