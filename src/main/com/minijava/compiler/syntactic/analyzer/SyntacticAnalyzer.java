@@ -3,6 +3,7 @@ package com.minijava.compiler.syntactic.analyzer;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
+import com.minijava.compiler.semantic.symbols.Class;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
 import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
@@ -162,9 +164,15 @@ public class SyntacticAnalyzer {
     }
 
     private void classNT() throws SyntacticException, IOException {
+        Class currentClass = new Class();
+        symbolTable.setCurrentClass(currentClass);
+
         try {
             match(CLASS_KW);
+            String name = currentToken.getLexeme();
             match(CLASS_ID);
+            currentClass.setName(name);
+
             genericTypeOrEmptyNT();
             inheritanceOrEmptyNT();
             implementationOrEmptyNT();
@@ -181,6 +189,8 @@ public class SyntacticAnalyzer {
             recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, Next.CLASS_OR_INTERFACE_BODY, exception);
             exceptions.add(exception);
         }
+
+        symbolTable.add(currentClass);
     }
 
     private void genericTypeOrEmptyNT() throws SyntacticException, IOException {
