@@ -25,14 +25,6 @@ public class LexicalAnalyzer {
         advanceCurrentChar();
     }
 
-    public String getLexemeStartLine() {
-        return lexemeStartLine;
-    }
-
-    public int getLexemeStartPosition() {
-        return lexemeStartPosition;
-    }
-
     private void advanceCurrentChar() throws IOException {
         currentChar = fileManager.nextChar();
     }
@@ -41,8 +33,12 @@ public class LexicalAnalyzer {
         currentLexeme = currentLexeme + currentChar;
     }
 
+    private Lexeme buildLexeme() {
+        return new Lexeme(currentLexeme, lexemeStartLineNumber, lexemeStartLine, lexemeStartPosition);
+    }
+
     private Token buildToken(String name) {
-        return new Token(name, currentLexeme, lexemeStartLineNumber);
+        return new Token(name, buildLexeme());
     }
 
     // Updates current lexeme, advances current char and executes State
@@ -89,7 +85,7 @@ public class LexicalAnalyzer {
         } else {
             updateLexeme();
             advanceCurrentChar();
-            throw new InvalidSymbolException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new InvalidSymbolException(buildLexeme());
         }
     }
 
@@ -119,7 +115,7 @@ public class LexicalAnalyzer {
 
     private Token charLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar) || isSingleQuote(currentChar)) {
-            throw new MalformedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new MalformedCharException(buildLexeme());
         } else if (isBackslash(currentChar)) {
             return transition(this::escapedCharLitOpenedState);
         } else {
@@ -129,7 +125,7 @@ public class LexicalAnalyzer {
 
     private Token escapedCharLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
-            throw new MalformedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new MalformedCharException(buildLexeme());
         } else {
             return transition(this::charLitPendingCloseState);
         }
@@ -137,7 +133,7 @@ public class LexicalAnalyzer {
 
     private Token charLitPendingCloseState() throws IOException, LexicalException {
         if (!isSingleQuote(currentChar)) {
-            throw new UnclosedCharException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new UnclosedCharException(buildLexeme());
         } else {
             return transition(this::charLitClosedState);
         }
@@ -160,7 +156,7 @@ public class LexicalAnalyzer {
         } else if (currentLexeme.equals(TEXT_BLOCK_OPEN)) {
             return textBlockOpenedState();
         } else {
-            throw new MalformedTextBlockException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new MalformedTextBlockException(buildLexeme());
         }
     }
 
@@ -169,7 +165,7 @@ public class LexicalAnalyzer {
                 && currentLexeme.endsWith(TEXT_BLOCK_CLOSE)) {
             return stringLitClosedState();
         } else if (isEOF(currentChar)) {
-            throw new UnclosedTextBlockException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new UnclosedTextBlockException(buildLexeme());
         } else {
             return transition(this::textBlockOpenedState);
         }
@@ -177,7 +173,7 @@ public class LexicalAnalyzer {
 
     private Token stringLitOpenedState() throws IOException, LexicalException {
         if (isEOF(currentChar) || isEOL(currentChar)) {
-            throw new UnclosedStringException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new UnclosedStringException(buildLexeme());
         } else if (!isDoubleQuote(currentChar)) {
             return transition(this::stringLitOpenedState);
         } else {
@@ -221,7 +217,7 @@ public class LexicalAnalyzer {
         } else if (!isEOF(currentChar)) {
             return transition(this::blockCommentOpenedState);
         } else {
-            throw new UnclosedCommentException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new UnclosedCommentException(buildLexeme());
         }
     }
 
@@ -233,7 +229,7 @@ public class LexicalAnalyzer {
         } else if (!isEOF(currentChar)) {
             return transition(this::blockCommentOpenedState);
         } else {
-            throw new UnclosedCommentException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new UnclosedCommentException(buildLexeme());
         }
     }
 
@@ -243,7 +239,7 @@ public class LexicalAnalyzer {
         } else if (OPERATORS.containsKey(currentLexeme)) {
             return buildToken(OPERATORS.get(currentLexeme));
         } else {
-            throw new MalformedOperatorException(lexemeStartLineNumber, currentLexeme, lexemeStartLine, lexemeStartPosition);
+            throw new MalformedOperatorException(buildLexeme());
         }
     }
 

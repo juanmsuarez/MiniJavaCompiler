@@ -1,5 +1,6 @@
 package com.minijava.compiler.syntactic.analyzer;
 
+import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
@@ -19,8 +20,6 @@ import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 public class SyntacticAnalyzer {
     private LexicalAnalyzer lexicalAnalyzer;
     private Token currentToken, nextToken;
-    private String currentLexemeStartLine, nextLexemeStartLine;
-    private int currentLexemeStartPosition, nextLexemeStartPosition;
     private List<Exception> exceptions = new ArrayList<>();
 
     public SyntacticAnalyzer(LexicalAnalyzer lexicalAnalyzer) {
@@ -43,8 +42,6 @@ public class SyntacticAnalyzer {
 
     private void advanceNextToken() throws IOException {
         nextToken = nextValidToken();
-        nextLexemeStartLine = lexicalAnalyzer.getLexemeStartLine();
-        nextLexemeStartPosition = lexicalAnalyzer.getLexemeStartPosition();
     }
 
     private void advanceCurrentToken() throws IOException {
@@ -53,8 +50,6 @@ public class SyntacticAnalyzer {
         }
 
         currentToken = nextToken;
-        currentLexemeStartLine = nextLexemeStartLine;
-        currentLexemeStartPosition = nextLexemeStartPosition;
 
         advanceNextToken();
     }
@@ -81,19 +76,23 @@ public class SyntacticAnalyzer {
     }
 
     private SyntacticException buildException(String expectedTokenName) {
-        return new SyntacticException(currentToken, expectedTokenName, currentLexemeStartLine, currentLexemeStartPosition);
+        return new SyntacticException(currentToken, expectedTokenName);
     }
 
-    private void match(String expectedTokenName) throws SyntacticException, IOException {
+    private Lexeme match(String expectedTokenName) throws SyntacticException, IOException {
         if (expectedTokenName.equals(currentToken.getName())) {
+            Lexeme currentLexeme = currentToken.getLexeme();
             advanceCurrentToken();
+            return currentLexeme;
         } else {
             throw buildException(expectedTokenName);
         }
     }
 
-    private void matchCurrent() throws IOException {
+    private Lexeme matchCurrent() throws IOException {
+        Lexeme currentLexeme = currentToken.getLexeme();
         advanceCurrentToken();
+        return currentLexeme;
     }
 
     private void recover(Set<String> recoveryTokens) throws IOException {
@@ -169,13 +168,16 @@ public class SyntacticAnalyzer {
 
         try {
             match(CLASS_KW);
-            String name = currentToken.getLexeme();
-            match(CLASS_ID);
-            currentClass.setName(name);
+            Lexeme classLexeme = match(CLASS_ID);
+            currentClass.setName(classLexeme.getString());
+            currentClass.setLexeme(classLexeme);
 
             genericTypeOrEmptyNT();
+
             inheritanceOrEmptyNT();
+
             implementationOrEmptyNT();
+
             match(OPEN_BRACE);
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, Next.CLASS_SIGNATURE, exception);
@@ -204,7 +206,9 @@ public class SyntacticAnalyzer {
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
-            match(CLASS_ID);
+            String parentName = match(CLASS_ID).getString();
+            symbolTable.getCurrentClass().setParent(parentName);
+
             genericTypeOrEmptyNT();
         }
     }

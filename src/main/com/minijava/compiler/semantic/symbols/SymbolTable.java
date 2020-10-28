@@ -4,20 +4,24 @@ import java.util.*;
 
 public class SymbolTable {
     private Map<String, Class> classes = new HashMap<>();
-    private Set<String> duplicatedNames = new HashSet<>(); // TODO: los nombres solo molestan si se repiten en el mismo contexto?
+    private Set<String> duplicatedNames = new HashSet<>();
+    private List<Exception> exceptions = new ArrayList<>();
 
     private Class currentClass;
 
-    public void add(Class newClass) {
+    public void add(Class newClass) { // TODO: qué pasa con las interfaces?
         String name = newClass.getName();
 
         if (!duplicatedNames.contains(name)) {
             if (!classes.containsKey(name)) {
                 classes.put(name, newClass);
             } else {
-                classes.remove(name);
-                duplicatedNames.add(name); // TODO: mostrar error de duplicado
+                // TODO: borramos también la primera o la dejamos? no mostramos error para la primera?
+                duplicatedNames.add(name);
+                exceptions.add(new DuplicatedClassException(newClass));
             }
+        } else {
+            exceptions.add(new DuplicatedClassException(newClass));
         }
     }
 
@@ -42,7 +46,7 @@ public class SymbolTable {
     }
 
     public List<Exception> getExceptions() {
-        return new ArrayList<>();
+        return exceptions;
     }
 
     @Override

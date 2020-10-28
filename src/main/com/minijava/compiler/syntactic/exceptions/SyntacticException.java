@@ -9,9 +9,8 @@ public class SyntacticException extends CompilerException {
 
     private String expectedTokenName;
 
-    public SyntacticException(Token foundToken, String expectedTokenName, String line, int lexemePosition) {
-        super(ERROR_TYPE, foundToken.getLineNumber(), buildErrorMessage(expectedTokenName, foundToken),
-                foundToken.getLexeme(), line, lexemePosition);
+    public SyntacticException(Token foundToken, String expectedTokenName) {
+        super(ERROR_TYPE, foundToken.getLexeme(), buildErrorMessage(expectedTokenName, foundToken));
 
         this.expectedTokenName = expectedTokenName;
     }

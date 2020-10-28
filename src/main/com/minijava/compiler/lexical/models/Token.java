@@ -1,30 +1,26 @@
 package com.minijava.compiler.lexical.models;
 
+import com.minijava.compiler.lexical.analyzer.Lexeme;
+
 public class Token {
     private String name;
-    private String lexeme;
-    private int lineNumber;
+    private Lexeme lexeme;
 
-    public Token(String name, String lexeme, int lineNumber) {
+    public Token(String name, Lexeme lexeme) {
         this.name = name;
         this.lexeme = lexeme;
-        this.lineNumber = lineNumber;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getLexeme() {
+    public Lexeme getLexeme() {
         return lexeme;
-    }
-
-    public int getLineNumber() {
-        return lineNumber;
     }
 
     @Override
     public String toString() {
-        return String.format("(%s,%s,%d)", name, lexeme, lineNumber + 1);
+        return String.format("(%s,%s,%d)", name, lexeme.getString(), lexeme.getLineNumber() + 1);
     }
 }
