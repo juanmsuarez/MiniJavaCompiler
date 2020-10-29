@@ -3,18 +3,20 @@ package com.minijava.compiler.semantic.entities;
 import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.exceptions.DuplicatedAttributeException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
-
-public class Class { // TODO: extends Tipo Referencia, cómo chequear igualdad?
+public class Class {
     private String name;
     private String parent;
     private Map<String, Attribute> attributes = new HashMap<>();
 
     // detailed error
     private Lexeme lexeme;
+
+    private List<Exception> exceptions = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -39,8 +41,12 @@ public class Class { // TODO: extends Tipo Referencia, cómo chequear igualdad?
         if (!attributes.containsKey(name)) {
             attributes.put(name, attribute);
         } else {
-            symbolTable.getExceptions().add(new DuplicatedAttributeException(attribute)); // TODO: addException?
+            exceptions.add(new DuplicatedAttributeException(attribute));
         }
+    }
+
+    public List<Exception> getExceptions() {
+        return exceptions;
     }
 
     @Override

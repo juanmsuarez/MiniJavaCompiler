@@ -12,9 +12,10 @@ public class SymbolTable {
     public static final String OBJECT = "Object";
 
     private Map<String, Class> classes = new HashMap<>();
-    private List<Exception> exceptions = new ArrayList<>();
 
     private Class currentClass;
+
+    private List<Exception> exceptions = new ArrayList<>();
 
     public SymbolTable() {
         initialize();
@@ -51,7 +52,13 @@ public class SymbolTable {
     }
 
     public List<Exception> getExceptions() {
-        return exceptions;
+        List<Exception> allExceptions = new ArrayList<>(exceptions);
+
+        for (Class aClass : classes.values()) {
+            allExceptions.addAll(aClass.getExceptions());
+        }
+
+        return allExceptions;
     }
 
     @Override
