@@ -1,6 +1,6 @@
-package com.minijava.compiler.semantic.symbols;
+package com.minijava.compiler.semantic.exceptions;
 
-import com.minijava.compiler.semantic.exceptions.SemanticException;
+import com.minijava.compiler.semantic.entities.Class;
 
 public class DuplicatedClassException extends SemanticException {
     private static final String ERROR_MESSAGE = "clase %s duplicada";

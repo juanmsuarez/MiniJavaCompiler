@@ -4,7 +4,12 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
-import com.minijava.compiler.semantic.symbols.Class;
+import com.minijava.compiler.semantic.entities.Attribute;
+import com.minijava.compiler.semantic.entities.Class;
+import com.minijava.compiler.semantic.entities.modifiers.Form;
+import com.minijava.compiler.semantic.entities.modifiers.Visibility;
+import com.minijava.compiler.semantic.entities.types.*;
+import com.minijava.compiler.semantic.symbols.SymbolTable;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
@@ -164,12 +169,11 @@ public class SyntacticAnalyzer {
 
     private void classNT() throws SyntacticException, IOException {
         Class currentClass = new Class();
-        symbolTable.setCurrentClass(currentClass);
+        symbolTable.setCurrentClass(currentClass); // TODO: se puede hacer junto con add
 
         try {
             match(CLASS_KW);
             Lexeme classLexeme = match(CLASS_ID);
-            currentClass.setName(classLexeme.getString());
             currentClass.setLexeme(classLexeme);
 
             genericTypeOrEmptyNT();
@@ -204,13 +208,16 @@ public class SyntacticAnalyzer {
     }
 
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
+        String parentName = SymbolTable.OBJECT;
+
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
-            String parentName = match(CLASS_ID).getString();
-            symbolTable.getCurrentClass().setParent(parentName);
+            parentName = match(CLASS_ID).getString();
 
             genericTypeOrEmptyNT();
         }
+
+        symbolTable.getCurrentClass().setParent(parentName);
     }
 
     private void implementationOrEmptyNT() throws SyntacticException, IOException {
@@ -254,10 +261,10 @@ public class SyntacticAnalyzer {
 
     private void attributeNT() throws SyntacticException, IOException {
         try {
-            visibilityNT();
-            staticOrEmpty();
-            typeNT();
-            attrsDecListNT();
+            Visibility visibility = visibilityNT();
+            Form form = staticOrEmpty();
+            Type type = typeNT();
+            attrsDecListNT(visibility, form, type);
             match(SEMICOLON);
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.ATTRIBUTE, SEMICOLON, Next.ATTRIBUTE, exception);
@@ -265,43 +272,62 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void visibilityNT() throws IOException {
-        if (canMatch(Firsts.VISIBILITY)) {
+    private Visibility visibilityNT() throws IOException {
+        if (canMatch(PUBLIC_KW)) {
             matchCurrent();
+            return Visibility.PUBLIC;
+        } else if (canMatch(PRIVATE_KW)) {
+            matchCurrent();
+            return Visibility.PRIVATE;
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void staticOrEmpty() throws IOException {
+    private Form staticOrEmpty() throws IOException {
         if (canMatch(STATIC_KW)) {
             matchCurrent();
+            return Form.STATIC;
+        } else {
+            return Form.DYNAMIC;
         }
     }
 
-    private void typeNT() throws SyntacticException, IOException {
+    private Type typeNT() throws SyntacticException, IOException { // TODO: ver cómo almacenar tipos
         if (canMatch(Firsts.PRIMITIVE_TYPE)) {
-            primitiveTypeNT();
+            return primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
-            matchCurrent();
+            String typeName = matchCurrent().getString();
             genericTypeOrEmptyNT();
+            return new ReferenceType(typeName);
         } else {
             throw buildException(TYPE);
         }
     }
 
-    private void primitiveTypeNT() throws IOException {
-        if (canMatch(Firsts.PRIMITIVE_TYPE)) {
+    private PrimitiveType primitiveTypeNT() throws IOException {
+        if (canMatch(BOOLEAN_KW)) {
             matchCurrent();
+            return new BooleanType();
+        } else if (canMatch(CHAR_KW)) {
+            matchCurrent();
+            return new CharType();
+        } else if (canMatch(INT_KW)) {
+            matchCurrent();
+            return new IntType();
+        } else if (canMatch(STRING_KW)) {
+            matchCurrent();
+            return new StringType();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void attrsDecListNT() throws SyntacticException, IOException {
-        match(VAR_MET_ID);
+    private void attrsDecListNT(Visibility visibility, Form form, Type type) throws SyntacticException, IOException {
+        Lexeme lexeme = match(VAR_MET_ID);
+        symbolTable.getCurrentClass().add(new Attribute(visibility, form, type, lexeme));
         inlineAssignmentOrEmpty();
-        attrsDecListSuffixOrEmptyNT();
+        attrsDecListSuffixOrEmptyNT(visibility, form, type);
     }
 
     private void inlineAssignmentOrEmpty() throws SyntacticException, IOException {
@@ -311,10 +337,10 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void attrsDecListSuffixOrEmptyNT() throws SyntacticException, IOException {
+    private void attrsDecListSuffixOrEmptyNT(Visibility visibility, Form form, Type type) throws SyntacticException, IOException {
         if (canMatch(COMMA)) {
             matchCurrent();
-            attrsDecListNT();
+            attrsDecListNT(visibility, form, type);
         }
     }
 
