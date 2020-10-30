@@ -404,25 +404,33 @@ public class SyntacticAnalyzer {
     }
 
     private void methodSignatureNT() throws SyntacticException, IOException {
-        methodFormNT();
-        methodTypeNT();
-        match(VAR_MET_ID);
+        Form form = methodFormNT();
+        Type type = methodTypeNT();
+        Lexeme lexeme = match(VAR_MET_ID);
+        Method method = new Method(form, type, lexeme);
+        symbolTable.getCurrentClass().add(method);
+
         formalArgsNT();
     }
 
-    private void methodFormNT() throws IOException {
-        if (canMatch(Firsts.METHOD_FORM)) {
+    private Form methodFormNT() throws IOException {
+        if (canMatch(STATIC_KW)) {
             matchCurrent();
+            return Form.STATIC;
+        } else if (canMatch(DYNAMIC_KW)) {
+            matchCurrent();
+            return Form.DYNAMIC;
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void methodTypeNT() throws SyntacticException, IOException {
+    private Type methodTypeNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.TYPE)) {
-            typeNT();
+            return typeNT();
         } else if (canMatch(VOID_KW)) {
             matchCurrent();
+            return new VoidType();
         } else {
             throw buildException(METHOD_TYPE);
         }
@@ -558,7 +566,7 @@ public class SyntacticAnalyzer {
     private void expression1SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_1)) {
             binaryOperator1NT();
-            expression1NT();
+            expression1NT(); // TODO: tener cuidado con usar mismo NT en recursión (último ejemplo del tema 4.5.3)
         }
     }
 

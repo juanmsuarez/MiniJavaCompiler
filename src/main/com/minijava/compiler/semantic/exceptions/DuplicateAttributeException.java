@@ -2,10 +2,10 @@ package com.minijava.compiler.semantic.exceptions;
 
 import com.minijava.compiler.semantic.entities.Attribute;
 
-public class DuplicatedAttributeException extends SemanticException {
+public class DuplicateAttributeException extends SemanticException {
     private static final String ERROR_MESSAGE = "atributo %s duplicado";
 
-    public DuplicatedAttributeException(Attribute attribute) {
+    public DuplicateAttributeException(Attribute attribute) {
         super(attribute.getLexeme(), buildErrorMessage(attribute.getName()));
     }
 

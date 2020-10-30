@@ -1,7 +1,7 @@
 package com.minijava.compiler.semantic.symbols;
 
 import com.minijava.compiler.semantic.entities.Class;
-import com.minijava.compiler.semantic.exceptions.DuplicatedClassException;
+import com.minijava.compiler.semantic.exceptions.DuplicateClassException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class SymbolTable {
         if (!classes.containsKey(name)) {
             classes.put(name, newClass);
         } else {
-            exceptions.add(new DuplicatedClassException(newClass));
+            exceptions.add(new DuplicateClassException(newClass));
         }
     }
 

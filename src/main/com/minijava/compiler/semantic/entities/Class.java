@@ -1,8 +1,9 @@
 package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.lexical.analyzer.Lexeme;
-import com.minijava.compiler.semantic.exceptions.DuplicatedAttributeException;
-import com.minijava.compiler.semantic.exceptions.DuplicatedConstructorException;
+import com.minijava.compiler.semantic.exceptions.DuplicateAttributeException;
+import com.minijava.compiler.semantic.exceptions.DuplicateConstructorException;
+import com.minijava.compiler.semantic.exceptions.DuplicateMethodException;
 import com.minijava.compiler.semantic.exceptions.InvalidConstructorException;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Class {
     private String parent;
     private Constructor constructor;
     private Map<String, Attribute> attributes = new HashMap<>();
+    private Map<String, Method> methods = new HashMap<>();
 
     private Callable currentCallable;
 
@@ -44,7 +46,7 @@ public class Class {
         if (!attributes.containsKey(name)) {
             attributes.put(name, attribute);
         } else {
-            exceptions.add(new DuplicatedAttributeException(attribute));
+            exceptions.add(new DuplicateAttributeException(attribute));
         }
     }
 
@@ -53,13 +55,25 @@ public class Class {
             if (this.constructor == null) {
                 this.constructor = constructor;
             } else {
-                exceptions.add(new DuplicatedConstructorException(constructor));
+                exceptions.add(new DuplicateConstructorException(constructor));
             }
         } else {
             exceptions.add(new InvalidConstructorException(constructor));
         }
 
         currentCallable = constructor;
+    }
+
+    public void add(Method method) {
+        String name = method.getName();
+
+        if (!methods.containsKey(name)) {
+            methods.put(name, method);
+        } else {
+            exceptions.add(new DuplicateMethodException(method));
+        }
+
+        currentCallable = method;
     }
 
     public Callable getCurrentCallable() {
@@ -73,6 +87,10 @@ public class Class {
             allExceptions.addAll(constructor.getExceptions());
         }
 
+        for (Method method : methods.values()) {
+            allExceptions.addAll(method.getExceptions());
+        }
+
         return allExceptions;
     }
 
@@ -84,6 +102,7 @@ public class Class {
                 ", parent='" + parent + '\'' +
                 ", constructor=" + constructor +
                 ", attributes=" + attributes +
+                ", methods=" + methods +
                 '}';
     }
 }

@@ -1,10 +1,6 @@
 class B {
 	public static String x = "asd";
 	private int y = 3;
-
-	static int f() {
-
-	}
 }
 
 class A extends B {
@@ -14,25 +10,20 @@ class A extends B {
 	private boolean b;
 	public static Clase k;
 
-	static void main(String args) {
-
+	B(int a, char c, String k) {
+		return;
 	}
 
-	dynamic Clase f() {
 
+	A(Integer i, char i) {
+		
 	}
 
-	static int f(int x) {
-
+	A(Integer i) {
+		
 	}
 
-	static int f(int x) {
+	A(int k, char k) {
 
 	}
-
-	static int k(int x, char x, String k) {
-
-	}
-
-	dynamic String k() {}
 }

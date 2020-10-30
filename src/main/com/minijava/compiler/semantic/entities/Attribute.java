@@ -6,13 +6,11 @@ import com.minijava.compiler.semantic.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.entities.types.Type;
 
 public class Attribute {
-    private String name;
     private Visibility visibility;
     private Form form;
     private Type type;
-
-    // detailed error
     private Lexeme lexeme;
+    private String name;
 
     public Attribute(Visibility visibility, Form form, Type type, Lexeme lexeme) {
         this.visibility = visibility;
