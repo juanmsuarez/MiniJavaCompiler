@@ -4,8 +4,8 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
-import com.minijava.compiler.semantic.entities.Attribute;
 import com.minijava.compiler.semantic.entities.Class;
+import com.minijava.compiler.semantic.entities.*;
 import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.entities.types.*;
@@ -169,12 +169,13 @@ public class SyntacticAnalyzer {
 
     private void classNT() throws SyntacticException, IOException {
         Class currentClass = new Class();
-        symbolTable.setCurrentClass(currentClass); // TODO: se puede hacer junto con add
+        symbolTable.setCurrentClass(currentClass);
 
         try {
             match(CLASS_KW);
             Lexeme classLexeme = match(CLASS_ID);
             currentClass.setLexeme(classLexeme);
+            symbolTable.add(currentClass);
 
             genericTypeOrEmptyNT();
 
@@ -195,8 +196,6 @@ public class SyntacticAnalyzer {
             recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_BODY, CLOSE_BRACE, Next.CLASS_OR_INTERFACE_BODY, exception);
             exceptions.add(exception);
         }
-
-        symbolTable.add(currentClass);
     }
 
     private void genericTypeOrEmptyNT() throws SyntacticException, IOException {
@@ -325,7 +324,9 @@ public class SyntacticAnalyzer {
 
     private void attrsDecListNT(Visibility visibility, Form form, Type type) throws SyntacticException, IOException {
         Lexeme lexeme = match(VAR_MET_ID);
-        symbolTable.getCurrentClass().add(new Attribute(visibility, form, type, lexeme));
+        Attribute attribute = new Attribute(visibility, form, type, lexeme);
+        symbolTable.getCurrentClass().add(attribute);
+
         inlineAssignmentOrEmpty();
         attrsDecListSuffixOrEmptyNT(visibility, form, type);
     }
@@ -346,7 +347,10 @@ public class SyntacticAnalyzer {
 
     private void constructorNT() throws SyntacticException, IOException {
         try {
-            match(CLASS_ID);
+            Lexeme lexeme = match(CLASS_ID);
+            Constructor constructor = new Constructor(lexeme);
+            symbolTable.getCurrentClass().add(constructor);
+
             formalArgsNT();
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, Next.CLASS_METHOD_SIGNATURE, exception);
@@ -381,8 +385,12 @@ public class SyntacticAnalyzer {
     }
 
     private void formalArgNT() throws SyntacticException, IOException {
-        typeNT();
-        match(VAR_MET_ID);
+        Callable callable = symbolTable.getCurrentClass().getCurrentCallable();
+
+        Type type = typeNT();
+        Lexeme lexeme = match(VAR_MET_ID);
+        Parameter parameter = new Parameter(type, lexeme);
+        callable.add(parameter);
     }
 
     private void methodNT() throws SyntacticException, IOException {

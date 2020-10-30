@@ -1,6 +1,6 @@
-class A {
+class B {
 	public static String x = "asd";
-	private int x = 3;
+	private int y = 3;
 }
 
 class A extends B {
@@ -9,4 +9,21 @@ class A extends B {
 	private char c = 'c';
 	private boolean b;
 	public static Clase k;
+
+	B(int a, char c, String k) {
+		return;
+	}
+
+
+	A(Integer i, char i) {
+		
+	}
+
+	A(Integer i) {
+		
+	}
+
+	A(int k, char k) {
+
+	}
 }

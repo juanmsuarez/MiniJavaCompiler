@@ -35,20 +35,12 @@ public class SymbolTable {
         }
     }
 
-    public void setCurrentClass(Class currentClass) {
-        this.currentClass = currentClass;
-    }
-
     public Class getCurrentClass() {
         return currentClass;
     }
 
-    public void checkDeclarations() { // mejor nombre?
-
-    }
-
-    public void consolidate() {
-
+    public void setCurrentClass(Class currentClass) {
+        this.currentClass = currentClass;
     }
 
     public List<Exception> getExceptions() {
@@ -59,6 +51,14 @@ public class SymbolTable {
         }
 
         return allExceptions;
+    }
+
+    public void checkDeclarations() { // mejor nombre?
+
+    }
+
+    public void consolidate() {
+
     }
 
     @Override
