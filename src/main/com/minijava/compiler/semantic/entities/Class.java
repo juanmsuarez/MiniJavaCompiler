@@ -4,11 +4,15 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.exceptions.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Class {
+    public static final String OBJECT = "Object";
+
     private Lexeme lexeme;
     private String name;
     private String parent;
@@ -75,13 +79,35 @@ public class Class {
         return currentCallable;
     }
 
-    public void checkDeclaration() {
-        // my checks
-        if (!symbolTable.contains(parent)) {
-            symbolTable.occurred(new ParentNotFoundException(this, parent)); // TODO: delete?
-        }
+    public void checkDeclaration() { // TODO: throw and delete on first error?
+        checkParentExists();
+        checkCyclicInheritance();
 
-        // check children
+        checkChildren();
+    }
+
+    private void checkParentExists() {
+        if (!symbolTable.contains(parent)) {
+            symbolTable.occurred(new ParentNotFoundException(this, parent));
+        }
+    }
+
+    private void checkCyclicInheritance() {
+        Set<String> ancestors = new HashSet<>();
+        Class currentClass = this;
+
+        do {
+            ancestors.add(currentClass.name);
+
+            currentClass = symbolTable.get(currentClass.parent);
+        } while (currentClass != null && !currentClass.name.equals(OBJECT) && !ancestors.contains(currentClass.name));
+
+        if (currentClass != null && !currentClass.name.equals(OBJECT)) {
+            symbolTable.occurred(new CyclicInheritanceException(currentClass, this));
+        }
+    }
+
+    private void checkChildren() {
         for (Attribute attribute : attributes.values()) {
             attribute.checkDeclaration();
         }
@@ -94,7 +120,6 @@ public class Class {
             method.checkDeclaration();
         }
     }
-
 
     @Override
     public String toString() {

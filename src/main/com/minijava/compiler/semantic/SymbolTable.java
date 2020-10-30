@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SymbolTable {
-    public static final String OBJECT = "Object";
-
     private Map<String, Class> classes = new HashMap<>();
 
     private Class currentClass;
@@ -33,7 +31,7 @@ public class SymbolTable {
         return classes.containsKey(className);
     }
 
-    public void occurred(Class newClass) { // TODO: interfaces deberían estar acá también
+    public void add(Class newClass) { // TODO: interfaces deberían estar acá también
         String name = newClass.getName();
 
         if (!classes.containsKey(name)) {

@@ -4,7 +4,6 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
-import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.semantic.entities.Class;
 import com.minijava.compiler.semantic.entities.*;
 import com.minijava.compiler.semantic.entities.modifiers.Form;
@@ -175,7 +174,7 @@ public class SyntacticAnalyzer {
             match(CLASS_KW);
             Lexeme classLexeme = match(CLASS_ID);
             currentClass.setLexeme(classLexeme);
-            symbolTable.occurred(currentClass);
+            symbolTable.add(currentClass);
 
             genericTypeOrEmptyNT();
 
@@ -207,7 +206,7 @@ public class SyntacticAnalyzer {
     }
 
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
-        String parentName = SymbolTable.OBJECT;
+        String parentName = Class.OBJECT;
 
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();

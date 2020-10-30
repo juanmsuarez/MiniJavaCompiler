@@ -13,6 +13,10 @@ public class Constructor implements Callable {
     private String name;
     private Map<String, Parameter> parameters = new HashMap<>(); // TODO: no hace falta mantener ordenados, no?
 
+    public Constructor(String name) {
+        this.name = name;
+    }
+
     public Constructor(Lexeme lexeme) {
         this.lexeme = lexeme;
         this.name = lexeme.getString();
