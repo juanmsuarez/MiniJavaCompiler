@@ -2,7 +2,7 @@ package com.minijava.compiler;
 
 import com.minijava.compiler.filemanager.FileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
-import com.minijava.compiler.semantic.symbols.SymbolTable;
+import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
 
 import java.io.FileNotFoundException;
@@ -42,6 +42,7 @@ public class MiniJavaCompiler {
             if (syntacticSuccess) {
                 logger.log(INFO, symbolTable.toString()); // TODO: remove in final version
 
+                symbolTable.checkDeclarations();
                 symbolTable.consolidate();
                 boolean semanticSuccess = symbolTable.getExceptions().isEmpty();
 

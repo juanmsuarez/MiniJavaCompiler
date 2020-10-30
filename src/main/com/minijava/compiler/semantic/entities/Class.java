@@ -1,15 +1,12 @@
 package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.lexical.analyzer.Lexeme;
-import com.minijava.compiler.semantic.exceptions.DuplicateAttributeException;
-import com.minijava.compiler.semantic.exceptions.DuplicateConstructorException;
-import com.minijava.compiler.semantic.exceptions.DuplicateMethodException;
-import com.minijava.compiler.semantic.exceptions.InvalidConstructorException;
+import com.minijava.compiler.semantic.exceptions.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Class {
     private Lexeme lexeme;
@@ -20,8 +17,6 @@ public class Class {
     private Map<String, Method> methods = new HashMap<>();
 
     private Callable currentCallable;
-
-    private List<Exception> exceptions = new ArrayList<>();
 
     public Lexeme getLexeme() {
         return lexeme;
@@ -46,7 +41,7 @@ public class Class {
         if (!attributes.containsKey(name)) {
             attributes.put(name, attribute);
         } else {
-            exceptions.add(new DuplicateAttributeException(attribute));
+            symbolTable.occurred(new DuplicateAttributeException(attribute));
         }
     }
 
@@ -55,10 +50,10 @@ public class Class {
             if (this.constructor == null) {
                 this.constructor = constructor;
             } else {
-                exceptions.add(new DuplicateConstructorException(constructor));
+                symbolTable.occurred(new DuplicateConstructorException(constructor));
             }
         } else {
-            exceptions.add(new InvalidConstructorException(constructor));
+            symbolTable.occurred(new InvalidConstructorException(constructor));
         }
 
         currentCallable = constructor;
@@ -70,7 +65,7 @@ public class Class {
         if (!methods.containsKey(name)) {
             methods.put(name, method);
         } else {
-            exceptions.add(new DuplicateMethodException(method));
+            symbolTable.occurred(new DuplicateMethodException(method));
         }
 
         currentCallable = method;
@@ -80,18 +75,24 @@ public class Class {
         return currentCallable;
     }
 
-    public List<Exception> getExceptions() {
-        List<Exception> allExceptions = new ArrayList<>(exceptions);
+    public void checkDeclaration() {
+        // my checks
+        if (!symbolTable.contains(parent)) {
+            symbolTable.occurred(new ParentNotFoundException(this, parent)); // TODO: delete?
+        }
+
+        // check children
+        for (Attribute attribute : attributes.values()) {
+            attribute.checkDeclaration();
+        }
 
         if (constructor != null) {
-            allExceptions.addAll(constructor.getExceptions());
+            constructor.checkDeclaration();
         }
 
         for (Method method : methods.values()) {
-            allExceptions.addAll(method.getExceptions());
+            method.checkDeclaration();
         }
-
-        return allExceptions;
     }
 
 

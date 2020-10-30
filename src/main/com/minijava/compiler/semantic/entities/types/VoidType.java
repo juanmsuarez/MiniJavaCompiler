@@ -6,4 +6,8 @@ public class VoidType extends Type {
     public VoidType() {
         super(VOID);
     }
+
+    public boolean isDefined() {
+        return true;
+    }
 }

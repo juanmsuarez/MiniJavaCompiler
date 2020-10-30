@@ -4,6 +4,9 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.entities.types.Type;
+import com.minijava.compiler.semantic.exceptions.AttributeTypeNotFoundException;
+
+import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Attribute {
     private Visibility visibility;
@@ -26,6 +29,12 @@ public class Attribute {
 
     public Lexeme getLexeme() {
         return lexeme;
+    }
+
+    public void checkDeclaration() {
+        if (!type.isDefined()) {
+            symbolTable.occurred(new AttributeTypeNotFoundException(this, type)); // TODO: delete?
+        }
     }
 
     @Override

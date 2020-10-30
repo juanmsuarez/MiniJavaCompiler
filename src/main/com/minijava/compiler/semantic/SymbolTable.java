@@ -1,4 +1,4 @@
-package com.minijava.compiler.semantic.symbols;
+package com.minijava.compiler.semantic;
 
 import com.minijava.compiler.semantic.entities.Class;
 import com.minijava.compiler.semantic.exceptions.DuplicateClassException;
@@ -25,7 +25,15 @@ public class SymbolTable {
         // TODO: initialize Object y System
     }
 
-    public void add(Class newClass) { // TODO: interfaces deberían estar acá también
+    public Class get(String className) {
+        return classes.get(className);
+    }
+
+    public boolean contains(String className) {
+        return classes.containsKey(className);
+    }
+
+    public void occurred(Class newClass) { // TODO: interfaces deberían estar acá también
         String name = newClass.getName();
 
         if (!classes.containsKey(name)) {
@@ -44,17 +52,17 @@ public class SymbolTable {
     }
 
     public List<Exception> getExceptions() {
-        List<Exception> allExceptions = new ArrayList<>(exceptions);
-
-        for (Class aClass : classes.values()) {
-            allExceptions.addAll(aClass.getExceptions());
-        }
-
-        return allExceptions;
+        return exceptions;
     }
 
-    public void checkDeclarations() { // mejor nombre?
+    public void occurred(Exception exception) { // TODO: improve name
+        exceptions.add(exception);
+    }
 
+    public void checkDeclarations() {
+        for (Class aClass : classes.values()) {
+            aClass.checkDeclaration();
+        }
     }
 
     public void consolidate() {

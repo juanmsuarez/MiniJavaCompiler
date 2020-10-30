@@ -4,12 +4,12 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
+import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.semantic.entities.Class;
 import com.minijava.compiler.semantic.entities.*;
 import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.entities.types.*;
-import com.minijava.compiler.semantic.symbols.SymbolTable;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
@@ -175,7 +175,7 @@ public class SyntacticAnalyzer {
             match(CLASS_KW);
             Lexeme classLexeme = match(CLASS_ID);
             currentClass.setLexeme(classLexeme);
-            symbolTable.add(currentClass);
+            symbolTable.occurred(currentClass);
 
             genericTypeOrEmptyNT();
 
@@ -292,7 +292,7 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private Type typeNT() throws SyntacticException, IOException { // TODO: ver cómo almacenar tipos
+    private Type typeNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.PRIMITIVE_TYPE)) {
             return primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {

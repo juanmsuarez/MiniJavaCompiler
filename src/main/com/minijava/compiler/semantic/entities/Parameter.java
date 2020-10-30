@@ -2,6 +2,9 @@ package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.entities.types.Type;
+import com.minijava.compiler.semantic.exceptions.ParameterTypeNotFoundException;
+
+import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Parameter {
     private Type type;
@@ -20,6 +23,12 @@ public class Parameter {
 
     public String getName() {
         return name;
+    }
+
+    public void checkDeclaration() {
+        if (!type.isDefined()) {
+            symbolTable.occurred(new ParameterTypeNotFoundException(this, type)); // TODO: delete?
+        }
     }
 
     @Override

@@ -4,4 +4,8 @@ public abstract class PrimitiveType extends Type {
     public PrimitiveType(String name) {
         super(name);
     }
+
+    public boolean isDefined() {
+        return true;
+    }
 }

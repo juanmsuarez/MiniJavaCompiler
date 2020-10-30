@@ -1,7 +1,7 @@
 package com.minijava.compiler.semantic.entities.types;
 
 public abstract class Type {
-    private String name;
+    protected String name;
 
     public Type(String name) {
         this.name = name;
@@ -15,4 +15,6 @@ public abstract class Type {
     public String toString() {
         return name;
     }
+
+    public abstract boolean isDefined();
 }
