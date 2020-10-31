@@ -53,7 +53,7 @@ public class SymbolTable {
         return exceptions;
     }
 
-    public void occurred(Exception exception) { // TODO: improve name
+    public void throwLater(Exception exception) { // TODO: improve name
         exceptions.add(exception);
     }
 
@@ -61,6 +61,8 @@ public class SymbolTable {
         for (Class aClass : classes.values()) {
             aClass.checkDeclaration();
         }
+
+        // TODO: main check
     }
 
     public void consolidate() {

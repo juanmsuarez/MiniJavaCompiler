@@ -33,7 +33,7 @@ public class Attribute {
 
     public void checkDeclaration() {
         if (!type.isDefined()) {
-            symbolTable.occurred(new AttributeTypeNotFoundException(this, type)); // TODO: delete?
+            symbolTable.throwLater(new AttributeTypeNotFoundException(this, type)); // TODO: delete?
         }
     }
 

@@ -27,13 +27,13 @@ public class Parameter {
 
     public void checkDeclaration() {
         if (!type.isDefined()) {
-            symbolTable.occurred(new ParameterTypeNotFoundException(this, type)); // TODO: delete?
+            symbolTable.throwLater(new ParameterTypeNotFoundException(this, type)); // TODO: delete?
         }
     }
 
     @Override
     public String toString() {
-        return "\nParameter{" +
+        return "Parameter{" +
                 "type=" + type +
                 ", name='" + name + '\'' +
                 '}';

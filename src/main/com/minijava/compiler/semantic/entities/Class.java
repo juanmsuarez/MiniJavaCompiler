@@ -45,7 +45,7 @@ public class Class {
         if (!attributes.containsKey(name)) {
             attributes.put(name, attribute);
         } else {
-            symbolTable.occurred(new DuplicateAttributeException(attribute));
+            symbolTable.throwLater(new DuplicateAttributeException(attribute));
         }
     }
 
@@ -54,10 +54,10 @@ public class Class {
             if (this.constructor == null) {
                 this.constructor = constructor;
             } else {
-                symbolTable.occurred(new DuplicateConstructorException(constructor));
+                symbolTable.throwLater(new DuplicateConstructorException(constructor));
             }
         } else {
-            symbolTable.occurred(new InvalidConstructorException(constructor));
+            symbolTable.throwLater(new InvalidConstructorException(constructor));
         }
 
         currentCallable = constructor;
@@ -69,7 +69,7 @@ public class Class {
         if (!methods.containsKey(name)) {
             methods.put(name, method);
         } else {
-            symbolTable.occurred(new DuplicateMethodException(method));
+            symbolTable.throwLater(new DuplicateMethodException(method));
         }
 
         currentCallable = method;
@@ -88,7 +88,7 @@ public class Class {
 
     private void checkParentExists() {
         if (!symbolTable.contains(parent)) {
-            symbolTable.occurred(new ParentNotFoundException(this, parent));
+            symbolTable.throwLater(new ParentNotFoundException(this, parent));
         }
     }
 
@@ -103,7 +103,7 @@ public class Class {
         } while (currentClass != null && !currentClass.name.equals(OBJECT) && !ancestors.contains(currentClass.name));
 
         if (currentClass != null && !currentClass.name.equals(OBJECT)) {
-            symbolTable.occurred(new CyclicInheritanceException(currentClass, this));
+            symbolTable.throwLater(new CyclicInheritanceException(currentClass, this));
         }
     }
 
@@ -121,14 +121,20 @@ public class Class {
         }
     }
 
+    private void consolidate() {
+        // TODO: generate constructor
+        // TODO: bring methods from above (redefine)
+        // TODO: bring attributes from above (hide)
+    }
+
     @Override
     public String toString() {
         return "\nClass{" +
                 "name='" + name + '\'' +
                 ", parent='" + parent + '\'' +
-                ", constructor=" + constructor +
-                ", attributes=" + attributes +
-                ", methods=" + methods +
+                ", \nconstructor=" + constructor +
+                ", \nattributes=" + attributes +
+                ", \nmethods=" + methods +
                 '}';
     }
 }
