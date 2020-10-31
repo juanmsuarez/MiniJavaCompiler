@@ -1,5 +1,7 @@
 package com.minijava.compiler.semantic.entities.types;
 
+import java.util.Objects;
+
 public abstract class Type {
     protected String name;
 
@@ -17,4 +19,17 @@ public abstract class Type {
     }
 
     public abstract boolean isDefined();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Type type = (Type) o;
+        return name.equals(type.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }

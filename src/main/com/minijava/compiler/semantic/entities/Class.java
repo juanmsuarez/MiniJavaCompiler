@@ -39,6 +39,10 @@ public class Class {
         this.parent = parent;
     }
 
+    public Method getMethod(String name) {
+        return methods.get(name);
+    }
+
     public void add(Attribute attribute) {
         String name = attribute.getName();
 

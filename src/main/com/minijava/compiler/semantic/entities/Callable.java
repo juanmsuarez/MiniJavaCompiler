@@ -2,10 +2,7 @@ package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.semantic.exceptions.DuplicateParameterException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
@@ -28,5 +25,18 @@ public abstract class Callable {
         parameters.removeIf(parameter -> !parameter.validDeclaration());
 
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Callable callable = (Callable) o;
+        return parameters.equals(callable.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(parameters);
     }
 }

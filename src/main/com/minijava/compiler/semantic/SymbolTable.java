@@ -1,7 +1,11 @@
 package com.minijava.compiler.semantic;
 
 import com.minijava.compiler.semantic.entities.Class;
+import com.minijava.compiler.semantic.entities.Method;
+import com.minijava.compiler.semantic.entities.modifiers.Form;
+import com.minijava.compiler.semantic.entities.types.VoidType;
 import com.minijava.compiler.semantic.exceptions.DuplicateClassException;
+import com.minijava.compiler.semantic.exceptions.MainMethodNotFoundException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SymbolTable {
+    private static final String MAIN = "main";
+
     private Map<String, Class> classes = new HashMap<>();
 
     private Class currentClass;
@@ -61,7 +67,7 @@ public class SymbolTable {
     public void checkDeclarations() {
         checkClasses();
 
-        // TODO: main check
+        checkMainExists();
     }
 
     private void checkClasses() {
@@ -71,6 +77,22 @@ public class SymbolTable {
                 .collect(Collectors.toList());
 
         invalidClasses.forEach(aClass -> classes.remove(aClass.getName()));
+    }
+
+    private void checkMainExists() {
+        Method mainMethod = new Method(Form.STATIC, new VoidType(), MAIN);
+
+        boolean mainExists = false;
+        for (Class aClass : classes.values()) {
+            Method method = aClass.getMethod(MAIN);
+            if (mainMethod.equals(method)) {
+                mainExists = true;
+            }
+        }
+
+        if (!mainExists) {
+            throwLater(new MainMethodNotFoundException());
+        }
     }
 
     public void consolidate() {

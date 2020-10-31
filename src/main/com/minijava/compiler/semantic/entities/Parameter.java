@@ -4,6 +4,8 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.entities.types.Type;
 import com.minijava.compiler.semantic.exceptions.ParameterTypeNotFoundException;
 
+import java.util.Objects;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Parameter {
@@ -32,6 +34,19 @@ public class Parameter {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Parameter parameter = (Parameter) o;
+        return type.equals(parameter.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 
     @Override
