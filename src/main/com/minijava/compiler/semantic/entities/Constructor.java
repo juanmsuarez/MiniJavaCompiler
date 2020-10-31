@@ -23,12 +23,6 @@ public class Constructor extends Callable {
         return lexeme;
     }
 
-    public void checkDeclaration() {
-        for (Parameter parameter : parameters) {
-            parameter.checkDeclaration();
-        }
-    }
-
     @Override
     public String toString() {
         return "Constructor{" +

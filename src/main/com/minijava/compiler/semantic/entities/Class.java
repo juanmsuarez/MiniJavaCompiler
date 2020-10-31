@@ -79,46 +79,50 @@ public class Class {
         return currentCallable;
     }
 
-    public void checkDeclaration() { // TODO: throw and delete on first error?
+    public boolean validDeclaration() {
         checkParentExists();
-        checkCyclicInheritance();
+        if (!validInheritanceChain()) {
+            return false;
+        }
 
         checkChildren();
+
+        return true;
     }
 
     private void checkParentExists() {
         if (!symbolTable.contains(parent)) {
             symbolTable.throwLater(new ParentNotFoundException(this, parent));
+            parent = OBJECT;
         }
     }
 
-    private void checkCyclicInheritance() {
+    private boolean validInheritanceChain() {
         Set<String> ancestors = new HashSet<>();
         Class currentClass = this;
 
-        do {
+        do { // go up in chain
             ancestors.add(currentClass.name);
 
             currentClass = symbolTable.get(currentClass.parent);
         } while (currentClass != null && !currentClass.name.equals(OBJECT) && !ancestors.contains(currentClass.name));
 
-        if (currentClass != null && !currentClass.name.equals(OBJECT)) {
+        if (currentClass != null && !currentClass.name.equals(OBJECT)) { // cycle found
             symbolTable.throwLater(new CyclicInheritanceException(currentClass, this));
+            return false;
         }
+
+        return true;
     }
 
     private void checkChildren() {
-        for (Attribute attribute : attributes.values()) {
-            attribute.checkDeclaration();
+        attributes.values().removeIf(attribute -> !attribute.validDeclaration());
+
+        if (constructor != null && !constructor.validDeclaration()) {
+            constructor = null;
         }
 
-        if (constructor != null) {
-            constructor.checkDeclaration();
-        }
-
-        for (Method method : methods.values()) {
-            method.checkDeclaration();
-        }
+        methods.values().removeIf(method -> !method.validDeclaration());
     }
 
     private void consolidate() {

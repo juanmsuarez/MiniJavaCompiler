@@ -28,14 +28,14 @@ public class Method extends Callable {
         return lexeme;
     }
 
-    public void checkDeclaration() {
+    @Override
+    public boolean validDeclaration() {
         if (!type.isDefined()) {
-            symbolTable.throwLater(new MethodTypeNotFoundException(this, type)); // TODO: delete?
+            symbolTable.throwLater(new MethodTypeNotFoundException(this, type));
+            return false;
         }
 
-        for (Parameter parameter : parameters) {
-            parameter.checkDeclaration();
-        }
+        return super.validDeclaration();
     }
 
     @Override

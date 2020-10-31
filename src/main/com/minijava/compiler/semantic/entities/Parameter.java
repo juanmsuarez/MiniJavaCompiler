@@ -25,10 +25,13 @@ public class Parameter {
         return name;
     }
 
-    public void checkDeclaration() {
+    public boolean validDeclaration() {
         if (!type.isDefined()) {
-            symbolTable.throwLater(new ParameterTypeNotFoundException(this, type)); // TODO: delete?
+            symbolTable.throwLater(new ParameterTypeNotFoundException(this, type));
+            return false;
         }
+
+        return true;
     }
 
     @Override

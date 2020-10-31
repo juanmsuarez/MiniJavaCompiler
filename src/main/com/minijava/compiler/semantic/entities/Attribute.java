@@ -31,10 +31,13 @@ public class Attribute {
         return lexeme;
     }
 
-    public void checkDeclaration() {
+    public boolean validDeclaration() {
         if (!type.isDefined()) {
-            symbolTable.throwLater(new AttributeTypeNotFoundException(this, type)); // TODO: delete?
+            symbolTable.throwLater(new AttributeTypeNotFoundException(this, type));
+            return false;
         }
+
+        return true;
     }
 
     @Override

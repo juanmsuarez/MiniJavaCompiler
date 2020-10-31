@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SymbolTable {
     private Map<String, Class> classes = new HashMap<>();
@@ -53,16 +54,23 @@ public class SymbolTable {
         return exceptions;
     }
 
-    public void throwLater(Exception exception) { // TODO: improve name
+    public void throwLater(Exception exception) {
         exceptions.add(exception);
     }
 
     public void checkDeclarations() {
-        for (Class aClass : classes.values()) {
-            aClass.checkDeclaration();
-        }
+        checkClasses();
 
         // TODO: main check
+    }
+
+    private void checkClasses() {
+        List<Class> invalidClasses = classes.values()
+                .stream()
+                .filter(aClass -> !aClass.validDeclaration())
+                .collect(Collectors.toList());
+
+        invalidClasses.forEach(aClass -> classes.remove(aClass.getName()));
     }
 
     public void consolidate() {

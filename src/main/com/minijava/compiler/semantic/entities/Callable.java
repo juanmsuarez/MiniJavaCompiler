@@ -23,4 +23,10 @@ public abstract class Callable {
             symbolTable.throwLater(new DuplicateParameterException(parameter));
         }
     }
+
+    public boolean validDeclaration() {
+        parameters.removeIf(parameter -> !parameter.validDeclaration());
+
+        return true;
+    }
 }

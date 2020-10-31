@@ -1,40 +1,26 @@
-class B {
+class B extends C {
 	public static String x = "asd";
 	private int y = 3;
 
-	static void main(int i, int j, char k, boolean j) {}
+	static int f(C f) {
+
+	}
 }
 
 class A extends B {
 	private static int x = 0, y;
-	public String x;
-	private char c = 'c';
 	private boolean b;
-	public static Clase k;
+	public static C k;
 
-	B(int a, char c, String k) {
-		return;
+	A(C k) {
+
 	}
 
+	static void main(String args) {
 
-	A(Integer i, char i) {
-		
 	}
 
-	A(Integer i) {
-		
-	}
-
-	A(int k, char k) {
+	dynamic C f() {
 
 	}
 }
-
-
-class A extends B {}
-
-class B extends A {}
-
-class C extends C {}
-class D extends C {}
-class E extends D {}

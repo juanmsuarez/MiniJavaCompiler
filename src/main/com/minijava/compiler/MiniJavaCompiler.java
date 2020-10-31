@@ -8,13 +8,9 @@ import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Logger;
-
-import static java.util.logging.Level.INFO;
 
 public class MiniJavaCompiler {
     public static SymbolTable symbolTable;
-    private static final Logger logger = Logger.getLogger(MiniJavaCompiler.class.getName());
 
     private static final String SUCCESS_MESSAGE = "El análisis finalizó: no se encontraron errores.";
     private static final String SUCCESS_CODE = "[SinErrores]";
@@ -40,9 +36,8 @@ public class MiniJavaCompiler {
             boolean syntacticSuccess = syntacticAnalyzer.getExceptions().isEmpty();
 
             if (syntacticSuccess) {
-                logger.log(INFO, symbolTable.toString()); // TODO: remove in final version
-
                 symbolTable.checkDeclarations();
+                System.err.println(symbolTable.toString());
                 symbolTable.consolidate();
                 boolean semanticSuccess = symbolTable.getExceptions().isEmpty();
 
