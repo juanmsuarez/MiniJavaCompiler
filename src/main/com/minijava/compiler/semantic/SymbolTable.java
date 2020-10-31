@@ -2,8 +2,7 @@ package com.minijava.compiler.semantic;
 
 import com.minijava.compiler.semantic.entities.Class;
 import com.minijava.compiler.semantic.entities.Method;
-import com.minijava.compiler.semantic.entities.modifiers.Form;
-import com.minijava.compiler.semantic.entities.types.VoidType;
+import com.minijava.compiler.semantic.entities.PredefinedEntities;
 import com.minijava.compiler.semantic.exceptions.DuplicateClassException;
 import com.minijava.compiler.semantic.exceptions.MainMethodNotFoundException;
 
@@ -13,8 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.minijava.compiler.semantic.entities.PredefinedEntities.MAIN;
+
 public class SymbolTable {
-    private static final String MAIN = "main";
 
     private Map<String, Class> classes = new HashMap<>();
 
@@ -27,7 +27,8 @@ public class SymbolTable {
     }
 
     private void initialize() {
-        // TODO: initialize Object y System
+        add(PredefinedEntities.OBJECT);
+        add(PredefinedEntities.SYSTEM);
     }
 
     public Class get(String className) {
@@ -80,12 +81,10 @@ public class SymbolTable {
     }
 
     private void checkMainExists() {
-        Method mainMethod = new Method(Form.STATIC, new VoidType(), MAIN);
-
         boolean mainExists = false;
         for (Class aClass : classes.values()) {
-            Method method = aClass.getMethod(MAIN);
-            if (mainMethod.equals(method)) {
+            Method method = aClass.getMethod(MAIN.getName());
+            if (MAIN.equals(method)) {
                 mainExists = true;
             }
         }

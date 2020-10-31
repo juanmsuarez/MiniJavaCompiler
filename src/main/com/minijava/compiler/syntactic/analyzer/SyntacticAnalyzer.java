@@ -18,6 +18,7 @@ import java.util.Set;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
+import static com.minijava.compiler.semantic.entities.PredefinedEntities.OBJECT;
 import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
 import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 
@@ -206,7 +207,7 @@ public class SyntacticAnalyzer {
     }
 
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
-        String parentName = Class.OBJECT;
+        String parentName = OBJECT.getName();
 
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();

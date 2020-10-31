@@ -13,10 +13,14 @@ public class Parameter {
     private Lexeme lexeme;
     private String name;
 
-    public Parameter(Type type, Lexeme lexeme) {
+    public Parameter(Type type, String name) {
         this.type = type;
+        this.name = name;
+    }
+
+    public Parameter(Type type, Lexeme lexeme) {
+        this(type, lexeme.getString());
         this.lexeme = lexeme;
-        this.name = lexeme.getString();
     }
 
     public Lexeme getLexeme() {

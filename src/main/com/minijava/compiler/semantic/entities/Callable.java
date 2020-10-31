@@ -10,6 +10,13 @@ public abstract class Callable {
     protected List<Parameter> parameters = new ArrayList<>();
     private Set<String> parameterNames = new HashSet<>();
 
+    public Callable(Parameter... parameters) {
+        for (Parameter parameter : parameters) {
+            this.parameterNames.add(parameter.getName());
+            this.parameters.add(parameter);
+        }
+    }
+
     public void add(Parameter parameter) {
         String parameterName = parameter.getName();
 

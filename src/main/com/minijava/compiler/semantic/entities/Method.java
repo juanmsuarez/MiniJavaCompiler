@@ -15,7 +15,8 @@ public class Method extends Callable {
     private Lexeme lexeme;
     private String name;
 
-    public Method(Form form, Type type, String name) {
+    public Method(Form form, Type type, String name, Parameter... parameters) {
+        super(parameters);
         this.form = form;
         this.type = type;
         this.name = name;

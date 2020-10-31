@@ -9,10 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
+import static com.minijava.compiler.semantic.entities.PredefinedEntities.OBJECT;
 
 public class Class {
-    public static final String OBJECT = "Object";
-
     private Lexeme lexeme;
     private String name;
     private String parent;
@@ -21,6 +20,14 @@ public class Class {
     private Map<String, Method> methods = new HashMap<>();
 
     private Callable currentCallable;
+
+    public Class() {
+    }
+
+    public Class(String name, String parent) {
+        this.name = name;
+        this.parent = parent;
+    }
 
     public Lexeme getLexeme() {
         return lexeme;
@@ -95,9 +102,9 @@ public class Class {
     }
 
     private void checkParentExists() {
-        if (!symbolTable.contains(parent)) {
+        if (!name.equals(OBJECT.name) && !symbolTable.contains(parent)) {
             symbolTable.throwLater(new ParentNotFoundException(this, parent));
-            parent = OBJECT;
+            parent = OBJECT.name;
         }
     }
 
@@ -109,9 +116,9 @@ public class Class {
             ancestors.add(currentClass.name);
 
             currentClass = symbolTable.get(currentClass.parent);
-        } while (currentClass != null && !currentClass.name.equals(OBJECT) && !ancestors.contains(currentClass.name));
+        } while (currentClass != null && !currentClass.name.equals(OBJECT.name) && !ancestors.contains(currentClass.name));
 
-        if (currentClass != null && !currentClass.name.equals(OBJECT)) { // cycle found
+        if (currentClass != null && !currentClass.name.equals(OBJECT.name)) { // cycle found
             symbolTable.throwLater(new CyclicInheritanceException(currentClass, this));
             return false;
         }

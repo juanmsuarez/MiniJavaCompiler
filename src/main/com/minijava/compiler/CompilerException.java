@@ -32,7 +32,7 @@ public abstract class CompilerException extends Exception {
 
     @Override
     public String toString() {
-        if (this.lexeme == null) {
+        if (lexeme == null) {
             return String.format(SHORT_ERROR_DESC, errorType, errorMessage);
         }
 
