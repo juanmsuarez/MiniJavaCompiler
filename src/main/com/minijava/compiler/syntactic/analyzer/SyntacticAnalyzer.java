@@ -216,7 +216,7 @@ public class SyntacticAnalyzer {
             genericTypeOrEmptyNT();
         }
 
-        symbolTable.getCurrentClass().setParent(parentName);
+        symbolTable.getCurrentClass().setParentName(parentName);
     }
 
     private void implementationOrEmptyNT() throws SyntacticException, IOException {

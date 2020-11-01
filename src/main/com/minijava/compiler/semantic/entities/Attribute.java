@@ -6,6 +6,8 @@ import com.minijava.compiler.semantic.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.entities.types.Type;
 import com.minijava.compiler.semantic.exceptions.AttributeTypeNotFoundException;
 
+import java.util.Objects;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Attribute {
@@ -38,6 +40,19 @@ public class Attribute {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Attribute attribute = (Attribute) o;
+        return name.equals(attribute.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override

@@ -14,19 +14,21 @@ import static com.minijava.compiler.semantic.entities.PredefinedEntities.OBJECT;
 public class Class {
     private Lexeme lexeme;
     private String name;
-    private String parent;
+    private String parentName;
     private Constructor constructor;
+    private Map<String, Attribute> hiddenAttributes = new HashMap<>();
     private Map<String, Attribute> attributes = new HashMap<>();
     private Map<String, Method> methods = new HashMap<>();
 
     private Callable currentCallable;
+    private boolean consolidated = false;
 
     public Class() {
     }
 
-    public Class(String name, String parent) {
+    public Class(String name, String parentName) {
         this.name = name;
-        this.parent = parent;
+        this.parentName = parentName;
     }
 
     public Lexeme getLexeme() {
@@ -42,8 +44,8 @@ public class Class {
         return name;
     }
 
-    public void setParent(String parent) {
-        this.parent = parent;
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 
     public Method getMethod(String name) {
@@ -102,9 +104,9 @@ public class Class {
     }
 
     private void checkParentExists() {
-        if (!name.equals(OBJECT.name) && !symbolTable.contains(parent)) {
-            symbolTable.throwLater(new ParentNotFoundException(this, parent));
-            parent = OBJECT.name;
+        if (!name.equals(OBJECT.name) && !symbolTable.contains(parentName)) {
+            symbolTable.throwLater(new ParentNotFoundException(this, parentName));
+            parentName = OBJECT.name;
         }
     }
 
@@ -115,7 +117,7 @@ public class Class {
         do { // go up in chain
             ancestors.add(currentClass.name);
 
-            currentClass = symbolTable.get(currentClass.parent);
+            currentClass = symbolTable.get(currentClass.parentName);
         } while (currentClass != null && !currentClass.name.equals(OBJECT.name) && !ancestors.contains(currentClass.name));
 
         if (currentClass != null && !currentClass.name.equals(OBJECT.name)) { // cycle found
@@ -136,17 +138,60 @@ public class Class {
         methods.values().removeIf(method -> !method.validDeclaration());
     }
 
-    private void consolidate() {
-        // TODO: bring methods from above (redefine)
-        // TODO: bring attributes from above (hide)
+    public void consolidate() {
+        if (consolidated || name.equals(OBJECT.getName())) {
+            return;
+        }
+
+        Class parent = symbolTable.get(parentName);
+        parent.consolidate();
+
+        consolidateAttributes();
+        consolidateMethods();
+
+        consolidated = true;
+    }
+
+    private void consolidateAttributes() {
+        Class parent = symbolTable.get(parentName);
+
+        for (Attribute parentAttribute : parent.attributes.values()) { // TODO: hacemos algo con parent.hiddenAttributes?
+            String parentAttributeName = parentAttribute.getName();
+
+            if (attributes.containsKey(parentAttributeName)) {
+                hiddenAttributes.put(parentAttributeName, parentAttribute);
+            } else {
+                attributes.put(parentAttributeName, parentAttribute);
+            }
+        }
+
+    }
+
+    private void consolidateMethods() {
+        Class parent = symbolTable.get(parentName);
+
+        for (Method parentMethod : parent.methods.values()) {
+            String parentMethodName = parentMethod.getName();
+
+            Method childMethod = methods.get(parentMethodName);
+            if (childMethod != null && !childMethod.equals(parentMethod)) { // remove if it's invalidly redefined
+                symbolTable.throwLater(new InvalidRedefinitionException(childMethod));
+                methods.remove(childMethod.getName());
+            }
+
+            if (!methods.containsKey(parentMethodName)) { // add if not redefined
+                methods.put(parentMethodName, parentMethod);
+            }
+        }
     }
 
     @Override
     public String toString() {
         return "\nClass{" +
                 "name='" + name + '\'' +
-                ", parent='" + parent + '\'' +
+                ", parent='" + parentName + '\'' +
                 ", \nconstructor=" + constructor +
+                ", \nhiddenAttributes=" + hiddenAttributes +
                 ", \nattributes=" + attributes +
                 ", \nmethods=" + methods +
                 '}';

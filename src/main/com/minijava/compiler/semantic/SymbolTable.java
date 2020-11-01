@@ -95,7 +95,7 @@ public class SymbolTable {
     }
 
     public void consolidate() {
-
+        classes.values().forEach(Class::consolidate);
     }
 
     @Override

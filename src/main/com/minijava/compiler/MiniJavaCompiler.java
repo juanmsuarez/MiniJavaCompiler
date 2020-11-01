@@ -37,8 +37,8 @@ public class MiniJavaCompiler {
 
             if (syntacticSuccess) {
                 symbolTable.checkDeclarations();
-                System.err.println(symbolTable.toString());
                 symbolTable.consolidate();
+                System.err.println(symbolTable.toString());
                 boolean semanticSuccess = symbolTable.getExceptions().isEmpty();
 
                 if (semanticSuccess) {
