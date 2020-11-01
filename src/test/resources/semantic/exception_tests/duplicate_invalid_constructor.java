@@ -1,6 +1,12 @@
+class C {
+	B() {}
+}
+
 class B {
 	public static String x = "asd";
 	private int y = 3;
+
+	static void main() {}
 }
 
 class A extends B {
@@ -15,7 +21,7 @@ class A extends B {
 	}
 
 
-	A(Integer i, char i) {
+	A(Integer i, char i, int k) {
 		
 	}
 

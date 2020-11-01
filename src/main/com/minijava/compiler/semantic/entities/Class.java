@@ -129,15 +129,14 @@ public class Class {
     private void checkChildren() {
         attributes.values().removeIf(attribute -> !attribute.validDeclaration());
 
-        if (constructor != null && !constructor.validDeclaration()) {
-            constructor = null;
+        if (constructor == null || !constructor.validDeclaration()) {
+            constructor = new Constructor(name);
         }
 
         methods.values().removeIf(method -> !method.validDeclaration());
     }
 
     private void consolidate() {
-        // TODO: generate constructor
         // TODO: bring methods from above (redefine)
         // TODO: bring attributes from above (hide)
     }
