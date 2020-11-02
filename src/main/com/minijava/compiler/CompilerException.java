@@ -30,15 +30,19 @@ public abstract class CompilerException extends Exception {
         return spacesBeforeLexeme + "^\n";
     }
 
-    @Override
-    public String toString() {
-        if (lexeme == null) {
-            return String.format(SHORT_ERROR_DESC, errorType, errorMessage);
+    private String buildDetailLines() {
+        if (lexeme.getLineNumber() != -1) {
+            return String.format(DETAIL_LINE, lexeme.getLine())
+                    + buildLexemeIndicator();
         }
 
+        return "";
+    }
+
+    @Override
+    public String toString() {
         return String.format(ERROR_DESC, errorType, lexeme.getLineNumber() + 1, errorMessage)
-                + String.format(DETAIL_LINE, lexeme.getLine())
-                + buildLexemeIndicator()
+                + buildDetailLines()
                 + String.format(ERROR_CODE, lexeme, lexeme.getLineNumber() + 1);
     }
 }
