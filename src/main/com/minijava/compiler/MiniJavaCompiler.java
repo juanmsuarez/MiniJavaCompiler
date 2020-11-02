@@ -28,9 +28,9 @@ public class MiniJavaCompiler {
 
         String path = args[0];
         try (FileManager fileManager = new FileManager(path)) {
-            symbolTable = new SymbolTable();
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
             SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
+            symbolTable = new SymbolTable();
 
             syntacticAnalyzer.analyze();
             boolean syntacticSuccess = syntacticAnalyzer.getExceptions().isEmpty();

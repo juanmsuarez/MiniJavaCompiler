@@ -1,55 +1,37 @@
 package com.minijava.compiler.semantic.entities;
 
-import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.exceptions.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.entities.PredefinedEntities.OBJECT;
 
-public class Class {
-    private Lexeme lexeme;
-    private String name;
+public class Class extends Unit {
     private String parentName;
+    private Set<String> interfaceNames = new HashSet<>();
     private Constructor constructor;
     private Map<String, Attribute> hiddenAttributes = new HashMap<>();
     private Map<String, Attribute> attributes = new HashMap<>();
-    private Map<String, Method> methods = new HashMap<>();
-
-    private Callable currentCallable;
-    private boolean consolidated = false;
 
     public Class() {
     }
 
     public Class(String name, String parentName) {
-        this.name = name;
+        super(name);
         this.parentName = parentName;
-    }
-
-    public Lexeme getLexeme() {
-        return lexeme;
-    }
-
-    public void setLexeme(Lexeme lexeme) {
-        this.lexeme = lexeme;
-        this.name = lexeme.getString();
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
 
-    public Method getMethod(String name) {
-        return methods.get(name);
+    public void add(String interfaceName) {
+        if (!interfaceNames.contains(interfaceName)) {
+            interfaceNames.add(interfaceName);
+        } else {
+            symbolTable.throwLater(new DuplicateImplementationException(this, interfaceName));
+        }
     }
 
     public void add(Attribute attribute) {
@@ -76,24 +58,9 @@ public class Class {
         currentCallable = constructor;
     }
 
-    public void add(Method method) {
-        String name = method.getName();
-
-        if (!methods.containsKey(name)) {
-            methods.put(name, method);
-        } else {
-            symbolTable.throwLater(new DuplicateMethodException(method));
-        }
-
-        currentCallable = method;
-    }
-
-    public Callable getCurrentCallable() {
-        return currentCallable;
-    }
-
     public boolean validDeclaration() {
         checkParentExists();
+        checkInterfacesExist(interfaceNames);
         if (!validInheritanceChain()) {
             return false;
         }
@@ -104,10 +71,14 @@ public class Class {
     }
 
     private void checkParentExists() {
-        if (!name.equals(OBJECT.name) && !symbolTable.contains(parentName)) {
+        if (!name.equals(OBJECT.name) && !symbolTable.containsClass(parentName)) {
             symbolTable.throwLater(new ParentNotFoundException(this, parentName));
             parentName = OBJECT.name;
         }
+    }
+
+    protected SemanticException parentOrInterfaceNotFoundException(String interfaceName) {
+        return new InterfaceNotFoundException(this, interfaceName);
     }
 
     private boolean validInheritanceChain() {
@@ -117,11 +88,11 @@ public class Class {
         do { // go up in chain
             ancestors.add(currentClass.name);
 
-            currentClass = symbolTable.get(currentClass.parentName);
+            currentClass = symbolTable.getClass(currentClass.parentName);
         } while (currentClass != null && !currentClass.name.equals(OBJECT.name) && !ancestors.contains(currentClass.name));
 
         if (currentClass != null && !currentClass.name.equals(OBJECT.name)) { // cycle found
-            symbolTable.throwLater(new CyclicInheritanceException(currentClass, this));
+            symbolTable.throwLater(new CyclicInheritanceException(this));
             return false;
         }
 
@@ -135,7 +106,7 @@ public class Class {
             constructor = new Constructor(name);
         }
 
-        methods.values().removeIf(method -> !method.validDeclaration());
+        checkMethods();
     }
 
     public void consolidate() {
@@ -143,17 +114,18 @@ public class Class {
             return;
         }
 
-        Class parent = symbolTable.get(parentName);
+        Class parent = symbolTable.getClass(parentName);
         parent.consolidate();
 
         consolidateAttributes();
         consolidateMethods();
+        checkInterfacesImplemented();
 
         consolidated = true;
     }
 
     private void consolidateAttributes() {
-        Class parent = symbolTable.get(parentName);
+        Class parent = symbolTable.getClass(parentName);
 
         for (Attribute parentAttribute : parent.attributes.values()) { // TODO: hacemos algo con parent.hiddenAttributes?
             String parentAttributeName = parentAttribute.getName();
@@ -164,23 +136,26 @@ public class Class {
                 attributes.put(parentAttributeName, parentAttribute);
             }
         }
-
     }
 
     private void consolidateMethods() {
-        Class parent = symbolTable.get(parentName);
+        Class parent = symbolTable.getClass(parentName);
 
-        for (Method parentMethod : parent.methods.values()) {
-            String parentMethodName = parentMethod.getName();
+        for (Method method : parent.methods.values()) {
+            consolidateMethod(method);
+        }
+    }
 
-            Method childMethod = methods.get(parentMethodName);
-            if (childMethod != null && !childMethod.equals(parentMethod)) { // remove if it's invalidly redefined
-                symbolTable.throwLater(new InvalidRedefinitionException(childMethod));
-                methods.remove(childMethod.getName());
-            }
+    private void checkInterfacesImplemented() {
+        Collection<Method> methodsToImplement = validInterfacesMethods(interfaceNames);
 
-            if (!methods.containsKey(parentMethodName)) { // add if not redefined
-                methods.put(parentMethodName, parentMethod);
+        for (Method methodToImplement : methodsToImplement) {
+            Method implementedMethod = methods.get(methodToImplement.getName());
+
+            if (implementedMethod == null) {
+                symbolTable.throwLater(new NotImplementedException(this, methodToImplement));
+            } else if (!implementedMethod.equals(methodToImplement)) {
+                symbolTable.throwLater(new InvalidImplementationException(this, methodToImplement));
             }
         }
     }
@@ -190,6 +165,7 @@ public class Class {
         return "\nClass{" +
                 "name='" + name + '\'' +
                 ", parent='" + parentName + '\'' +
+                ", interfaceNames='" + interfaceNames + '\'' +
                 ", \nconstructor=" + constructor +
                 ", \nhiddenAttributes=" + hiddenAttributes +
                 ", \nattributes=" + attributes +

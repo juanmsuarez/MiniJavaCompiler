@@ -23,5 +23,9 @@ class C extends B {
 }
 
 class D extends C {
-	static int main(int x) {}
+	static void main(int x) {}
+}
+
+class E extends D {
+	dynamic void main(int x) {}
 }

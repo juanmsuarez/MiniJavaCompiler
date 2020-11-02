@@ -1,15 +1,15 @@
 package com.minijava.compiler.semantic.exceptions;
 
-import com.minijava.compiler.semantic.entities.Class;
+import com.minijava.compiler.semantic.entities.Unit;
 
 public class CyclicInheritanceException extends SemanticException {
-    private static final String ERROR_MESSAGE = "herencia cíclica involucrando al ancestro %s de la clase %s";
+    private static final String ERROR_MESSAGE = "herencia cíclica involucrando a los ancestros de la clase o interfaz %s";
 
-    public CyclicInheritanceException(Class ancestor, Class aClass) {
-        super(aClass.getLexeme(), buildErrorMessage(ancestor.getName(), aClass.getName()));
+    public CyclicInheritanceException(Unit unit) {
+        super(unit.getLexeme(), buildErrorMessage(unit.getName()));
     }
 
-    private static String buildErrorMessage(String ancestorName, String className) {
-        return String.format(ERROR_MESSAGE, ancestorName, className);
+    private static String buildErrorMessage(String unitName) {
+        return String.format(ERROR_MESSAGE, unitName);
     }
 }

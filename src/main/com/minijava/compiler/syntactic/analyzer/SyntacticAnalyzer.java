@@ -169,7 +169,7 @@ public class SyntacticAnalyzer {
 
     private void classNT() throws SyntacticException, IOException {
         Class currentClass = new Class();
-        symbolTable.setCurrentClass(currentClass);
+        symbolTable.setCurrentUnit(currentClass);
 
         try {
             match(CLASS_KW);
@@ -216,7 +216,7 @@ public class SyntacticAnalyzer {
             genericTypeOrEmptyNT();
         }
 
-        symbolTable.getCurrentClass().setParentName(parentName);
+        ((Class) symbolTable.getCurrentUnit()).setParentName(parentName);
     }
 
     private void implementationOrEmptyNT() throws SyntacticException, IOException {
@@ -227,8 +227,9 @@ public class SyntacticAnalyzer {
     }
 
     private void interfaceNamesListNT() throws SyntacticException, IOException {
-        match(CLASS_ID);
+        String interfaceName = match(CLASS_ID).getString();
         genericTypeOrEmptyNT();
+        symbolTable.getCurrentUnit().add(interfaceName);
         interfaceNamesListSuffixOrEmptyNT();
     }
 
@@ -325,7 +326,7 @@ public class SyntacticAnalyzer {
     private void attrsDecListNT(Visibility visibility, Form form, Type type) throws SyntacticException, IOException {
         Lexeme lexeme = match(VAR_MET_ID);
         Attribute attribute = new Attribute(visibility, form, type, lexeme);
-        symbolTable.getCurrentClass().add(attribute);
+        ((Class) symbolTable.getCurrentUnit()).add(attribute);
 
         inlineAssignmentOrEmpty();
         attrsDecListSuffixOrEmptyNT(visibility, form, type);
@@ -349,7 +350,7 @@ public class SyntacticAnalyzer {
         try {
             Lexeme lexeme = match(CLASS_ID);
             Constructor constructor = new Constructor(lexeme);
-            symbolTable.getCurrentClass().add(constructor);
+            ((Class) symbolTable.getCurrentUnit()).add(constructor);
 
             formalArgsNT();
         } catch (SyntacticException exception) {
@@ -385,7 +386,7 @@ public class SyntacticAnalyzer {
     }
 
     private void formalArgNT() throws SyntacticException, IOException {
-        Callable callable = symbolTable.getCurrentClass().getCurrentCallable();
+        Callable callable = symbolTable.getCurrentUnit().getCurrentCallable();
 
         Type type = typeNT();
         Lexeme lexeme = match(VAR_MET_ID);
@@ -408,7 +409,7 @@ public class SyntacticAnalyzer {
         Type type = methodTypeNT();
         Lexeme lexeme = match(VAR_MET_ID);
         Method method = new Method(form, type, lexeme);
-        symbolTable.getCurrentClass().add(method);
+        symbolTable.getCurrentUnit().add(method);
 
         formalArgsNT();
     }
@@ -819,11 +820,19 @@ public class SyntacticAnalyzer {
     }
 
     private void interfaceNT() throws SyntacticException, IOException {
+        Interface currentInterface = new Interface();
+        symbolTable.setCurrentUnit(currentInterface);
+
         try {
             match(INTERFACE_KW);
-            match(CLASS_ID);
+            Lexeme interfaceLexeme = match(CLASS_ID);
+            currentInterface.setLexeme(interfaceLexeme);
+            symbolTable.add(currentInterface);
+
             genericTypeOrEmptyNT();
+
             interfaceInheritanceOrEmptyNT();
+
             match(OPEN_BRACE);
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.CLASS_OR_INTERFACE_SIGNATURE, OPEN_BRACE, Next.INTERFACE_SIGNATURE, exception);

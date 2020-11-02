@@ -1,9 +1,8 @@
 package com.minijava.compiler.semantic;
 
 import com.minijava.compiler.semantic.entities.Class;
-import com.minijava.compiler.semantic.entities.Method;
-import com.minijava.compiler.semantic.entities.PredefinedEntities;
-import com.minijava.compiler.semantic.exceptions.DuplicateClassException;
+import com.minijava.compiler.semantic.entities.*;
+import com.minijava.compiler.semantic.exceptions.DuplicateUnitException;
 import com.minijava.compiler.semantic.exceptions.MainMethodNotFoundException;
 
 import java.util.ArrayList;
@@ -15,10 +14,10 @@ import java.util.stream.Collectors;
 import static com.minijava.compiler.semantic.entities.PredefinedEntities.MAIN;
 
 public class SymbolTable {
-
     private Map<String, Class> classes = new HashMap<>();
+    private Map<String, Interface> interfaces = new HashMap<>();
 
-    private Class currentClass;
+    private Unit currentUnit;
 
     private List<Exception> exceptions = new ArrayList<>();
 
@@ -31,30 +30,50 @@ public class SymbolTable {
         add(PredefinedEntities.SYSTEM);
     }
 
-    public Class get(String className) {
+    public Class getClass(String className) {
         return classes.get(className);
     }
 
-    public boolean contains(String className) {
+    public Interface getInterface(String interfaceName) {
+        return interfaces.get(interfaceName);
+    }
+
+    public boolean contains(String unitName) {
+        return classes.containsKey(unitName) || interfaces.containsKey(unitName);
+    }
+
+    public boolean containsClass(String className) {
         return classes.containsKey(className);
     }
 
-    public void add(Class newClass) { // TODO: interfaces deberían estar acá también
-        String name = newClass.getName();
+    public boolean containsInterface(String interfaceName) {
+        return interfaces.containsKey(interfaceName);
+    }
 
-        if (!classes.containsKey(name)) {
-            classes.put(name, newClass);
+    public void add(Class newClass) {
+        add(classes, newClass);
+    }
+
+    public void add(Interface newInterface) {
+        add(interfaces, newInterface);
+    }
+
+    private <T extends Unit> void add(Map<String, T> unitsMap, T unit) {
+        String name = unit.getName();
+
+        if (!interfaces.containsKey(name) && !classes.containsKey(name)) {
+            unitsMap.put(name, unit);
         } else {
-            exceptions.add(new DuplicateClassException(newClass));
+            exceptions.add(new DuplicateUnitException(unit));
         }
     }
 
-    public Class getCurrentClass() {
-        return currentClass;
+    public Unit getCurrentUnit() {
+        return currentUnit;
     }
 
-    public void setCurrentClass(Class currentClass) {
-        this.currentClass = currentClass;
+    public void setCurrentUnit(Unit currentUnit) {
+        this.currentUnit = currentUnit;
     }
 
     public List<Exception> getExceptions() {
@@ -66,18 +85,19 @@ public class SymbolTable {
     }
 
     public void checkDeclarations() {
-        checkClasses();
+        checkUnits(interfaces);
+        checkUnits(classes);
 
         checkMainExists();
     }
 
-    private void checkClasses() {
-        List<Class> invalidClasses = classes.values()
+    private <T extends Unit> void checkUnits(Map<String, T> unitsMap) {
+        List<T> invalidUnits = unitsMap.values()
                 .stream()
-                .filter(aClass -> !aClass.validDeclaration())
+                .filter(unit -> !unit.validDeclaration())
                 .collect(Collectors.toList());
 
-        invalidClasses.forEach(aClass -> classes.remove(aClass.getName()));
+        invalidUnits.forEach(unit -> unitsMap.remove(unit.getName()));
     }
 
     private void checkMainExists() {
@@ -95,13 +115,19 @@ public class SymbolTable {
     }
 
     public void consolidate() {
-        classes.values().forEach(Class::consolidate);
+        consolidate(interfaces);
+        consolidate(classes);
+    }
+
+    private <T extends Unit> void consolidate(Map<String, T> unitsMap) {
+        unitsMap.values().forEach(T::consolidate);
     }
 
     @Override
     public String toString() {
         return "SymbolTable{" +
                 "classes=" + classes +
+                "interfaces=" + interfaces +
                 '}';
     }
 }
