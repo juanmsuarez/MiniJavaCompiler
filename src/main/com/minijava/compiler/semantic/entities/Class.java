@@ -11,7 +11,7 @@ public class Class extends Unit {
     private String parentName;
     private Set<String> interfaceNames = new HashSet<>();
     private Constructor constructor;
-    private Map<String, Attribute> hiddenAttributes = new HashMap<>();
+    private List<Attribute> hiddenAttributes = new ArrayList<>();
     private Map<String, Attribute> attributes = new HashMap<>();
 
     public Class() {
@@ -127,11 +127,13 @@ public class Class extends Unit {
     private void consolidateAttributes() {
         Class parent = symbolTable.getClass(parentName);
 
-        for (Attribute parentAttribute : parent.attributes.values()) { // TODO: hacemos algo con parent.hiddenAttributes?
+        hiddenAttributes.addAll(parent.hiddenAttributes);
+
+        for (Attribute parentAttribute : parent.attributes.values()) {
             String parentAttributeName = parentAttribute.getName();
 
             if (attributes.containsKey(parentAttributeName)) {
-                hiddenAttributes.put(parentAttributeName, parentAttribute);
+                hiddenAttributes.add(parentAttribute);
             } else {
                 attributes.put(parentAttributeName, parentAttribute);
             }
