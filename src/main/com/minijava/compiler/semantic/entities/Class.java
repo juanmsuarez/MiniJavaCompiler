@@ -1,5 +1,6 @@
 package com.minijava.compiler.semantic.entities;
 
+import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.exceptions.*;
 
 import java.util.*;
@@ -8,7 +9,7 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.entities.PredefinedEntities.OBJECT;
 
 public class Class extends Unit {
-    private String parentName;
+    private ReferenceType parentType;
     private Set<String> interfaceNames = new HashSet<>();
     private Constructor constructor;
     private List<Attribute> hiddenAttributes = new ArrayList<>();
@@ -17,13 +18,17 @@ public class Class extends Unit {
     public Class() {
     }
 
-    public Class(String name, String parentName) {
+    public Class(String name) {
         super(name);
-        this.parentName = parentName;
     }
 
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
+    public Class(String name, String parentName) {
+        super(name);
+        this.parentType = new ReferenceType(parentName, this);
+    }
+
+    public void setParentType(ReferenceType parentType) {
+        this.parentType = parentType;
     }
 
     public void add(String interfaceName) {
@@ -59,6 +64,7 @@ public class Class extends Unit {
     }
 
     public boolean validDeclaration() {
+        // TODO: check generic type not defined?
         checkParentExists();
         checkInterfacesExist(interfaceNames);
         if (!validInheritanceChain()) {
@@ -70,10 +76,16 @@ public class Class extends Unit {
         return true;
     }
 
+    class B<T> {
+    }
+
+    class A extends B<B> {
+    }
+
     private void checkParentExists() {
-        if (!name.equals(OBJECT.name) && !symbolTable.containsClass(parentName)) {
-            symbolTable.throwLater(new ParentNotFoundException(this, parentName));
-            parentName = OBJECT.name;
+        if (!name.equals(OBJECT.name) && !parentType.isGloballyValid()) { // TODO: check parent's generic type
+            symbolTable.throwLater(new InvalidParentTypeException(this, parentType));
+            parentType = new ReferenceType(OBJECT.name, this);
         }
     }
 
@@ -85,11 +97,11 @@ public class Class extends Unit {
         Set<String> ancestors = new HashSet<>();
         Class currentClass = this;
 
-        do { // go up in chain
+        while (currentClass != null && !currentClass.name.equals(OBJECT.name) && !ancestors.contains(currentClass.name)) { // go up in chain
             ancestors.add(currentClass.name);
 
-            currentClass = symbolTable.getClass(currentClass.parentName);
-        } while (currentClass != null && !currentClass.name.equals(OBJECT.name) && !ancestors.contains(currentClass.name));
+            currentClass = symbolTable.getClass(currentClass.parentType.getName());
+        }
 
         if (currentClass != null && !currentClass.name.equals(OBJECT.name)) { // cycle found
             symbolTable.throwLater(new CyclicInheritanceException(this));
@@ -99,7 +111,7 @@ public class Class extends Unit {
         return true;
     }
 
-    private void checkChildren() {
+    private void checkChildren() { // TODO: children's usage of generic type
         attributes.values().removeIf(attribute -> !attribute.validDeclaration());
 
         if (constructor == null || !constructor.validDeclaration()) {
@@ -114,8 +126,8 @@ public class Class extends Unit {
             return;
         }
 
-        Class parent = symbolTable.getClass(parentName);
-        parent.consolidate();
+        Class parent = symbolTable.getClass(parentType.getName());
+        parent.consolidate(); // TODO: instantiate parent methods and attributes (if generic)
 
         consolidateAttributes();
         consolidateMethods();
@@ -125,7 +137,7 @@ public class Class extends Unit {
     }
 
     private void consolidateAttributes() {
-        Class parent = symbolTable.getClass(parentName);
+        Class parent = symbolTable.getClass(parentType.getName());
 
         hiddenAttributes.addAll(parent.hiddenAttributes);
 
@@ -141,7 +153,7 @@ public class Class extends Unit {
     }
 
     private void consolidateMethods() {
-        Class parent = symbolTable.getClass(parentName);
+        Class parent = symbolTable.getClass(parentType.getName());
 
         for (Method method : parent.methods.values()) {
             consolidateMethod(method);
@@ -166,7 +178,8 @@ public class Class extends Unit {
     public String toString() {
         return "\nClass{" +
                 "name='" + name + '\'' +
-                ", parent='" + parentName + '\'' +
+                ", genericType='" + genericType + '\'' +
+                ", parent='" + parentType + '\'' +
                 ", interfaceNames='" + interfaceNames + '\'' +
                 ", \nconstructor=" + constructor +
                 ", \nhiddenAttributes=" + hiddenAttributes +

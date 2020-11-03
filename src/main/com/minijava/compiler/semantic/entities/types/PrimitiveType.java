@@ -5,7 +5,7 @@ public abstract class PrimitiveType extends Type {
         super(name);
     }
 
-    public boolean isDefined() {
+    public boolean isValid() {
         return true;
     }
 }

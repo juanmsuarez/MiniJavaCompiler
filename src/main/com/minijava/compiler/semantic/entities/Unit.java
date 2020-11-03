@@ -14,6 +14,7 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 public abstract class Unit {
     protected Lexeme lexeme;
     protected String name;
+    protected String genericType;
     protected Map<String, Method> methods = new HashMap<>();
 
     protected Callable currentCallable;
@@ -37,6 +38,18 @@ public abstract class Unit {
 
     public String getName() {
         return name;
+    }
+
+    public void setGenericType(String genericType) {
+        this.genericType = genericType;
+    }
+
+    public String getGenericType() {
+        return genericType;
+    }
+
+    public boolean isGeneric() {
+        return genericType != null;
     }
 
     public abstract void add(String interfaceName);

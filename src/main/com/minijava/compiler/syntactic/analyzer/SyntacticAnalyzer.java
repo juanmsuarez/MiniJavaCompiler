@@ -177,7 +177,8 @@ public class SyntacticAnalyzer {
             currentClass.setLexeme(classLexeme);
             symbolTable.add(currentClass);
 
-            genericTypeOrEmptyNT();
+            String genericType = genericTypeOrEmptyNT();
+            symbolTable.getCurrentUnit().setGenericType(genericType);
 
             inheritanceOrEmptyNT();
 
@@ -198,25 +199,31 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void genericTypeOrEmptyNT() throws SyntacticException, IOException {
+    private String genericTypeOrEmptyNT() throws SyntacticException, IOException {
+        String genericType = null;
+
         if (canMatch(LESS)) {
             matchCurrent();
-            match(CLASS_ID);
+            genericType = match(CLASS_ID).getString();
             match(GREATER);
         }
+
+        return genericType;
     }
 
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
-        String parentName = OBJECT.getName();
+        ReferenceType parentType = new ReferenceType(OBJECT.getName(), symbolTable.getCurrentUnit());
 
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
-            parentName = match(CLASS_ID).getString();
+            String parentName = match(CLASS_ID).getString();
+            parentType.setName(parentName);
 
-            genericTypeOrEmptyNT();
+            String genericType = genericTypeOrEmptyNT();
+            parentType.setGenericType(genericType);
         }
 
-        ((Class) symbolTable.getCurrentUnit()).setParentName(parentName);
+        ((Class) symbolTable.getCurrentUnit()).setParentType(parentType);
     }
 
     private void implementationOrEmptyNT() throws SyntacticException, IOException {
@@ -298,8 +305,8 @@ public class SyntacticAnalyzer {
             return primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
             String typeName = matchCurrent().getString();
-            genericTypeOrEmptyNT();
-            return new ReferenceType(typeName);
+            String genericType = genericTypeOrEmptyNT();
+            return new ReferenceType(typeName, genericType, symbolTable.getCurrentUnit());
         } else {
             throw buildException(TYPE);
         }

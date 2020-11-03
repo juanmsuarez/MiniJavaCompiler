@@ -30,6 +30,14 @@ public class SymbolTable {
         add(PredefinedEntities.SYSTEM);
     }
 
+    public Unit get(String name) {
+        if (classes.containsKey(name)) {
+            return classes.get(name);
+        } else {
+            return interfaces.getOrDefault(name, null);
+        }
+    }
+
     public Class getClass(String className) {
         return classes.get(className);
     }

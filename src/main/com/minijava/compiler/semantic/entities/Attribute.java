@@ -3,8 +3,9 @@ package com.minijava.compiler.semantic.entities;
 import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.entities.modifiers.Visibility;
+import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.entities.types.Type;
-import com.minijava.compiler.semantic.exceptions.AttributeTypeNotFoundException;
+import com.minijava.compiler.semantic.exceptions.InvalidAttributeTypeException;
 
 import java.util.Objects;
 
@@ -34,8 +35,8 @@ public class Attribute {
     }
 
     public boolean validDeclaration() {
-        if (!type.isDefined()) {
-            symbolTable.throwLater(new AttributeTypeNotFoundException(this, type));
+        if (!type.isValid()) {
+            symbolTable.throwLater(new InvalidAttributeTypeException(this, (ReferenceType) type));
             return false;
         }
 

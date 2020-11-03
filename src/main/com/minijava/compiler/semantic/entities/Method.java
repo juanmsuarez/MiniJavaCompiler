@@ -2,8 +2,9 @@ package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.entities.modifiers.Form;
+import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.entities.types.Type;
-import com.minijava.compiler.semantic.exceptions.MethodTypeNotFoundException;
+import com.minijava.compiler.semantic.exceptions.InvalidMethodTypeException;
 
 import java.util.Objects;
 
@@ -37,8 +38,8 @@ public class Method extends Callable {
 
     @Override
     public boolean validDeclaration() {
-        if (!type.isDefined()) {
-            symbolTable.throwLater(new MethodTypeNotFoundException(this, type));
+        if (!type.isValid()) {
+            symbolTable.throwLater(new InvalidMethodTypeException(this, (ReferenceType) type));
             return false;
         }
 

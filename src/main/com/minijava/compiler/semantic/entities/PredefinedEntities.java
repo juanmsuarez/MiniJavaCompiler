@@ -4,7 +4,7 @@ import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.entities.types.*;
 
 public class PredefinedEntities {
-    public static final Class OBJECT = new Class("Object", null) {{
+    public static final Class OBJECT = new Class("Object") {{
         add(new Constructor("Object"));
     }};
 

@@ -1,8 +1,9 @@
 package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.lexical.analyzer.Lexeme;
+import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.entities.types.Type;
-import com.minijava.compiler.semantic.exceptions.ParameterTypeNotFoundException;
+import com.minijava.compiler.semantic.exceptions.InvalidParameterTypeException;
 
 import java.util.Objects;
 
@@ -32,8 +33,8 @@ public class Parameter {
     }
 
     public boolean validDeclaration() {
-        if (!type.isDefined()) {
-            symbolTable.throwLater(new ParameterTypeNotFoundException(this, type));
+        if (!type.isValid()) {
+            symbolTable.throwLater(new InvalidParameterTypeException(this, (ReferenceType) type));
             return false;
         }
 

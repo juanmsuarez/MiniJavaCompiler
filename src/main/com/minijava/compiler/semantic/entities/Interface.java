@@ -1,8 +1,9 @@
 package com.minijava.compiler.semantic.entities;
 
+import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.exceptions.CyclicInheritanceException;
 import com.minijava.compiler.semantic.exceptions.DuplicateParentException;
-import com.minijava.compiler.semantic.exceptions.ParentNotFoundException;
+import com.minijava.compiler.semantic.exceptions.InvalidParentTypeException;
 import com.minijava.compiler.semantic.exceptions.SemanticException;
 
 import java.util.Collection;
@@ -36,7 +37,7 @@ public class Interface extends Unit {
 
     @Override
     protected SemanticException parentOrInterfaceNotFoundException(String interfaceName) {
-        return new ParentNotFoundException(this, interfaceName);
+        return new InvalidParentTypeException(this, new ReferenceType(interfaceName, this));
     }
 
     private boolean hasCycles(Interface currentInterface, Set<String> visited, Set<String> visiting) {

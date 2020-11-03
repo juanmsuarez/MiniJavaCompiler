@@ -7,7 +7,7 @@ public class VoidType extends Type {
         super(VOID);
     }
 
-    public boolean isDefined() {
+    public boolean isValid() {
         return true;
     }
 }
