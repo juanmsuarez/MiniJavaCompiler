@@ -26,5 +26,5 @@ public class PredefinedEntities {
         add(new Method(Form.STATIC, new VoidType(), "printSln", new Parameter(new StringType(), "s")));
     }};
 
-    public static final Method MAIN = new Method(Form.STATIC, new VoidType(), "main"); // TODO: era static void main no?
+    public static final Method MAIN = new Method(Form.STATIC, new VoidType(), "main");
 }

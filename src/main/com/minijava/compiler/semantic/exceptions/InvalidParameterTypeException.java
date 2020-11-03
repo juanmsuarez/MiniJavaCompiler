@@ -4,8 +4,8 @@ import com.minijava.compiler.semantic.entities.Parameter;
 import com.minijava.compiler.semantic.entities.types.ReferenceType;
 
 public class InvalidParameterTypeException extends SemanticException {
-    private static final String ERROR_MESSAGE = "el parámetro %s es de tipo inválido %s (no fue declarado, o no cumple reglas de genericidad)";
-    private static final String GENERIC_ERROR_MESSAGE = "el parámetro %s es de tipo inválido %s<%s> (no fue declarado, o no cumple reglas de genericidad)";
+    private static final String ERROR_MESSAGE = "el parámetro %s es de tipo inválido %s (no fue declarado o no cumple reglas de genericidad)";
+    private static final String GENERIC_ERROR_MESSAGE = "el parámetro %s es de tipo inválido %s<%s> (no fue declarado o no cumple reglas de genericidad)";
 
     public InvalidParameterTypeException(Parameter parameter, ReferenceType type) {
         super(parameter.getLexeme(), buildErrorMessage(parameter.getName(), type));

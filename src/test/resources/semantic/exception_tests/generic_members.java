@@ -9,8 +9,8 @@ class A<K> {
 	private static B<A> z;
 
 	private static K x;
-	static K f() {}
-	static void f(K x) {}
+	static K h1() {}
+	static void h2(K x) {}
 
 	dynamic void f1(K p1, T p2, B p3, B<K> p4, B<B> p5) {}
 	dynamic void f2(Integer<B> p1, Integer<Integer> p2) {}

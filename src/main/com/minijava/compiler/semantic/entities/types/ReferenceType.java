@@ -1,6 +1,7 @@
 package com.minijava.compiler.semantic.entities.types;
 
 import com.minijava.compiler.semantic.entities.Unit;
+import com.minijava.compiler.semantic.entities.modifiers.Form;
 
 import java.util.Objects;
 
@@ -9,16 +10,19 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 public class ReferenceType extends Type {
     private String genericType;
     private Unit context;
+    private Form accessForm;
 
-    public ReferenceType(String name, Unit context) {
+    public ReferenceType(String name, Unit context, Form accessForm) {
         super(name);
         this.context = context;
+        this.accessForm = accessForm;
     }
 
-    public ReferenceType(String name, String genericType, Unit context) {
+    public ReferenceType(String name, String genericType, Unit context, Form accessForm) {
         super(name);
         this.genericType = genericType;
         this.context = context;
+        this.accessForm = accessForm;
     }
 
     public void setGenericType(String genericType) {
@@ -29,19 +33,23 @@ public class ReferenceType extends Type {
         return genericType;
     }
 
+    public boolean isValidParentClass() {
+        return symbolTable.containsClass(name) && isTypeParameterValid();
+    }
+
     public boolean isValid() {
         if (name.equals(context.getGenericType())) { // type parameter
-            return genericType == null;
+            return genericType == null && accessForm.equals(Form.DYNAMIC);
         } else { // global type
             return isGloballyValid();
         }
     }
 
-    public boolean isGloballyValid() { // for types defined globally
+    private boolean isGloballyValid() { // for types defined globally
         return symbolTable.contains(name) && isTypeParameterValid();
     }
 
-    private boolean isTypeParameterValid() {
+    public boolean isTypeParameterValid() {
         Unit typeUnitReference = symbolTable.get(name);
 
         if (typeUnitReference.isGeneric()) {
@@ -52,7 +60,8 @@ public class ReferenceType extends Type {
     }
 
     private boolean isParameterTypeDefined() {
-        return genericType.equals(context.getGenericType()) || (symbolTable.contains(genericType) && !symbolTable.get(genericType).isGeneric());
+        return (genericType.equals(context.getGenericType()) && accessForm.equals(Form.DYNAMIC))
+                || (symbolTable.contains(genericType) && !symbolTable.get(genericType).isGeneric());
     }
 
     @Override
@@ -61,9 +70,9 @@ public class ReferenceType extends Type {
             String contextType = context.getGenericType();
 
             if (name.equals(contextType)) {
-                return new ReferenceType(newType, context);
+                return new ReferenceType(newType, context, accessForm);
             } else if (genericType != null && genericType.equals(contextType)) {
-                return new ReferenceType(name, newType, context);
+                return new ReferenceType(name, newType, context, accessForm);
             }
         }
 

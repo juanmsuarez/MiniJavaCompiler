@@ -4,8 +4,8 @@ import com.minijava.compiler.semantic.entities.Unit;
 import com.minijava.compiler.semantic.entities.types.ReferenceType;
 
 public class InvalidParentTypeException extends SemanticException {
-    private static final String ERROR_MESSAGE = "la clase o interfaz %s hereda de un tipo inválido %s (no fue declarado, o no cumple reglas de genericidad)";
-    private static final String GENERIC_ERROR_MESSAGE = "la clase o interfaz %s hereda de un tipo inválido %s<%s> (no fue declarado, o no cumple reglas de genericidad)";
+    private static final String ERROR_MESSAGE = "la clase o interfaz %s hereda de un tipo inválido %s (no fue declarado o no cumple reglas de genericidad)";
+    private static final String GENERIC_ERROR_MESSAGE = "la clase o interfaz %s hereda de un tipo inválido %s<%s> (no fue declarado o no cumple reglas de genericidad)";
 
     public InvalidParentTypeException(Unit unit, ReferenceType parentType) {
         super(unit.getLexeme(), buildErrorMessage(unit.getName(), parentType));

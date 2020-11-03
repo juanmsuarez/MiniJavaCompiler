@@ -4,8 +4,8 @@ import com.minijava.compiler.semantic.entities.Attribute;
 import com.minijava.compiler.semantic.entities.types.ReferenceType;
 
 public class InvalidAttributeTypeException extends SemanticException {
-    private static final String ERROR_MESSAGE = "el atributo %s es de tipo inválido %s (no fue declarado, o no cumple reglas de genericidad)";
-    private static final String GENERIC_ERROR_MESSAGE = "el atributo %s es de tipo inválido %s<%s> (no fue declarado, o no cumple reglas de genericidad)";
+    private static final String ERROR_MESSAGE = "el atributo %s es de tipo inválido %s (no fue declarado o no cumple reglas de genericidad)";
+    private static final String GENERIC_ERROR_MESSAGE = "el atributo %s es de tipo inválido %s<%s> (no fue declarado o no cumple reglas de genericidad)";
 
     public InvalidAttributeTypeException(Attribute attribute, ReferenceType type) {
         super(attribute.getLexeme(), buildErrorMessage(attribute.getName(), type));

@@ -1,5 +1,6 @@
 package com.minijava.compiler.semantic.entities;
 
+import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.exceptions.*;
 
@@ -24,7 +25,7 @@ public class Class extends Unit {
 
     public Class(String name, String parentName) {
         super(name);
-        this.parentType = new ReferenceType(parentName, this);
+        this.parentType = new ReferenceType(parentName, this, Form.DYNAMIC);
     }
 
     public void setParentType(ReferenceType parentType) {
@@ -76,9 +77,9 @@ public class Class extends Unit {
     }
 
     private void checkParentExists() {
-        if (!name.equals(OBJECT.name) && !parentType.isGloballyValid()) {
+        if (!name.equals(OBJECT.name) && !parentType.isValidParentClass()) {
             symbolTable.throwLater(new InvalidParentTypeException(this, parentType));
-            parentType = new ReferenceType(OBJECT.name, this);
+            parentType = new ReferenceType(OBJECT.name, this, Form.DYNAMIC);
         }
     }
 
@@ -120,7 +121,7 @@ public class Class extends Unit {
         }
 
         Class parent = symbolTable.getClass(parentType.getName());
-        parent.consolidate(); // TODO: instantiate parent methods and attributes (if generic)
+        parent.consolidate();
 
         consolidateAttributes();
         consolidateMethods();
@@ -134,7 +135,7 @@ public class Class extends Unit {
 
         hiddenAttributes.addAll(parent.hiddenAttributes);
 
-        for (Attribute parentAttribute : parent.attributes.values()) { // TODO: no hay tratamiento especial para los static no?
+        for (Attribute parentAttribute : parent.attributes.values()) {
             String parentAttributeName = parentAttribute.getName();
 
             if (attributes.containsKey(parentAttributeName)) {

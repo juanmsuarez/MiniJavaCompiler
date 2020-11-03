@@ -1,26 +1,67 @@
-class B<K> {}
+class G0<T> {
+	public static T x; // invalid
+	static T f() {} // invalid
+	static void g(T x) {} // invalid
+}
+
+class G1<T> {
+	dynamic void f(T x) {}
+	dynamic void g(T x) {}
+	dynamic void h(Y x) {}
+	dynamic void i(T x) {}
+}
+	
+class G2<K> extends G1<K> {
+	dynamic void f(K x) {} // valid
+	dynamic void g(X x) {} // not valid
+	dynamic void h(K x) {} // not valid
+	// inherits i
+}
+
+class G3<T> {
+	dynamic void f(G1<T> x) {}
+	dynamic void g(G1<T> x) {}
+}
+
+class G4<K> extends G3<K> {
+	dynamic void f(G1<K> x) {} // valid
+	dynamic void g(G1<X> x) {} // not valid
+}
+
+class A {
+	dynamic void f(G1<X> x) {}
+	dynamic void g(G1<X> x) {}
+	dynamic void h(G1<X> x) {}
+	dynamic void i(X x) {}
+	dynamic void j(G1<X> x) {}
+	dynamic void k(G1<X> x) {}
+}
+
+class B extends A {
+	dynamic void f(G1<X> y) {} // valid
+	dynamic void g(G1<Y> y) {} // not valid
+	dynamic void h(G2<X> x) {} // not valid
+	dynamic void i(G1<X> x) {} // not valid
+	dynamic void j(X x) {} // not valid
+	// inherits k
+}
+
+class X {}
+class Y {}
+
+////////////////////////////
+
+
 class Integer {}
 
-class A<K> {
-	public K x1;
-	private T x2;
+class Q<T> {
+	dynamic void f(T x) {}
+}
 
-	private B<B> y;
-	private static B<A> z;
+class W<K> extends Q<K> {
+	// inherits f(K...
+}
 
-	private static K x;
-	static K f() {}
-	static void f(K x) {}
-
-	dynamic void f1(K p1, T p2, B p3, B<K> p4, B<B> p5) {}
-	dynamic void f2(Integer<B> p1, Integer<Integer> p2) {}
-	dynamic void f3(K<Integer> p1, B<Integer> p2) {}
-
-	dynamic K g1() {}
-	dynamic T g2() {}
-	dynamic B g3() {}
-	dynamic B<K> g4() {}
-	dynamic B<B> g5() {}	
-	dynamic B<A> g6() {}	
-	dynamic B<Integer> g7() {} 	
+class E extends W<Integer> {
+	dynamic void f(Integer x) {} // valid
 }

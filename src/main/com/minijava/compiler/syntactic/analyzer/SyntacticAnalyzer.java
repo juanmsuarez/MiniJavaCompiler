@@ -212,7 +212,7 @@ public class SyntacticAnalyzer {
     }
 
     private void inheritanceOrEmptyNT() throws SyntacticException, IOException {
-        ReferenceType parentType = new ReferenceType(OBJECT.getName(), symbolTable.getCurrentUnit());
+        ReferenceType parentType = new ReferenceType(OBJECT.getName(), symbolTable.getCurrentUnit(), Form.DYNAMIC);
 
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
@@ -270,6 +270,7 @@ public class SyntacticAnalyzer {
         try {
             Visibility visibility = visibilityNT();
             Form form = staticOrEmpty();
+            symbolTable.setCurrentAccessForm(form);
             Type type = typeNT();
             attrsDecListNT(visibility, form, type);
             match(SEMICOLON);
@@ -306,7 +307,7 @@ public class SyntacticAnalyzer {
         } else if (canMatch(CLASS_ID)) {
             String typeName = matchCurrent().getString();
             String genericType = genericTypeOrEmptyNT();
-            return new ReferenceType(typeName, genericType, symbolTable.getCurrentUnit());
+            return new ReferenceType(typeName, genericType, symbolTable.getCurrentUnit(), symbolTable.getCurrentAccessForm());
         } else {
             throw buildException(TYPE);
         }
@@ -358,6 +359,7 @@ public class SyntacticAnalyzer {
             Lexeme lexeme = match(CLASS_ID);
             Constructor constructor = new Constructor(lexeme);
             ((Class) symbolTable.getCurrentUnit()).add(constructor);
+            symbolTable.setCurrentAccessForm(Form.DYNAMIC);
 
             formalArgsNT();
         } catch (SyntacticException exception) {
@@ -413,6 +415,7 @@ public class SyntacticAnalyzer {
 
     private void methodSignatureNT() throws SyntacticException, IOException {
         Form form = methodFormNT();
+        symbolTable.setCurrentAccessForm(form);
         Type type = methodTypeNT();
         Lexeme lexeme = match(VAR_MET_ID);
         Method method = new Method(form, type, lexeme);

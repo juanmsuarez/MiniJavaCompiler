@@ -2,6 +2,7 @@ package com.minijava.compiler.semantic;
 
 import com.minijava.compiler.semantic.entities.Class;
 import com.minijava.compiler.semantic.entities.*;
+import com.minijava.compiler.semantic.entities.modifiers.Form;
 import com.minijava.compiler.semantic.exceptions.DuplicateUnitException;
 import com.minijava.compiler.semantic.exceptions.MainMethodNotFoundException;
 
@@ -18,6 +19,7 @@ public class SymbolTable {
     private Map<String, Interface> interfaces = new HashMap<>();
 
     private Unit currentUnit;
+    private Form currentAccessForm;
 
     private List<Exception> exceptions = new ArrayList<>();
 
@@ -82,6 +84,14 @@ public class SymbolTable {
 
     public void setCurrentUnit(Unit currentUnit) {
         this.currentUnit = currentUnit;
+    }
+
+    public Form getCurrentAccessForm() {
+        return currentAccessForm;
+    }
+
+    public void setCurrentAccessForm(Form currentAccessForm) {
+        this.currentAccessForm = currentAccessForm;
     }
 
     public List<Exception> getExceptions() {
