@@ -46,6 +46,16 @@ public class Method extends Callable {
         return super.validDeclaration();
     }
 
+    public Method instantiate(String newType) {
+        Method instantiatedMethod = new Method(form, type.instantiate(newType), lexeme);
+
+        for (Parameter parameter : parameters) {
+            instantiatedMethod.add(parameter.instantiate(newType));
+        }
+
+        return instantiatedMethod;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

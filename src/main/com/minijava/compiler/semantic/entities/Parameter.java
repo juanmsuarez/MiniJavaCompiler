@@ -41,6 +41,10 @@ public class Parameter {
         return true;
     }
 
+    public Parameter instantiate(String newType) {
+        return new Parameter(type.instantiate(newType), lexeme);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

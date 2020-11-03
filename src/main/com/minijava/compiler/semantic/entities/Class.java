@@ -64,7 +64,6 @@ public class Class extends Unit {
     }
 
     public boolean validDeclaration() {
-        // TODO: check generic type not defined?
         checkParentExists();
         checkInterfacesExist(interfaceNames);
         if (!validInheritanceChain()) {
@@ -76,14 +75,8 @@ public class Class extends Unit {
         return true;
     }
 
-    class B<T> {
-    }
-
-    class A extends B<B> {
-    }
-
     private void checkParentExists() {
-        if (!name.equals(OBJECT.name) && !parentType.isGloballyValid()) { // TODO: check parent's generic type
+        if (!name.equals(OBJECT.name) && !parentType.isGloballyValid()) {
             symbolTable.throwLater(new InvalidParentTypeException(this, parentType));
             parentType = new ReferenceType(OBJECT.name, this);
         }
@@ -111,7 +104,7 @@ public class Class extends Unit {
         return true;
     }
 
-    private void checkChildren() { // TODO: children's usage of generic type
+    private void checkChildren() {
         attributes.values().removeIf(attribute -> !attribute.validDeclaration());
 
         if (constructor == null || !constructor.validDeclaration()) {
@@ -141,7 +134,7 @@ public class Class extends Unit {
 
         hiddenAttributes.addAll(parent.hiddenAttributes);
 
-        for (Attribute parentAttribute : parent.attributes.values()) {
+        for (Attribute parentAttribute : parent.attributes.values()) { // TODO: no hay tratamiento especial para los static no?
             String parentAttributeName = parentAttribute.getName();
 
             if (attributes.containsKey(parentAttributeName)) {
@@ -156,7 +149,7 @@ public class Class extends Unit {
         Class parent = symbolTable.getClass(parentType.getName());
 
         for (Method method : parent.methods.values()) {
-            consolidateMethod(method);
+            consolidateMethod(method, parentType.getGenericType());
         }
     }
 

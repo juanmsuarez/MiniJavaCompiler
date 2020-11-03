@@ -120,11 +120,12 @@ public abstract class Unit {
         return interfacesMethods.values();
     }
 
-    protected void consolidateMethod(Method parentMethod) {
+    protected void consolidateMethod(Method parentMethod, String parentGenericType) {
         String parentMethodName = parentMethod.getName();
+        Method instantiatedParentMethod = parentMethod.instantiate(parentGenericType);
 
         Method childMethod = methods.get(parentMethodName);
-        if (childMethod != null && !childMethod.equals(parentMethod)) { // remove if it's invalidly redefined
+        if (childMethod != null && !childMethod.equals(instantiatedParentMethod)) { // remove if it's invalidly redefined
             symbolTable.throwLater(new InvalidRedefinitionException(childMethod));
             methods.remove(childMethod.getName());
         }

@@ -10,4 +10,9 @@ public class VoidType extends Type {
     public boolean isValid() {
         return true;
     }
+
+    @Override
+    public Type instantiate(String newType) {
+        return this;
+    }
 }

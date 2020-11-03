@@ -8,4 +8,9 @@ public abstract class PrimitiveType extends Type {
     public boolean isValid() {
         return true;
     }
+
+    @Override
+    public Type instantiate(String newType) {
+        return this;
+    }
 }

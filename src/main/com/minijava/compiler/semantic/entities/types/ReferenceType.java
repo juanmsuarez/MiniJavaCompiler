@@ -2,6 +2,8 @@ package com.minijava.compiler.semantic.entities.types;
 
 import com.minijava.compiler.semantic.entities.Unit;
 
+import java.util.Objects;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class ReferenceType extends Type {
@@ -53,7 +55,34 @@ public class ReferenceType extends Type {
         return genericType.equals(context.getGenericType()) || (symbolTable.contains(genericType) && !symbolTable.get(genericType).isGeneric());
     }
 
-    // TODO: redefine equals
+    @Override
+    public Type instantiate(String newType) {
+        if (context.isGeneric()) {
+            String contextType = context.getGenericType();
+
+            if (name.equals(contextType)) {
+                return new ReferenceType(newType, context);
+            } else if (genericType != null && genericType.equals(contextType)) {
+                return new ReferenceType(name, newType, context);
+            }
+        }
+
+        return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        ReferenceType that = (ReferenceType) o;
+        return Objects.equals(genericType, that.genericType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), genericType);
+    }
 
     @Override
     public String toString() {

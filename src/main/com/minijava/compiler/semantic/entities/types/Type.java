@@ -24,6 +24,8 @@ public abstract class Type {
 
     public abstract boolean isValid();
 
+    public abstract Type instantiate(String newType);
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

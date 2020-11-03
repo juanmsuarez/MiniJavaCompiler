@@ -93,7 +93,7 @@ public class Interface extends Unit {
         Collection<Method> inheritedMethods = validInterfacesMethods(parentNames);
 
         for (Method inheritedMethod : inheritedMethods) {
-            consolidateMethod(inheritedMethod);
+            consolidateMethod(inheritedMethod, null);
         }
     }
 
