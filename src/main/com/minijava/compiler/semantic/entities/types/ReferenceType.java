@@ -34,7 +34,7 @@ public class ReferenceType extends Type {
     }
 
     public boolean isValidParentClass() {
-        return symbolTable.containsClass(name) && isTypeParameterValid();
+        return symbolTable.containsClass(name) && isTypeArgumentValid();
     }
 
     public boolean isValid() {
@@ -46,10 +46,10 @@ public class ReferenceType extends Type {
     }
 
     private boolean isGloballyValid() { // for types defined globally
-        return symbolTable.contains(name) && isTypeParameterValid();
+        return symbolTable.contains(name) && isTypeArgumentValid();
     }
 
-    public boolean isTypeParameterValid() {
+    private boolean isTypeArgumentValid() {
         Unit typeUnitReference = symbolTable.get(name);
 
         if (typeUnitReference.isGeneric()) {

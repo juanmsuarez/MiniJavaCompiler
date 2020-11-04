@@ -157,7 +157,7 @@ public class Class extends Unit {
     private void checkInterfacesImplemented() {
         Collection<Method> methodsToImplement = validInterfacesMethods(interfaceNames);
 
-        for (Method methodToImplement : methodsToImplement) {
+        for (Method methodToImplement : methodsToImplement) { // non-implemented methods aren't fixed (for now)
             Method implementedMethod = methods.get(methodToImplement.getName());
 
             if (implementedMethod == null) {
