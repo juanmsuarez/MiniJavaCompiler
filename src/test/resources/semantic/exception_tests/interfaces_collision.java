@@ -1,3 +1,5 @@
+class Main { static void main() {} }
+
 interface A {
 	static void f();
 }
@@ -10,9 +12,15 @@ interface C {
 interface D extends B {
 }
 
-class E implements A, B {}
-class F implements A, C {}
-class G implements A, D {}
+class E implements A, B {
+	static void f() {}
+}
+class F implements A, C {
+	static void f() {}
+}
+class G implements A, D {
+	static void f() {}
+}
 
 interface H extends A, B {}
 interface I extends A, C {}

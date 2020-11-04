@@ -163,7 +163,7 @@ public class Class extends Unit {
             if (implementedMethod == null) {
                 symbolTable.throwLater(new NotImplementedException(this, methodToImplement));
             } else if (!implementedMethod.equals(methodToImplement)) {
-                symbolTable.throwLater(new InvalidImplementationException(this, methodToImplement));
+                symbolTable.throwLater(new InvalidImplementationException(methodToImplement));
             }
         }
     }

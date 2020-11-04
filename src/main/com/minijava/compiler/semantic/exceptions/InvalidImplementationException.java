@@ -1,16 +1,15 @@
 package com.minijava.compiler.semantic.exceptions;
 
-import com.minijava.compiler.semantic.entities.Class;
 import com.minijava.compiler.semantic.entities.Method;
 
 public class InvalidImplementationException extends SemanticException {
-    private static final String ERROR_MESSAGE = "la clase %s no implementa correctamente el método %s definido en una de sus interfaces";
+    private static final String ERROR_MESSAGE = "el método %s tiene el mismo nombre que el método de una de sus interfaces pero difiere en su signatura";
 
-    public InvalidImplementationException(Class aClass, Method method) {
-        super(aClass.getLexeme(), buildErrorMessage(aClass.getName(), method.getName()));
+    public InvalidImplementationException(Method method) {
+        super(method.getLexeme(), buildErrorMessage(method.getName()));
     }
 
-    private static String buildErrorMessage(String className, String methodName) {
-        return String.format(ERROR_MESSAGE, className, methodName);
+    private static String buildErrorMessage(String methodName) {
+        return String.format(ERROR_MESSAGE, methodName);
     }
 }

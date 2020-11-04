@@ -1,3 +1,7 @@
+class Main {
+	static void main() {}
+}
+
 class B extends C {
 	public static String x = "asd";
 	private int y = 3;

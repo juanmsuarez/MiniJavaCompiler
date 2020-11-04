@@ -1,3 +1,5 @@
+class Main { static void main() {} }
+
 interface A extends B, C {}
 interface B extends D {}
 interface C extends D, E {}

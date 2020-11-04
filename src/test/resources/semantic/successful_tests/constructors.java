@@ -2,22 +2,14 @@ class Main {
 	static void main() {}
 }
 
-class Object {}
-
-class System {}
-
 class A {
-
+	A() {}
 }
 
 class B {
-
+	B(int x) {}
 }
 
 class C {
-
-}
-
-class A {
-
+	C(char c, boolean k, Object o) {}
 }

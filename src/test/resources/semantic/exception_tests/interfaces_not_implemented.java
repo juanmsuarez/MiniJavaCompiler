@@ -1,3 +1,5 @@
+class Main { static void main() {} }
+
 interface A {
 	static void f(int x);
 	static void g(int y);

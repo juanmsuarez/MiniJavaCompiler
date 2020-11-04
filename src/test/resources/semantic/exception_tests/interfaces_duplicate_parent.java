@@ -1,3 +1,5 @@
+class Main { static void main() {} }
+
 interface C {}
 
 interface B {}

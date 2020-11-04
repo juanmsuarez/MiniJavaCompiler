@@ -10,22 +10,18 @@ class A {
 class B extends A {
 	public char x;
 
-	dynamic void main() {}
 	static String f(int y, char x) {}
 }
 
 class C extends B {
 	private char x;
 	private char y;
-
-	static int main() {}
-	static String f(int y, String x) {}
 }
 
 class D extends C {
-	static void main(int x) {}
+	dynamic void h() {}
 }
 
 class E extends D {
-	dynamic void main(int x) {}
+	static String f(int a, char b) {}
 }

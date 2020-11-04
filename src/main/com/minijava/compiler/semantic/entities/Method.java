@@ -47,7 +47,7 @@ public class Method extends Callable {
     }
 
     public Method instantiate(String newType) {
-        Method instantiatedMethod = new Method(form, type.instantiate(newType), lexeme);
+        Method instantiatedMethod = new Method(form, type.instantiate(newType), name);
 
         for (Parameter parameter : parameters) {
             instantiatedMethod.add(parameter.instantiate(newType));

@@ -1,5 +1,6 @@
 package com.minijava.compiler.syntactic.analyzer;
 
+import com.minijava.compiler.CompilerException;
 import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
@@ -25,7 +26,7 @@ import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 public class SyntacticAnalyzer {
     private LexicalAnalyzer lexicalAnalyzer;
     private Token currentToken, nextToken;
-    private List<Exception> exceptions = new ArrayList<>();
+    private List<CompilerException> exceptions = new ArrayList<>();
 
     public SyntacticAnalyzer(LexicalAnalyzer lexicalAnalyzer) {
         this.lexicalAnalyzer = lexicalAnalyzer;
@@ -64,7 +65,7 @@ public class SyntacticAnalyzer {
         initialNT();
     }
 
-    public List<Exception> getExceptions() {
+    public List<CompilerException> getExceptions() {
         return exceptions;
     }
 

@@ -42,7 +42,7 @@ public class Parameter {
     }
 
     public Parameter instantiate(String newType) {
-        return new Parameter(type.instantiate(newType), lexeme);
+        return new Parameter(type.instantiate(newType), name);
     }
 
     @Override

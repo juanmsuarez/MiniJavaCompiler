@@ -1,19 +1,14 @@
-class B {
-	public static String x = "asd";
-	private int y = 3;
+class Main {
+	static void main() {}
+}
 
+class B {
 	static int f() {
 
 	}
 }
 
 class A extends B {
-	private static int x = 0, y;
-	public String x;
-	private char c = 'c';
-	private boolean b;
-	public static Clase k;
-
 	static void main(String args) {
 
 	}
@@ -26,11 +21,11 @@ class A extends B {
 
 	}
 
-	static int f(int x) {
+	static int f(Clase x) {
 
 	}
 
-	static int k(int x, char x, String k) {
+	static int f(int x, char x, String k) {
 
 	}
 

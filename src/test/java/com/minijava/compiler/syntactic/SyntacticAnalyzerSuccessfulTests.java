@@ -1,5 +1,6 @@
 package com.minijava.compiler.syntactic;
 
+import com.minijava.compiler.CompilerException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -43,7 +44,7 @@ class SyntacticAnalyzerSuccessfulTests extends SyntacticAnalyzerTests {
 
         runAnalyzer(getPath(path));
 
-        List<Exception> occurredExceptions = syntacticAnalyzer.getExceptions();
+        List<CompilerException> occurredExceptions = syntacticAnalyzer.getExceptions();
         Assertions.assertTrue(occurredExceptions.isEmpty());
     }
 }

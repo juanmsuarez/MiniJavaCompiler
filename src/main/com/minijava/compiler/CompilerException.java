@@ -23,6 +23,10 @@ public abstract class CompilerException extends Exception {
         this.lexeme = lexeme;
     }
 
+    public Lexeme getLexeme() {
+        return lexeme;
+    }
+
     private String buildLexemeIndicator() {
         String detailLineBeforeLexeme = DETAIL_PREFIX + lexeme.getLine().substring(0, lexeme.getLexemePosition());
         String spacesBeforeLexeme = detailLineBeforeLexeme.replaceAll("[^\t ]", " ");
