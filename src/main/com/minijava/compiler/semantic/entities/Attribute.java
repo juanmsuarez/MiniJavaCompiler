@@ -26,6 +26,10 @@ public class Attribute {
         this.name = lexeme.getString();
     }
 
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
     public String getName() {
         return name;
     }

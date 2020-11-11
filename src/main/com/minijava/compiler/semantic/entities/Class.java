@@ -1,6 +1,7 @@
 package com.minijava.compiler.semantic.entities;
 
 import com.minijava.compiler.semantic.entities.modifiers.Form;
+import com.minijava.compiler.semantic.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.exceptions.*;
 
@@ -138,7 +139,7 @@ public class Class extends Unit {
         for (Attribute parentAttribute : parent.attributes.values()) {
             String parentAttributeName = parentAttribute.getName();
 
-            if (attributes.containsKey(parentAttributeName)) {
+            if (attributes.containsKey(parentAttributeName) || parentAttribute.getVisibility() == Visibility.PRIVATE) {
                 hiddenAttributes.add(parentAttribute);
             } else {
                 attributes.put(parentAttributeName, parentAttribute);
