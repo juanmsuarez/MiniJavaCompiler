@@ -5,11 +5,11 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
-import com.minijava.compiler.semantic.entities.Class;
-import com.minijava.compiler.semantic.entities.*;
-import com.minijava.compiler.semantic.entities.modifiers.Form;
-import com.minijava.compiler.semantic.entities.modifiers.Visibility;
-import com.minijava.compiler.semantic.entities.types.*;
+import com.minijava.compiler.semantic.declarations.entities.Class;
+import com.minijava.compiler.semantic.declarations.entities.*;
+import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
+import com.minijava.compiler.semantic.declarations.entities.modifiers.Visibility;
+import com.minijava.compiler.semantic.declarations.entities.types.*;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
-import static com.minijava.compiler.semantic.entities.PredefinedEntities.OBJECT;
+import static com.minijava.compiler.semantic.declarations.entities.PredefinedEntities.OBJECT;
 import static com.minijava.compiler.syntactic.analyzer.TokenGroups.*;
 import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 
@@ -578,7 +578,8 @@ public class SyntacticAnalyzer {
     private void expression1SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_1)) {
             binaryOperator1NT();
-            expression1NT(); // TODO: tener cuidado con usar mismo NT en recursión (último ejemplo del tema 4.5.3)
+            expression2NT();
+            expression1SuffixOrEmptyNT();
         }
     }
 
@@ -598,7 +599,8 @@ public class SyntacticAnalyzer {
     private void expression2SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_2)) {
             binaryOperator2NT();
-            expression2NT();
+            expression3NT();
+            expression2SuffixOrEmptyNT();
         }
     }
 
@@ -618,7 +620,8 @@ public class SyntacticAnalyzer {
     private void expression3SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_3)) {
             binaryOperator3NT();
-            expression3NT();
+            expression4NT();
+            expression3SuffixOrEmptyNT();
         }
     }
 
@@ -638,7 +641,8 @@ public class SyntacticAnalyzer {
     private void expression4SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_4)) {
             binaryOperator4NT();
-            expression4NT();
+            expression5NT();
+            expression4SuffixOrEmptyNT();
         }
     }
 
@@ -658,7 +662,8 @@ public class SyntacticAnalyzer {
     private void expression5SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_5)) {
             binaryOperator5NT();
-            expression5NT();
+            expression6NT();
+            expression5SuffixOrEmptyNT();
         }
     }
 
@@ -678,7 +683,8 @@ public class SyntacticAnalyzer {
     private void expression6SuffixOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_6)) {
             binaryOperator6NT();
-            expression6NT();
+            unaryExpressionNT();
+            expression6SuffixOrEmptyNT();
         }
     }
 
