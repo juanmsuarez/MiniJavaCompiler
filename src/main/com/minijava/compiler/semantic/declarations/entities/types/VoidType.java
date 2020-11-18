@@ -1,0 +1,18 @@
+package com.minijava.compiler.semantic.declarations.entities.types;
+
+public class VoidType extends Type {
+    private static final String VOID = "void";
+
+    public VoidType() {
+        super(VOID);
+    }
+
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
+    public Type instantiate(String newType) {
+        return this;
+    }
+}

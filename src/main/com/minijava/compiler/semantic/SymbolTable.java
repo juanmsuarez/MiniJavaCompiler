@@ -1,11 +1,11 @@
 package com.minijava.compiler.semantic;
 
-import com.minijava.compiler.semantic.entities.Class;
-import com.minijava.compiler.semantic.entities.*;
-import com.minijava.compiler.semantic.entities.modifiers.Form;
-import com.minijava.compiler.semantic.exceptions.DuplicateUnitException;
-import com.minijava.compiler.semantic.exceptions.MainMethodNotFoundException;
-import com.minijava.compiler.semantic.exceptions.SemanticException;
+import com.minijava.compiler.semantic.declarations.entities.Class;
+import com.minijava.compiler.semantic.declarations.entities.*;
+import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
+import com.minijava.compiler.semantic.declarations.exceptions.DuplicateUnitException;
+import com.minijava.compiler.semantic.declarations.exceptions.MainMethodNotFoundException;
+import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.minijava.compiler.semantic.entities.PredefinedEntities.MAIN;
+import static com.minijava.compiler.semantic.declarations.entities.PredefinedEntities.MAIN;
 
 public class SymbolTable {
     private Map<String, Class> classes = new HashMap<>();
