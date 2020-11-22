@@ -28,6 +28,7 @@ public class Constructor extends Callable {
         return "Constructor{" +
                 "name='" + name + '\'' +
                 ", parameters=" + parameters +
+                ", block=" + block +
                 '}';
     }
 

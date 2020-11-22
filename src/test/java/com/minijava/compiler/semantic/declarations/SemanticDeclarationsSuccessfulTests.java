@@ -1,4 +1,4 @@
-package com.minijava.compiler.semantic;
+package com.minijava.compiler.semantic.declarations;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,8 +7,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-class SemanticAnalyzerSuccessfulTests extends SemanticAnalyzerTests {
-    private static final String DIR = "semantic/successful_tests/";
+class SemanticDeclarationsSuccessfulTests extends SemanticDeclarationsTests {
+    private static final String DIR = "semantic/declarations/successful_tests/";
 
     private static Stream<Arguments> provideExceptionArguments() {
         return Stream.of(

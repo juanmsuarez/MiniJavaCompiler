@@ -56,6 +56,10 @@ public class Method extends Callable {
         return instantiatedMethod;
     }
 
+    public void checkSentences() {
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -79,6 +83,7 @@ public class Method extends Callable {
                 ", type=" + type +
                 ", name='" + name + '\'' +
                 ", parameters=" + parameters +
+                ", block=" + block +
                 '}';
     }
 }

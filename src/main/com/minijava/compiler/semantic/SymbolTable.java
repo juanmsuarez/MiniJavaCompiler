@@ -142,6 +142,12 @@ public class SymbolTable {
         unitsMap.values().forEach(T::consolidate);
     }
 
+    public void checkSentences() {
+        for (Class aClass : classes.values()) {
+            aClass.checkSentences();
+        }
+    }
+
     @Override
     public String toString() {
         return "SymbolTable{" +

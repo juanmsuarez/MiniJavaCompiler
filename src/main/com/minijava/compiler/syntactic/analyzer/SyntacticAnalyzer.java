@@ -10,6 +10,7 @@ import com.minijava.compiler.semantic.declarations.entities.*;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.declarations.entities.types.*;
+import com.minijava.compiler.semantic.sentences.asts.*;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
@@ -85,20 +86,20 @@ public class SyntacticAnalyzer {
         return new SyntacticException(currentToken, expectedTokenName);
     }
 
-    private Lexeme match(String expectedTokenName) throws SyntacticException, IOException {
+    private Token match(String expectedTokenName) throws SyntacticException, IOException {
         if (expectedTokenName.equals(currentToken.getName())) {
-            Lexeme currentLexeme = currentToken.getLexeme();
+            Token matchedToken = currentToken;
             advanceCurrentToken();
-            return currentLexeme;
+            return matchedToken;
         } else {
             throw buildException(expectedTokenName);
         }
     }
 
-    private Lexeme matchCurrent() throws IOException {
-        Lexeme currentLexeme = currentToken.getLexeme();
+    private Token matchCurrent() throws IOException {
+        Token matchedToken = currentToken;
         advanceCurrentToken();
-        return currentLexeme;
+        return matchedToken;
     }
 
     private void recover(Set<String> recoveryTokens) throws IOException {
@@ -174,7 +175,7 @@ public class SyntacticAnalyzer {
 
         try {
             match(CLASS_KW);
-            Lexeme classLexeme = match(CLASS_ID);
+            Lexeme classLexeme = match(CLASS_ID).getLexeme();
             currentClass.setLexeme(classLexeme);
             symbolTable.add(currentClass);
 
@@ -205,7 +206,7 @@ public class SyntacticAnalyzer {
 
         if (canMatch(LESS)) {
             matchCurrent();
-            genericType = match(CLASS_ID).getString();
+            genericType = match(CLASS_ID).getLexeme().getString();
             match(GREATER);
         }
 
@@ -217,7 +218,7 @@ public class SyntacticAnalyzer {
 
         if (canMatch(EXTENDS_KW)) {
             matchCurrent();
-            String parentName = match(CLASS_ID).getString();
+            String parentName = match(CLASS_ID).getLexeme().getString();
             parentType.setName(parentName);
 
             String genericType = genericTypeOrEmptyNT();
@@ -235,7 +236,7 @@ public class SyntacticAnalyzer {
     }
 
     private void interfaceNamesListNT() throws SyntacticException, IOException {
-        String interfaceName = match(CLASS_ID).getString();
+        String interfaceName = match(CLASS_ID).getLexeme().getString();
         genericTypeOrEmptyNT();
         symbolTable.getCurrentUnit().add(interfaceName);
         interfaceNamesListSuffixOrEmptyNT();
@@ -306,7 +307,7 @@ public class SyntacticAnalyzer {
         if (canMatch(Firsts.PRIMITIVE_TYPE)) {
             return primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
-            String typeName = matchCurrent().getString();
+            String typeName = matchCurrent().getLexeme().getString();
             String genericType = genericTypeOrEmptyNT();
             return new ReferenceType(typeName, genericType, symbolTable.getCurrentUnit(), symbolTable.getCurrentAccessForm());
         } else {
@@ -333,7 +334,7 @@ public class SyntacticAnalyzer {
     }
 
     private void attrsDecListNT(Visibility visibility, Form form, Type type) throws SyntacticException, IOException {
-        Lexeme lexeme = match(VAR_MET_ID);
+        Lexeme lexeme = match(VAR_MET_ID).getLexeme();
         Attribute attribute = new Attribute(visibility, form, type, lexeme);
         ((Class) symbolTable.getCurrentUnit()).add(attribute);
 
@@ -356,9 +357,10 @@ public class SyntacticAnalyzer {
     }
 
     private void constructorNT() throws SyntacticException, IOException {
+        Constructor constructor = null;
         try {
-            Lexeme lexeme = match(CLASS_ID);
-            Constructor constructor = new Constructor(lexeme);
+            Lexeme lexeme = match(CLASS_ID).getLexeme();
+            constructor = new Constructor(lexeme);
             ((Class) symbolTable.getCurrentUnit()).add(constructor);
             symbolTable.setCurrentAccessForm(Form.DYNAMIC);
 
@@ -368,7 +370,10 @@ public class SyntacticAnalyzer {
             exceptions.add(exception);
         }
 
-        blockNT();
+        Block block = blockNT();
+        if (constructor != null) {
+            constructor.setBlock(block);
+        }
     }
 
     private void formalArgsNT() throws SyntacticException, IOException {
@@ -399,30 +404,38 @@ public class SyntacticAnalyzer {
         Callable callable = symbolTable.getCurrentUnit().getCurrentCallable();
 
         Type type = typeNT();
-        Lexeme lexeme = match(VAR_MET_ID);
+        Lexeme lexeme = match(VAR_MET_ID).getLexeme();
         Parameter parameter = new Parameter(type, lexeme);
         callable.add(parameter);
     }
 
     private void methodNT() throws SyntacticException, IOException {
+        Method method = null;
         try {
-            methodSignatureNT();
+            method = methodSignatureNT();
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.CLASS_METHOD_SIGNATURE, CLOSE_PARENTHESIS, Next.CLASS_METHOD_SIGNATURE, exception);
             exceptions.add(exception);
         }
-        blockNT();
+
+        Block block = blockNT();
+        if (method != null) {
+            method.setBlock(block);
+        }
     }
 
-    private void methodSignatureNT() throws SyntacticException, IOException {
+    private Method methodSignatureNT() throws SyntacticException, IOException {
         Form form = methodFormNT();
         symbolTable.setCurrentAccessForm(form);
         Type type = methodTypeNT();
-        Lexeme lexeme = match(VAR_MET_ID);
+        Lexeme lexeme = match(VAR_MET_ID).getLexeme();
+
         Method method = new Method(form, type, lexeme);
         symbolTable.getCurrentUnit().add(method);
 
         formalArgsNT();
+
+        return method;
     }
 
     private Form methodFormNT() throws IOException {
@@ -448,365 +461,453 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void blockNT() throws SyntacticException, IOException {
+    private Block blockNT() throws SyntacticException, IOException {
+        Block block = new Block();
+
         try {
             match(OPEN_BRACE);
-            sentencesListOrEmptyNT();
+            sentencesListOrEmptyNT(block);
             match(CLOSE_BRACE);
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.BLOCK, CLOSE_BRACE, Next.BLOCK, exception);
             exceptions.add(exception);
         }
+
+        return block;
     }
 
-    private void sentencesListOrEmptyNT() throws SyntacticException, IOException {
+    private void sentencesListOrEmptyNT(Block block) throws SyntacticException, IOException {
         if (canMatch(Firsts.SENTENCE)) {
-            sentenceNT();
-            sentencesListOrEmptyNT();
+            Sentence sentence = sentenceNT();
+            block.add(sentence);
+            sentencesListOrEmptyNT(block);
         }
     }
 
-    private void sentenceNT() throws SyntacticException, IOException {
+    private Sentence sentenceNT() throws SyntacticException, IOException {
         try {
             if (canMatch(SEMICOLON)) {
                 matchCurrent();
+                return new EmptySentence();
             } else if (canMatch(Firsts.EXPLICIT_CALL_OR_ASSIGNMENT)
                     || (canMatch(Firsts.IMPLICIT_CALL_OR_ASSIGNMENT) && canMatchNext(Seconds.IMPLICIT_CALL_OR_ASSIGNMENT))) {
-                callOrAssignmentNT();
+                return callOrAssignmentNT();
             } else if (canMatch(Firsts.DECLARATION)) {
-                typeNT();
-                varsDecListNT();
+                Type declarationType = typeNT();
+                DeclarationSentenceList declarationSentenceList = new DeclarationSentenceList(declarationType);
+
+                varsDecListNT(declarationSentenceList);
                 match(SEMICOLON);
+
+                return declarationSentenceList;
             } else if (canMatch(IF_KW)) {
+                Lexeme ifLexeme = matchCurrent().getLexeme();
+                IfElseSentence ifElseSentence = new IfElseSentence(ifLexeme);
+
                 try {
-                    matchCurrent();
                     match(OPEN_PARENTHESIS);
-                    expressionNT();
+                    Expression condition = expressionNT();
+                    ifElseSentence.setCondition(condition);
                     match(CLOSE_PARENTHESIS);
                 } catch (SyntacticException exception) {
                     recoverAndMatchIfPossible(Last.CONTROL_STRUCTURE, CLOSE_PARENTHESIS, Next.CONTROL_STRUCTURE, exception);
                     exceptions.add(exception);
                 }
-                sentenceNT();
-                elseOrEmptyNT();
+
+                Sentence mainBody = sentenceNT();
+                ifElseSentence.setMainBody(mainBody);
+
+                Sentence elseBody = elseOrEmptyNT();
+                ifElseSentence.setElseBody(elseBody);
+
+                return ifElseSentence;
             } else if (canMatch(WHILE_KW)) {
+                Lexeme whileLexeme = matchCurrent().getLexeme();
+                WhileSentence whileSentence = new WhileSentence(whileLexeme);
+
                 try {
-                    matchCurrent();
                     match(OPEN_PARENTHESIS);
-                    expressionNT();
+                    Expression condition = expressionNT();
+                    whileSentence.setCondition(condition);
                     match(CLOSE_PARENTHESIS);
                 } catch (SyntacticException exception) {
                     recoverAndMatchIfPossible(Last.CONTROL_STRUCTURE, CLOSE_PARENTHESIS, Next.CONTROL_STRUCTURE, exception);
                     exceptions.add(exception);
                 }
-                sentenceNT();
+
+                Sentence body = sentenceNT();
+                whileSentence.setBody(body);
+
+                return whileSentence;
             } else if (canMatch(OPEN_BRACE)) {
-                blockNT();
+                return blockNT();
             } else if (canMatch(RETURN_KW)) {
-                matchCurrent();
-                expressionOrEmptyNT();
+                Lexeme returnLexeme = matchCurrent().getLexeme();
+                Expression expression = expressionOrEmptyNT();
                 match(SEMICOLON);
+                return new ReturnSentence(returnLexeme, expression);
             } else {
                 throw buildException(SENTENCE);
             }
         } catch (SyntacticException exception) {
             recoverAndMatchIfPossible(Last.SENTENCE, SEMICOLON, Next.SENTENCE, exception);
             exceptions.add(exception);
+            return null;
         }
     }
 
-    private void varsDecListNT() throws SyntacticException, IOException {
-        match(VAR_MET_ID);
-        inlineAssignmentOrEmpty();
-        varsDecListSuffixOrEmptyNT();
+    private void varsDecListNT(DeclarationSentenceList declarationSentenceList) throws SyntacticException, IOException {
+        Lexeme id = match(VAR_MET_ID).getLexeme();
+        DeclarationSentence declarationSentence = new DeclarationSentence(id);
+        declarationSentenceList.addDeclaration(declarationSentence);
+
+        inlineAssignmentOrEmpty(); // TODO: logro pending, se puede tratar como asignación "separada"?
+
+        varsDecListSuffixOrEmptyNT(declarationSentenceList);
     }
 
-    private void varsDecListSuffixOrEmptyNT() throws SyntacticException, IOException {
+    private void varsDecListSuffixOrEmptyNT(DeclarationSentenceList declarationSentenceList) throws SyntacticException, IOException {
         if (canMatch(COMMA)) {
             matchCurrent();
-            varsDecListNT();
+            varsDecListNT(declarationSentenceList);
         }
     }
 
-    private void callOrAssignmentNT() throws SyntacticException, IOException {
-        accessNT();
-        assignmentOrSentenceEndNT();
+    private Sentence callOrAssignmentNT() throws SyntacticException, IOException {
+        Access access = accessNT();
+        return assignmentOrSentenceEndNT(access);
     }
 
-    private void assignmentOrSentenceEndNT() throws SyntacticException, IOException {
+    private Sentence assignmentOrSentenceEndNT(Access access) throws SyntacticException, IOException {
         if (canMatch(Firsts.ASSIGNMENT_TYPE)) {
-            assignmentTypeNT();
-            expressionNT();
+            Token assignmentType = assignmentTypeNT();
+            Expression expression = expressionNT();
             match(SEMICOLON);
+            return new Assignment(access, assignmentType, expression);
         } else if (canMatch(SEMICOLON)) {
             matchCurrent();
+            return new Call(access);
         } else {
             throw buildException(ASSIGNMENT_OR_SENTENCE_END);
         }
     }
 
-    private void assignmentTypeNT() throws IOException {
+    private Token assignmentTypeNT() throws IOException {
         if (canMatch(Firsts.ASSIGNMENT_TYPE)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void elseOrEmptyNT() throws SyntacticException, IOException {
+    private Sentence elseOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(ELSE_KW)) {
             matchCurrent();
-            sentenceNT();
+            return sentenceNT();
+        } else {
+            return null;
         }
     }
 
-    private void expressionOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expressionOrEmptyNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.EXPRESSION)) {
-            expressionNT();
+            return expressionNT();
+        } else {
+            return null;
         }
     }
 
-    private void expressionNT() throws SyntacticException, IOException {
-        expression1NT();
+    private Expression expressionNT() throws SyntacticException, IOException {
+        return expression1NT();
     }
 
-    private void expression1NT() throws SyntacticException, IOException {
-        expression2NT();
-        expression1SuffixOrEmptyNT();
+    private Expression expression1NT() throws SyntacticException, IOException {
+        Expression left = expression2NT();
+        return expression1SuffixOrEmptyNT(left);
     }
 
-    private void expression1SuffixOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expression1SuffixOrEmptyNT(Expression left) throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_1)) {
-            binaryOperator1NT();
-            expression2NT();
-            expression1SuffixOrEmptyNT();
+            Token operator = binaryOperator1NT();
+            Expression right = expression2NT();
+            Expression binaryExpression = new BinaryExpression(left, operator, right);
+
+            return expression1SuffixOrEmptyNT(binaryExpression);
+        } else {
+            return left;
         }
     }
 
-    private void binaryOperator1NT() throws IOException {
+    private Token binaryOperator1NT() throws IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_1)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void expression2NT() throws SyntacticException, IOException {
-        expression3NT();
-        expression2SuffixOrEmptyNT();
+    private Expression expression2NT() throws SyntacticException, IOException {
+        Expression left = expression3NT();
+        return expression2SuffixOrEmptyNT(left);
     }
 
-    private void expression2SuffixOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expression2SuffixOrEmptyNT(Expression left) throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_2)) {
-            binaryOperator2NT();
-            expression3NT();
-            expression2SuffixOrEmptyNT();
+            Token operator = binaryOperator2NT();
+            Expression right = expression3NT();
+            Expression binaryExpression = new BinaryExpression(left, operator, right);
+
+            return expression2SuffixOrEmptyNT(binaryExpression);
+        } else {
+            return left;
         }
     }
 
-    private void binaryOperator2NT() throws IOException {
+    private Token binaryOperator2NT() throws IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_2)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void expression3NT() throws SyntacticException, IOException {
-        expression4NT();
-        expression3SuffixOrEmptyNT();
+    private Expression expression3NT() throws SyntacticException, IOException {
+        Expression left = expression4NT();
+        return expression3SuffixOrEmptyNT(left);
     }
 
-    private void expression3SuffixOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expression3SuffixOrEmptyNT(Expression left) throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_3)) {
-            binaryOperator3NT();
-            expression4NT();
-            expression3SuffixOrEmptyNT();
+            Token operator = binaryOperator3NT();
+            Expression right = expression4NT();
+            Expression binaryExpression = new BinaryExpression(left, operator, right);
+
+            return expression3SuffixOrEmptyNT(binaryExpression);
+        } else {
+            return left;
         }
     }
 
-    private void binaryOperator3NT() throws IOException {
+    private Token binaryOperator3NT() throws IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_3)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void expression4NT() throws SyntacticException, IOException {
-        expression5NT();
-        expression4SuffixOrEmptyNT();
+    private Expression expression4NT() throws SyntacticException, IOException {
+        Expression left = expression5NT();
+        return expression4SuffixOrEmptyNT(left);
     }
 
-    private void expression4SuffixOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expression4SuffixOrEmptyNT(Expression left) throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_4)) {
-            binaryOperator4NT();
-            expression5NT();
-            expression4SuffixOrEmptyNT();
+            Token operator = binaryOperator4NT();
+            Expression right = expression5NT();
+            Expression binaryExpression = new BinaryExpression(left, operator, right);
+
+            return expression4SuffixOrEmptyNT(binaryExpression);
+        } else {
+            return left;
         }
     }
 
-    private void binaryOperator4NT() throws IOException {
+    private Token binaryOperator4NT() throws IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_4)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void expression5NT() throws SyntacticException, IOException {
-        expression6NT();
-        expression5SuffixOrEmptyNT();
+    private Expression expression5NT() throws SyntacticException, IOException {
+        Expression left = expression6NT();
+        return expression5SuffixOrEmptyNT(left);
     }
 
-    private void expression5SuffixOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expression5SuffixOrEmptyNT(Expression left) throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_5)) {
-            binaryOperator5NT();
-            expression6NT();
-            expression5SuffixOrEmptyNT();
+            Token operator = binaryOperator5NT();
+            Expression right = expression6NT();
+            Expression binaryExpression = new BinaryExpression(left, operator, right);
+
+            return expression5SuffixOrEmptyNT(binaryExpression);
+        } else {
+            return left;
         }
     }
 
-    private void binaryOperator5NT() throws IOException {
+    private Token binaryOperator5NT() throws IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_5)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void expression6NT() throws SyntacticException, IOException {
-        unaryExpressionNT();
-        expression6SuffixOrEmptyNT();
+    private Expression expression6NT() throws SyntacticException, IOException {
+        Expression left = unaryExpressionNT();
+        return expression6SuffixOrEmptyNT(left);
     }
 
-    private void expression6SuffixOrEmptyNT() throws SyntacticException, IOException {
+    private Expression expression6SuffixOrEmptyNT(Expression left) throws SyntacticException, IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_6)) {
-            binaryOperator6NT();
-            unaryExpressionNT();
-            expression6SuffixOrEmptyNT();
+            Token operator = binaryOperator6NT();
+            Expression right = unaryExpressionNT();
+            Expression binaryExpression = new BinaryExpression(left, operator, right);
+
+            return expression6SuffixOrEmptyNT(binaryExpression);
+        } else {
+            return left;
         }
     }
 
-    private void binaryOperator6NT() throws IOException {
+    private Token binaryOperator6NT() throws IOException {
         if (canMatch(Firsts.BINARY_OPERATOR_6)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void unaryExpressionNT() throws SyntacticException, IOException {
+    private Expression unaryExpressionNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.UNARY_OPERATOR)) {
-            unaryOperatorNT();
-            operandNT();
+            Token operator = unaryOperatorNT();
+            Operand operand = operandNT();
+            return new UnaryExpression(operator, operand);
         } else if (canMatch(Firsts.OPERAND)) {
-            operandNT();
+            return operandNT();
         } else {
             throw buildException(EXPRESSION);
         }
     }
 
-    private void unaryOperatorNT() throws IOException {
+    private Token unaryOperatorNT() throws IOException {
         if (canMatch(Firsts.UNARY_OPERATOR)) {
-            matchCurrent();
+            return matchCurrent();
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void operandNT() throws SyntacticException, IOException {
+    private Operand operandNT() throws SyntacticException, IOException {
         if (canMatch(Firsts.LITERAL)) {
-            literalNT();
+            return literalNT();
         } else if (canMatch(Firsts.ACCESS)) {
-            accessNT();
+            return accessNT();
         } else {
             throw buildException(OPERAND);
         }
     }
 
-    private void literalNT() throws IOException {
+    private Literal literalNT() throws IOException {
         if (canMatch(Firsts.LITERAL)) {
-            matchCurrent();
+            return new Literal(matchCurrent());
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void accessNT() throws SyntacticException, IOException {
-        primaryAccessNT();
-        chainedAccessOrEmptyNT();
+    private Access accessNT() throws SyntacticException, IOException {
+        Access access = primaryAccessNT();
+        access.setChainedAccess(chainedAccessOrEmptyNT());
+        return access;
     }
 
-    private void primaryAccessNT() throws SyntacticException, IOException {
+    private Access primaryAccessNT() throws SyntacticException, IOException {
         if (canMatch(THIS_KW)) {
-            thisAccessNT();
+            return thisAccessNT();
         } else if (canMatch(VAR_MET_ID)) {
-            varMetAccessNT();
+            return varMetAccessNT();
         } else if (canMatch(Firsts.STATIC_ACCESS)) {
-            staticAccessNT();
+            return staticAccessNT();
         } else if (canMatch(NEW_KW)) {
-            constructorAccessNT();
+            return constructorAccessNT();
         } else if (canMatch(OPEN_PARENTHESIS)) {
-            matchCurrent();
-            expressionNT();
+            Lexeme openParenthesis = matchCurrent().getLexeme();
+            Expression expression = expressionNT();
             match(CLOSE_PARENTHESIS);
+            return new ExpressionAccess(openParenthesis, expression);
         } else {
             throw new IllegalStateException();
         }
     }
 
-    private void thisAccessNT() throws SyntacticException, IOException {
-        match(THIS_KW);
+    private ThisAccess thisAccessNT() throws SyntacticException, IOException {
+        Lexeme thisLexeme = match(THIS_KW).getLexeme();
+        return new ThisAccess(thisLexeme);
     }
 
-    private void varMetAccessNT() throws SyntacticException, IOException {
-        match(VAR_MET_ID);
-        actualArgsOrEmptyNT();
+    private Access varMetAccessNT() throws SyntacticException, IOException {
+        Lexeme varMetLexeme = match(VAR_MET_ID).getLexeme();
+        return varMetActualArgsOrEmptyNT(varMetLexeme);
     }
 
-    private void actualArgsOrEmptyNT() throws SyntacticException, IOException {
+    private Access varMetActualArgsOrEmptyNT(Lexeme varMetLexeme) throws SyntacticException, IOException {
         if (canMatch(OPEN_PARENTHESIS)) {
-            actualArgsNT();
+            MethodAccess methodAccess = new MethodAccess(varMetLexeme);
+            varMetActualArgsNT(methodAccess);
+            return methodAccess;
+        } else {
+            return new VariableAccess(varMetLexeme);
         }
     }
 
-    private void actualArgsNT() throws SyntacticException, IOException {
+    private void varMetActualArgsNT(CallableAccess callableAccess) throws SyntacticException, IOException {
         match(OPEN_PARENTHESIS);
-        expressionsListOrEmptyNT();
+        expressionsListOrEmptyNT(callableAccess);
         match(CLOSE_PARENTHESIS);
     }
 
-    private void expressionsListOrEmptyNT() throws SyntacticException, IOException {
+    private void expressionsListOrEmptyNT(CallableAccess callableAccess) throws SyntacticException, IOException {
         if (canMatch(Firsts.EXPRESSION)) {
-            expressionsListNT();
+            expressionsListNT(callableAccess);
         }
     }
 
-    private void expressionsListNT() throws SyntacticException, IOException {
-        expressionNT();
-        expressionsListSuffixOrEmpty();
+    private void expressionsListNT(CallableAccess callableAccess) throws SyntacticException, IOException {
+        Expression argument = expressionNT();
+        callableAccess.add(argument);
+        expressionsListSuffixOrEmpty(callableAccess);
     }
 
-    private void expressionsListSuffixOrEmpty() throws SyntacticException, IOException {
+    private void expressionsListSuffixOrEmpty(CallableAccess callableAccess) throws SyntacticException, IOException {
         if (canMatch(COMMA)) {
             matchCurrent();
-            expressionsListNT();
+            expressionsListNT(callableAccess);
         }
     }
 
-    private void staticAccessNT() throws SyntacticException, IOException {
+    private Access staticAccessNT() throws SyntacticException, IOException {
         staticOrEmpty();
-        match(CLASS_ID);
+        Lexeme classLexeme = match(CLASS_ID).getLexeme();
         match(DOT);
-        varMetAccessNT();
+        return staticVarMetAccessNT(classLexeme);
     }
 
-    private void constructorAccessNT() throws SyntacticException, IOException {
+    private Access staticVarMetAccessNT(Lexeme classLexeme) throws SyntacticException, IOException {
+        Lexeme varMetLexeme = match(VAR_MET_ID).getLexeme();
+        return staticVarMetActualArgsOrEmptyNT(classLexeme, varMetLexeme);
+    }
+
+    private Access staticVarMetActualArgsOrEmptyNT(Lexeme classLexeme, Lexeme varMetLexeme) throws SyntacticException, IOException {
+        if (canMatch(OPEN_PARENTHESIS)) {
+            StaticMethodAccess staticMethodAccess = new StaticMethodAccess(classLexeme, varMetLexeme);
+            varMetActualArgsNT(staticMethodAccess);
+            return staticMethodAccess;
+        } else {
+            return new StaticVariableAccess(classLexeme, varMetLexeme);
+        }
+    }
+
+    private ConstructorAccess constructorAccessNT() throws SyntacticException, IOException {
         match(NEW_KW);
-        match(CLASS_ID);
+        Lexeme classId = match(CLASS_ID).getLexeme();
+        ConstructorAccess constructorAccess = new ConstructorAccess(classId);
         optionalGenericTypeOrEmptyNT();
-        actualArgsNT();
+        varMetActualArgsNT(constructorAccess);
+        return constructorAccess;
     }
 
     private void optionalGenericTypeOrEmptyNT() throws SyntacticException, IOException {
@@ -823,17 +924,31 @@ public class SyntacticAnalyzer {
         }
     }
 
-    private void chainedAccessOrEmptyNT() throws SyntacticException, IOException {
+    private ChainedAccess chainedAccessOrEmptyNT() throws SyntacticException, IOException {
+        ChainedAccess chainedAccess = null;
+
         if (canMatch(DOT)) {
-            varMetChainedNT();
-            chainedAccessOrEmptyNT();
+            chainedAccess = chainedVarMetAccessNT();
+            chainedAccess.setChainedAccess(chainedAccessOrEmptyNT());
         }
+
+        return chainedAccess;
     }
 
-    private void varMetChainedNT() throws SyntacticException, IOException {
+    private ChainedAccess chainedVarMetAccessNT() throws SyntacticException, IOException {
         match(DOT);
-        match(VAR_MET_ID);
-        actualArgsOrEmptyNT();
+        Lexeme varMetLexeme = match(VAR_MET_ID).getLexeme();
+        return chainedVarMetActualArgsOrEmptyNT(varMetLexeme);
+    }
+
+    private ChainedAccess chainedVarMetActualArgsOrEmptyNT(Lexeme varMetLexeme) throws SyntacticException, IOException {
+        if (canMatch(OPEN_PARENTHESIS)) {
+            ChainedMethodAccess chainedMethodAccess = new ChainedMethodAccess(varMetLexeme);
+            varMetActualArgsNT(chainedMethodAccess);
+            return chainedMethodAccess;
+        } else {
+            return new ChainedVariableAccess(varMetLexeme);
+        }
     }
 
     private void interfaceNT() throws SyntacticException, IOException {
@@ -842,7 +957,7 @@ public class SyntacticAnalyzer {
 
         try {
             match(INTERFACE_KW);
-            Lexeme interfaceLexeme = match(CLASS_ID);
+            Lexeme interfaceLexeme = match(CLASS_ID).getLexeme();
             currentInterface.setLexeme(interfaceLexeme);
             symbolTable.add(currentInterface);
 

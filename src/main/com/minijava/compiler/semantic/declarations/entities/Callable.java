@@ -1,6 +1,7 @@
 package com.minijava.compiler.semantic.declarations.entities;
 
 import com.minijava.compiler.semantic.declarations.exceptions.DuplicateParameterException;
+import com.minijava.compiler.semantic.sentences.asts.Block;
 
 import java.util.*;
 
@@ -9,6 +10,7 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 public abstract class Callable {
     protected List<Parameter> parameters = new ArrayList<>();
     private Set<String> parameterNames = new HashSet<>();
+    protected Block block = new Block();
 
     public Callable(Parameter... parameters) {
         for (Parameter parameter : parameters) {
@@ -32,6 +34,10 @@ public abstract class Callable {
         parameters.removeIf(parameter -> !parameter.validDeclaration());
 
         return true;
+    }
+
+    public void setBlock(Block block) {
+        this.block = block;
     }
 
     @Override

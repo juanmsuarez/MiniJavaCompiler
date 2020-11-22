@@ -38,10 +38,19 @@ public class MiniJavaCompiler {
             if (syntacticSuccess) {
                 symbolTable.checkDeclarations();
                 symbolTable.consolidate();
-                boolean semanticSuccess = symbolTable.getExceptions().isEmpty();
+                boolean declarationCheckSuccess = symbolTable.getExceptions().isEmpty();
 
-                if (semanticSuccess) {
-                    finishSuccessfully();
+                System.out.println(symbolTable.toString()); // TODO: TEMPORAL, borrar
+
+                if (declarationCheckSuccess) {
+                    symbolTable.checkSentences();
+                    boolean sentenceCheckSuccess = symbolTable.getExceptions().isEmpty();
+
+                    if (sentenceCheckSuccess) {
+                        finishSuccessfully();
+                    } else {
+                        finishWithErrors(symbolTable.getExceptions());
+                    }
                 } else {
                     finishWithErrors(symbolTable.getExceptions());
                 }

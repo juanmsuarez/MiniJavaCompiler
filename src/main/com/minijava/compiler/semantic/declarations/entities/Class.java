@@ -169,6 +169,12 @@ public class Class extends Unit {
         }
     }
 
+    public void checkSentences() {
+        for (Method method : methods.values()) {
+            method.checkSentences();
+        }
+    }
+
     @Override
     public String toString() {
         return "\nClass{" +

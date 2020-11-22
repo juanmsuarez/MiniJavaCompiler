@@ -1,9 +1,10 @@
-package com.minijava.compiler.semantic;
+package com.minijava.compiler.semantic.declarations;
 
 import com.minijava.compiler.CompilerException;
 import com.minijava.compiler.ResourceReader;
 import com.minijava.compiler.filemanager.FileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
+import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
 
 import java.io.FileNotFoundException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
-class SemanticAnalyzerTests extends ResourceReader {
+class SemanticDeclarationsTests extends ResourceReader {
     protected List<? extends CompilerException> exceptions = new ArrayList<>();
 
     private static final String SUCCESS_MESSAGE = "El análisis finalizó: no se encontraron errores.";
