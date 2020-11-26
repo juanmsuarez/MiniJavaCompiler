@@ -33,6 +33,10 @@ public class Class extends Unit {
         this.parentType = parentType;
     }
 
+    public ReferenceType getParentType() {
+        return parentType;
+    }
+
     public void add(String interfaceName) {
         if (!interfaceNames.contains(interfaceName)) {
             interfaceNames.add(interfaceName);
@@ -63,6 +67,22 @@ public class Class extends Unit {
         }
 
         currentCallable = constructor;
+    }
+
+    public boolean containsAttribute(String name) {
+        return attributes.containsKey(name);
+    }
+
+    public boolean containsMethod(String name) {
+        return methods.containsKey(name);
+    }
+
+    public Constructor getConstructor() {
+        return constructor;
+    }
+
+    public Attribute getAttribute(String name) {
+        return attributes.get(name);
     }
 
     public boolean validDeclaration() {
@@ -170,8 +190,10 @@ public class Class extends Unit {
     }
 
     public void checkSentences() {
+        constructor.checkSentences(this);
+
         for (Method method : methods.values()) {
-            method.checkSentences();
+            method.checkSentences(this);
         }
     }
 

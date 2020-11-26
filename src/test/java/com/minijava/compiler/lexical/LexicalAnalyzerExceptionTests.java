@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 class LexicalAnalyzerExceptionTests extends LexicalAnalyzerTests {
     private static final String DIR = "lexical/exception_tests/";
 
-    private static Stream<Arguments> provideExceptionArguments() {
+    private static Stream<Arguments> provideArguments() {
         return Stream.of(
                 Arguments.of("invalid_symbol", InvalidSymbolException.class),
                 Arguments.of("invalid_symbol_misc", InvalidSymbolException.class),
@@ -30,7 +30,7 @@ class LexicalAnalyzerExceptionTests extends LexicalAnalyzerTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideExceptionArguments")
+    @MethodSource("provideArguments")
     <T extends Throwable> void fileShouldProduceException(String fileName, Class<T> exception) {
         String path = DIR + fileName + ".java";
 

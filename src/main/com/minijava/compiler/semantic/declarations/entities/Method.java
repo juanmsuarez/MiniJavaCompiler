@@ -5,35 +5,25 @@ import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.declarations.exceptions.InvalidMethodTypeException;
+import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.util.Objects;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Method extends Callable {
-    private Form form;
-    private Type type;
-    private Lexeme lexeme;
-    private String name;
+    private Unit unit;
 
     public Method(Form form, Type type, String name, Parameter... parameters) {
-        super(parameters);
-        this.form = form;
-        this.type = type;
-        this.name = name;
+        super(form, type, name, parameters);
     }
 
-    public Method(Form form, Type type, Lexeme lexeme) {
-        this(form, type, lexeme.getString());
-        this.lexeme = lexeme;
+    public Method(Form form, Type type, Lexeme lexeme, Parameter... parameters) {
+        super(form, type, lexeme, parameters);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Lexeme getLexeme() {
-        return lexeme;
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 
     @Override
@@ -56,8 +46,11 @@ public class Method extends Callable {
         return instantiatedMethod;
     }
 
-    public void checkSentences() {
-
+    @Override
+    public void checkSentences(Class currentClass) {
+        if (currentClass.getName().equals(unit.getName())) {
+            block.check(new Context(currentClass, this));
+        }
     }
 
     @Override

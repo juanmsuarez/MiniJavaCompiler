@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 class SemanticDeclarationsSuccessfulTests extends SemanticDeclarationsTests {
     private static final String DIR = "semantic/declarations/successful_tests/";
 
-    private static Stream<Arguments> provideExceptionArguments() {
+    private static Stream<Arguments> provideArguments() {
         return Stream.of(
                 Arguments.of("classes"),
                 Arguments.of("attributes"),
@@ -26,7 +26,7 @@ class SemanticDeclarationsSuccessfulTests extends SemanticDeclarationsTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideExceptionArguments")
+    @MethodSource("provideArguments")
     void fileShouldBeProcessedSuccessfully(String fileName) {
         String path = DIR + fileName + ".java";
         System.out.println("Running test. File: " + path + " should be processed successfully.");

@@ -10,7 +10,7 @@ import com.minijava.compiler.semantic.declarations.entities.*;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Visibility;
 import com.minijava.compiler.semantic.declarations.entities.types.*;
-import com.minijava.compiler.semantic.sentences.asts.*;
+import com.minijava.compiler.semantic.sentences.models.asts.*;
 import com.minijava.compiler.syntactic.exceptions.SyntacticException;
 
 import java.io.IOException;
@@ -307,9 +307,9 @@ public class SyntacticAnalyzer {
         if (canMatch(Firsts.PRIMITIVE_TYPE)) {
             return primitiveTypeNT();
         } else if (canMatch(CLASS_ID)) {
-            String typeName = matchCurrent().getLexeme().getString();
+            Lexeme typeLexeme = matchCurrent().getLexeme();
             String genericType = genericTypeOrEmptyNT();
-            return new ReferenceType(typeName, genericType, symbolTable.getCurrentUnit(), symbolTable.getCurrentAccessForm());
+            return new ReferenceType(typeLexeme, genericType, symbolTable.getCurrentUnit(), symbolTable.getCurrentAccessForm());
         } else {
             throw buildException(TYPE);
         }
@@ -557,11 +557,12 @@ public class SyntacticAnalyzer {
     }
 
     private void varsDecListNT(DeclarationSentenceList declarationSentenceList) throws SyntacticException, IOException {
+        Type type = declarationSentenceList.getType();
         Lexeme id = match(VAR_MET_ID).getLexeme();
-        DeclarationSentence declarationSentence = new DeclarationSentence(id);
+        DeclarationSentence declarationSentence = new DeclarationSentence(type, id);
         declarationSentenceList.addDeclaration(declarationSentence);
 
-        inlineAssignmentOrEmpty(); // TODO: logro pending, se puede tratar como asignación "separada"?
+        inlineAssignmentOrEmpty();
 
         varsDecListSuffixOrEmptyNT(declarationSentenceList);
     }
@@ -902,10 +903,10 @@ public class SyntacticAnalyzer {
     }
 
     private ConstructorAccess constructorAccessNT() throws SyntacticException, IOException {
-        match(NEW_KW);
+        Lexeme newLexeme = match(NEW_KW).getLexeme();
         Lexeme classId = match(CLASS_ID).getLexeme();
-        ConstructorAccess constructorAccess = new ConstructorAccess(classId);
-        optionalGenericTypeOrEmptyNT();
+        ConstructorAccess constructorAccess = new ConstructorAccess(newLexeme, classId);
+        optionalGenericTypeOrEmptyNT(); // modificar en caso de hacer genericidad
         varMetActualArgsNT(constructorAccess);
         return constructorAccess;
     }

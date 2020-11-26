@@ -1,26 +1,22 @@
 package com.minijava.compiler.semantic.declarations.entities;
 
 import com.minijava.compiler.lexical.analyzer.Lexeme;
+import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
+import com.minijava.compiler.semantic.declarations.entities.types.VoidType;
+import com.minijava.compiler.semantic.sentences.models.Context;
 
 public class Constructor extends Callable {
-    private Lexeme lexeme;
-    private String name;
-
     public Constructor(String name) {
-        this.name = name;
+        super(Form.DYNAMIC, new VoidType(), name);
     }
 
     public Constructor(Lexeme lexeme) {
-        this.lexeme = lexeme;
-        this.name = lexeme.getString();
+        super(Form.DYNAMIC, new VoidType(), lexeme);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Lexeme getLexeme() {
-        return lexeme;
+    @Override
+    public void checkSentences(Class currentClass) {
+        block.check(new Context(currentClass, this));
     }
 
     @Override

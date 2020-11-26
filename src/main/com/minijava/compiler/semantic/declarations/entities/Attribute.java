@@ -38,6 +38,14 @@ public class Attribute {
         return lexeme;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public Form getForm() {
+        return form;
+    }
+
     public boolean validDeclaration() {
         if (!type.isValid()) {
             symbolTable.throwLater(new InvalidAttributeTypeException(this, (ReferenceType) type));

@@ -10,6 +10,26 @@ public abstract class PrimitiveType extends Type {
     }
 
     @Override
+    public boolean isSubtype(Type type) {
+        return type.isSupertype(this);
+    }
+
+    @Override
+    protected boolean isSupertype(PrimitiveType other) {
+        return other.name.equals(name);
+    }
+
+    @Override
+    protected boolean isSupertype(VoidType other) {
+        return false;
+    }
+
+    @Override
+    protected boolean isSupertype(ReferenceType other) {
+        return false;
+    }
+
+    @Override
     public Type instantiate(String newType) {
         return this;
     }

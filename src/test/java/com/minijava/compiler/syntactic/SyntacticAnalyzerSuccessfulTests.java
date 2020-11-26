@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 class SyntacticAnalyzerSuccessfulTests extends SyntacticAnalyzerTests {
     private static final String DIR = "syntactic/successful_tests/";
 
-    private static Stream<Arguments> provideExceptionArguments() {
+    private static Stream<Arguments> provideArguments() {
         return Stream.of(
                 Arguments.of("empty_class"),
                 Arguments.of("multiple_classes"),
@@ -37,7 +37,7 @@ class SyntacticAnalyzerSuccessfulTests extends SyntacticAnalyzerTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideExceptionArguments")
+    @MethodSource("provideArguments")
     void fileShouldBeProcessedSuccessfully(String fileName) {
         String path = DIR + fileName + ".java";
         System.out.println("Running test. File: " + path + " should be processed successfully.");

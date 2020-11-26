@@ -34,6 +34,14 @@ public abstract class Type {
         return name.equals(type.name);
     }
 
+    public abstract boolean isSubtype(Type type);
+
+    protected abstract boolean isSupertype(PrimitiveType other);
+
+    protected abstract boolean isSupertype(VoidType other);
+
+    protected abstract boolean isSupertype(ReferenceType other);
+
     @Override
     public int hashCode() {
         return Objects.hash(name);

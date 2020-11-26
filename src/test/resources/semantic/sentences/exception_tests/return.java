@@ -1,0 +1,30 @@
+class Main {
+	static void main() {
+	
+	}
+}
+
+class Test {
+	dynamic void f() {
+		return 1;
+		return true;
+		return new Object();
+		return f();
+	}
+
+	dynamic Object g() {
+		return 1 + 2;
+		return;
+		return 'a';
+		return new Object();
+		return null;
+		return new Test();
+	}	
+
+	dynamic int h() {
+		return 1;
+		return true;
+		return new Object();
+		return;	
+	}
+}

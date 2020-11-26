@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 class LexicalAnalyzerSuccessfulTests extends LexicalAnalyzerTests {
     private static final String DIR = "lexical/successful_tests/";
 
-    private static Stream<Arguments> provideExceptionArguments() {
+    private static Stream<Arguments> provideArguments() {
         return Stream.of(
                 Arguments.of("keywords"),
                 Arguments.of("identifiers"),
@@ -26,7 +26,7 @@ class LexicalAnalyzerSuccessfulTests extends LexicalAnalyzerTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideExceptionArguments")
+    @MethodSource("provideArguments")
     <T extends Throwable> void fileShouldBeProcessedSuccessfully(String fileName) throws LexicalException {
         String path = DIR + fileName + ".java";
 

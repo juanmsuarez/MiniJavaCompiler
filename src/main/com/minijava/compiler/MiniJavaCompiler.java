@@ -40,9 +40,8 @@ public class MiniJavaCompiler {
                 symbolTable.consolidate();
                 boolean declarationCheckSuccess = symbolTable.getExceptions().isEmpty();
 
-                System.out.println(symbolTable.toString()); // TODO: TEMPORAL, borrar
-
                 if (declarationCheckSuccess) {
+                    System.out.println(symbolTable.toString()); // TODO: TEMPORAL, borrar
                     symbolTable.checkSentences();
                     boolean sentenceCheckSuccess = symbolTable.getExceptions().isEmpty();
 

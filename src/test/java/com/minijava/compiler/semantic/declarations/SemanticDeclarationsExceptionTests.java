@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 class SemanticDeclarationsExceptionTests extends SemanticDeclarationsTests {
     private static final String DIR = "semantic/declarations/exception_tests/";
 
-    private static Stream<Arguments> provideExceptionArguments() {
+    private static Stream<Arguments> provideArguments() {
         return Stream.of(
                 Arguments.of("duplicate_classes", Arrays.asList("Object", "System", "A")),
                 Arguments.of("duplicate_invalid_attributes", Arrays.asList("x", "y", "k")),
@@ -38,7 +38,7 @@ class SemanticDeclarationsExceptionTests extends SemanticDeclarationsTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideExceptionArguments")
+    @MethodSource("provideArguments")
     void fileShouldProduceExceptions(String fileName, List<String> expectedExceptions) {
         String path = DIR + fileName + ".java";
         System.out.println("Running test. File: " + path + " should produce " + expectedExceptions + ".");

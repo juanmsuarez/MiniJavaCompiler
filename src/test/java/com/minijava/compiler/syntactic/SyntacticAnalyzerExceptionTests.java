@@ -18,7 +18,7 @@ import static com.minijava.compiler.syntactic.models.TokenGroupNames.*;
 class SyntacticAnalyzerExceptionTests extends SyntacticAnalyzerTests {
     private static final String DIR = "syntactic/exception_tests/";
 
-    private static Stream<Arguments> provideExceptionArguments() {
+    private static Stream<Arguments> provideArguments() {
         return Stream.of(
                 Arguments.of("empty_file", Collections.singletonList(CLASS_OR_INTERFACE)),
                 Arguments.of("unclosed_class", Collections.singletonList(CLOSE_BRACE)),
@@ -45,7 +45,7 @@ class SyntacticAnalyzerExceptionTests extends SyntacticAnalyzerTests {
     }
 
     @ParameterizedTest
-    @MethodSource("provideExceptionArguments")
+    @MethodSource("provideArguments")
     void fileShouldProduceExceptions(String fileName, List<String> expectedExceptions) {
         String path = DIR + fileName + ".java";
         System.out.println("Running test. File: " + path + " should produce " + expectedExceptions + ".");

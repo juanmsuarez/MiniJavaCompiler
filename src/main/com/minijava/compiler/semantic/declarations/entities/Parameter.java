@@ -32,6 +32,10 @@ public class Parameter {
         return name;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     public boolean validDeclaration() {
         if (!type.isValid()) {
             symbolTable.throwLater(new InvalidParameterTypeException(this, (ReferenceType) type));

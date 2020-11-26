@@ -62,6 +62,7 @@ public abstract class Unit {
         String name = method.getName();
 
         if (!methods.containsKey(name)) {
+            method.setUnit(this);
             methods.put(name, method);
         } else {
             symbolTable.throwLater(new DuplicateMethodException(method));
