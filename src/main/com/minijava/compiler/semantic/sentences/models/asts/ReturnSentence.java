@@ -19,7 +19,7 @@ public class ReturnSentence extends Sentence {
     }
 
     @Override
-    public void check(Context context) { // TODO: VERIFICAR -> return; debería funcionar normal en constructor
+    public void check(Context context) {
         Type returnType = context.getCurrentCallable().getType();
 
         try {

@@ -4,10 +4,10 @@ class Main {
 	}
 }
 
-class Test1 {
+class Test {
 	public int x;
 	
-	dynamic void f() {
+	static void f() {
 		Object o;
 		o = this;
 
@@ -17,20 +17,5 @@ class Test1 {
 	}
 
 	dynamic Object g() {
-	}	
-}
-
-class Test2 {
-	public static int x;
-	
-	static void f() {
-		Object o;
-
-		x = 1;
-
-		g();
-	}
-
-	static Object g() {
 	}	
 }

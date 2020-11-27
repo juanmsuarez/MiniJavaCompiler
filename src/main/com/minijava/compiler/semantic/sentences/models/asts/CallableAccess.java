@@ -28,6 +28,4 @@ public interface CallableAccess {
             }
         }
     }
-
-    // TODO: VERIFICAR -> que los errores en argumentos se muestren correctamente
 }

@@ -12,7 +12,23 @@ class SemanticSentencesSuccessfulTests extends SemanticSentencesTests {
 
     private static Stream<Arguments> provideArguments() {
         return Stream.of(
-                Arguments.of("declarations")
+                Arguments.of("dynamic_in_static_context"),
+                Arguments.of("return"),
+                Arguments.of("if_while"),
+                Arguments.of("calls"),
+                Arguments.of("declarations"),
+                Arguments.of("assignment"),
+                Arguments.of("arguments"),
+                Arguments.of("binary_operators"),
+                Arguments.of("variables_resolution"),
+                Arguments.of("unary_operators"),
+                Arguments.of("subtypes"),
+                Arguments.of("static_access"),
+                Arguments.of("constructors"),
+                Arguments.of("chained_variables"),
+                Arguments.of("variables"),
+                Arguments.of("chained_methods"),
+                Arguments.of("methods")
         );
     }
 

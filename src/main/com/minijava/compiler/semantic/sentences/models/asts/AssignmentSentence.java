@@ -10,23 +10,15 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.types.IntType.INT;
 import static com.minijava.compiler.semantic.sentences.models.TokenGroups.COMPOSITE_ASSIGNMENT;
 
-public class Assignment extends Sentence {
+public class AssignmentSentence extends Sentence {
     private Access access;
     private Token type;
     private Expression expression;
 
-    public Assignment(Access access, Token type, Expression expression) {
+    public AssignmentSentence(Access access, Token type, Expression expression) {
         super(type.getLexeme());
         this.access = access;
         this.type = type;
-        this.expression = expression;
-    }
-
-    public void setAccess(Access access) {
-        this.access = access;
-    }
-
-    public void setExpression(Expression expression) {
         this.expression = expression;
     }
 

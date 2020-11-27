@@ -11,24 +11,31 @@ class C {}
 
 class Test {
 	dynamic A f() {
-		int a = 3;
+		int a;
+		a = 3;
 
-		char b = ' ';
+		char b;
+		b = ' ';
 
-		boolean c = true;
+		boolean c;
+		c = true;
 		c = false;
 
-		String d = "asd";
+		String d;
+		d = "asd";
 
-		Object e = null;
+		Object e;
+		e = null;
 		e = new Object();
 		e = this;
 		e = this.f();
 	
-		A f = new A();
+		A f;
+		f = new A();
 		f = new B();
 
-		B g = new B();
+		B g;
+		g = new B();
 
 		C h = new C();
 	}

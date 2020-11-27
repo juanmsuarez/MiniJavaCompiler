@@ -23,7 +23,7 @@ public class VariableAccess extends Access { // variables, parameters or attribu
 
         Form form = context.getFormOfVariable(name);
         if (context.isStatic() && form == Form.DYNAMIC) {
-            throw new DynamicAccessInStaticContextException(lexeme); // TODO: VERIFICAR accesos dinámicos en estático x3
+            throw new DynamicAccessInStaticContextException(lexeme);
         }
 
         type = context.getTypeOfVariable(name);

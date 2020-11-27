@@ -21,7 +21,7 @@ public abstract class Access extends Operand {
         return chainedAccess.getLastInChain();
     }
 
-    public abstract boolean isAssignable();
+    public abstract boolean isAssignable(); // específico a este acceso, mientras que tipo incluye encadenados
 
     public abstract boolean isCallable();
 }

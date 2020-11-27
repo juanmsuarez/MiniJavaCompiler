@@ -36,7 +36,8 @@ class Test {
 		
 		A z;
 		z = new B();
-		boolean b = 1 < 2;
+		boolean b;
+		b = 1 < 2;
 		
 		;; 
 

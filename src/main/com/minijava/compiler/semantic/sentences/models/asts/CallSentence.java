@@ -6,10 +6,10 @@ import com.minijava.compiler.semantic.sentences.models.Context;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
-public class Call extends Sentence {
+public class CallSentence extends Sentence {
     private Access access;
 
-    public Call(Access access) {
+    public CallSentence(Access access) {
         super(access.getLastInChain().lexeme);
         this.access = access;
     }

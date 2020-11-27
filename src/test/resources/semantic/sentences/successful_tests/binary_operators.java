@@ -32,7 +32,7 @@ class Test {
 		
 		boolean b;
 
-		b = new Object() == this || new A() == new B() || new A() == new A();
+		b = new Object() == this || new A() == new B() || new A() == new A() || 1 == 2 || 'a' != 'b';
 		
 		b = this != new Test();
 		

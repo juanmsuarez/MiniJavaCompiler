@@ -584,10 +584,10 @@ public class SyntacticAnalyzer {
             Token assignmentType = assignmentTypeNT();
             Expression expression = expressionNT();
             match(SEMICOLON);
-            return new Assignment(access, assignmentType, expression);
+            return new AssignmentSentence(access, assignmentType, expression);
         } else if (canMatch(SEMICOLON)) {
             matchCurrent();
-            return new Call(access);
+            return new CallSentence(access);
         } else {
             throw buildException(ASSIGNMENT_OR_SENTENCE_END);
         }

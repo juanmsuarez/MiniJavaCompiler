@@ -17,7 +17,7 @@ public class Block extends Sentence {
     }
 
     @Override
-    public void check(Context previousContext) { // TODO: VERIFICAR -> que el scope de las variables sea correcto + if + while
+    public void check(Context previousContext) {
         Context context = new Context(previousContext);
         for (Sentence sentence : sentences) {
             sentence.check(context);

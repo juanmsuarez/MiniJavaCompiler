@@ -5,6 +5,13 @@ class Main {
 }
 
 class Test {
+	Test() {
+		return 1;
+		return f();
+		return null;		
+		return;
+	}
+
 	dynamic void f() {
 		return 1;
 		return true;

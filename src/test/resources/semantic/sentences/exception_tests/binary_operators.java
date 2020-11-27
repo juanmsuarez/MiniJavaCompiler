@@ -52,7 +52,8 @@ class Test {
 		c = "a" <= 1;
 		c = true < false;
 
-		String s = ((("asd")));
+		String s;
+		s = ((("asd")));
 		s = (((1)));	
 	}
 }

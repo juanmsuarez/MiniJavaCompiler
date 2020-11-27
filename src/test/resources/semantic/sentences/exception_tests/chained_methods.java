@@ -15,7 +15,7 @@ class A {
 }
 
 class B extends A {
-	public A atr1;
+	public B atr1;
 
 	static A b1() {}
 
@@ -29,9 +29,13 @@ class B extends A {
 
 		b2().a1(3);
 
+		b2().a1('a').asd();
+
 		b1().a2().f().f();
 
 		b2().b1().a2();
+
+		b2().b1(1).a2();
 
 		new A().b1();
 

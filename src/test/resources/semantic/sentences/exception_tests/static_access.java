@@ -17,29 +17,10 @@ class A {
 		static C.f();
 		C.f();
 	}
-
-	dynamic void g() {
-		a1 = 1;
-		A.a1 = 1;
-		static A.a2 = 2;
-		static A.f();
-		A.f();
-		static C.f();
-		C.f();
-	}
 }
 
 class B {
 	static int f() {
-		A.a1 = 1;
-		static A.a2 = 2;
-		static A.f();
-		A.f();
-		static C.f();
-		C.f();
-	}
-
-	dynamic void g() {
 		A.a1 = 1;
 		static A.a2 = 2;
 		static A.f();

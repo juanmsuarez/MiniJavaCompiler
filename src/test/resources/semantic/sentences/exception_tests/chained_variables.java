@@ -17,7 +17,7 @@ class A {
 	static B a2() {
 		new B().a1 = 'a';
 		new B().b2.b2.b2 = new B();
-		new B().b1 = 1;	
+		new B().b1.asd = 1;	
 	}
 }
 
@@ -31,7 +31,7 @@ class B extends A {
 	}
 
 	dynamic B b2() {
-		b2.b2.a2.a2.b2 = new B();	
+		b2.b2.a2.a2.b2.asd = new B();	
 		this.a1 = 'a';
 		this.b1 = 1;
 	}
