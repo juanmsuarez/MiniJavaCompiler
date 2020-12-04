@@ -28,7 +28,7 @@ class SemanticSentencesExceptionTests extends SemanticSentencesTests {
                 Arguments.of("variables_resolution", Arrays.asList("a1", "a2", "a3", "a3", "a1")),
                 Arguments.of("unary_operators", Arrays.asList("-", "-", "=", "!", "!")),
                 Arguments.of("subtypes", Arrays.asList("=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=")),
-                Arguments.of("static_access", Arrays.asList("a1", "a2", "f", "f", "C", "C", "a1", "a2", "f", "f", "C", "C")),
+                Arguments.of("static_access", Arrays.asList("a1", "a2", "f", "f", "g", "g", "C", "C", "a1", "a2", "f", "f", "C", "C")),
                 Arguments.of("constructors", Arrays.asList("a2", "C", "B", "B")),
                 Arguments.of("chained_variables", Arrays.asList("a1", "b1", "b2", "b2", "b1", "a1", "a3", "a1", "b2")),
                 Arguments.of("variables", Arrays.asList("=", "a4", "a3", "=")),

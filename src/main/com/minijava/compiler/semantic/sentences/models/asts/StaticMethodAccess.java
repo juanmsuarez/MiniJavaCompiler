@@ -42,7 +42,7 @@ public class StaticMethodAccess extends Access implements CallableAccess {
 
         Method method = accessedClass.getMethod(methodName);
         if (method == null || method.getForm() == Form.DYNAMIC) {
-            symbolTable.throwLater(new InvalidStaticMethodAccessException(methodLexeme));
+            throw new InvalidStaticMethodAccessException(methodLexeme);
         }
 
         CallableAccess.checkArguments(method, lexeme, arguments, context);

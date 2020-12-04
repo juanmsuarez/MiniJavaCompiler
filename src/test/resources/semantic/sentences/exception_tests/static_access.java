@@ -14,6 +14,8 @@ class A {
 		static A.a2 = 2;
 		static A.f();
 		A.f();
+		static A.g();
+		A.g();
 		static C.f();
 		C.f();
 	}
