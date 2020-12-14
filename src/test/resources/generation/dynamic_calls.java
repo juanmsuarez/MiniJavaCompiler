@@ -1,5 +1,5 @@
 class A {
-    static int f1() {
+    static void f1() {
         System.printSln("A.f1()");
     }
 
@@ -9,7 +9,7 @@ class A {
 }
 
 class B extends A {
-    static int f1() {
+    static void f1() {
         System.printSln("B.f1()");
     }
     static void f3() {

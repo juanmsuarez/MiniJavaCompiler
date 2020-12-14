@@ -60,6 +60,9 @@ public class StaticVariableAccess extends Access {
     @Override
     public void translate() throws IOException {
         // TODO: pending
+        if (chainedAccess != null) {
+            chainedAccess.translate();
+        }
     }
 
     @Override

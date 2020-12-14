@@ -39,6 +39,9 @@ public class ExpressionAccess extends Access {
     @Override
     public void translate() throws IOException {
         // TODO: pending
+        if (chainedAccess != null) {
+            chainedAccess.translate();
+        }
     }
 
     @Override

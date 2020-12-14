@@ -90,6 +90,10 @@ public class Class extends Unit {
         return attributes.get(name);
     }
 
+    public int getNumberOfAttributes() {
+        return hiddenAttributes.size() + attributes.size(); // TODO: reemplazar con nextAttributeOffset?
+    }
+
     public boolean validDeclaration() {
         checkParentExists();
         checkInterfacesExist(interfaceNames);
@@ -219,6 +223,10 @@ public class Class extends Unit {
         }
     }
 
+    public String getVirtualTableLabel() {
+        return "VT_" + name;
+    }
+
     public void translate() throws IOException {
         generateVirtualTables();
 
@@ -238,7 +246,7 @@ public class Class extends Unit {
 
         codeGenerator.generate(".DATA");
         if (dynamicMethods.isEmpty()) {
-            codeGenerator.generate("VT_" + name + ": NOP");
+            codeGenerator.generate(getVirtualTableLabel() + ": NOP");
         } else {
             List<String> sortedMethodLabels = dynamicMethods.stream()
                     .sorted(Comparator.comparing(Method::getOffset))

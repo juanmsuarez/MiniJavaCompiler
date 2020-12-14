@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
-import static com.minijava.compiler.semantic.declarations.entities.types.VoidType.VOID;
 
 public class StaticMethodAccess extends Access implements CallableAccess {
     private Lexeme classLexeme;
@@ -72,21 +70,11 @@ public class StaticMethodAccess extends Access implements CallableAccess {
 
     @Override
     public void translate() throws IOException {
-        String currentReturnTypeName = method.getType().getName();
-        if (!currentReturnTypeName.equals(VOID)) {
-            codeGenerator.generate(
-                    ".CODE",
-                    "RMEM 1"
-            );
-        }
+        CallableAccess.reserveMemoryForReturnTypeIfNeeded(method.getType(), Form.STATIC);
 
-        CallableAccess.translateArguments(arguments);
+        CallableAccess.translateArguments(arguments, Form.STATIC);
 
-        codeGenerator.generate(
-                ".CODE",
-                "PUSH " + method.getLabel(),
-                "CALL"
-        );
+        CallableAccess.callStatic(method.getLabel());
 
         if (chainedAccess != null) {
             chainedAccess.translate();

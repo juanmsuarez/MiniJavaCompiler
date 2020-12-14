@@ -112,7 +112,7 @@ public abstract class Callable {
         codeGenerator.generate(
                 ".CODE",
                 "STOREFP",
-                "RET " + parameters.size()
+                "RET " + (form == Form.STATIC ? parameters.size() : parameters.size() + 1) // TODO: CONTROLAR atributos y this
         );
     }
 

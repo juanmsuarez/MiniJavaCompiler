@@ -41,6 +41,9 @@ public class ChainedVariableAccess extends ChainedAccess {
     public void translate() throws IOException {
         // TODO pending
         // TODO: pop el this en encadenados estáticos
+        if (chainedAccess != null) {
+            chainedAccess.translate();
+        }
     }
 
     @Override

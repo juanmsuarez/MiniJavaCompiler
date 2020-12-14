@@ -7,6 +7,9 @@ import java.io.IOException;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class CodeGenerator {
+    public static final String HELPER_HEAP_INIT = "HELPER_HEAP_INIT";
+    public static final String HELPER_MALLOC = "HELPER_MALLOC";
+
     private int labelNumber = 0;
     private OutputFileManager outputFileManager;
 
@@ -25,7 +28,7 @@ public class CodeGenerator {
 
         String mainLabel = symbolTable.getMainMethod().getLabel();
         generate(
-                "PUSH HELPER_HEAP_INIT",
+                "PUSH " + HELPER_HEAP_INIT,
                 "CALL",
                 "PUSH " + mainLabel,
                 "CALL",
@@ -33,12 +36,12 @@ public class CodeGenerator {
         );
 
         generate(
-                "HELPER_HEAP_INIT:",
+                HELPER_HEAP_INIT + ":",
                 "RET 0"
         );
 
         generate(
-                "HELPER_MALLOC:",
+                HELPER_MALLOC + ":",
                 "LOADFP",
                 "LOADSP",
                 "STOREFP",
