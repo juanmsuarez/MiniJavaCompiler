@@ -5,6 +5,8 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.ExpectedBooleanConditionException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 
@@ -37,6 +39,11 @@ public class WhileSentence extends Sentence {
 
         Context bodyContext = new Context(previousContext);
         body.check(bodyContext);
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

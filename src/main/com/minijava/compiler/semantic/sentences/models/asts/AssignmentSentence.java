@@ -6,6 +6,8 @@ import com.minijava.compiler.semantic.sentences.exceptions.InvalidAssignmentExce
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidCompositeAssignmentException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.types.IntType.INT;
 import static com.minijava.compiler.semantic.sentences.models.TokenGroups.COMPOSITE_ASSIGNMENT;
@@ -40,6 +42,11 @@ public class AssignmentSentence extends Sentence {
         } catch (SemanticException exception) {
             symbolTable.throwLater(exception);
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
     }
 
     @Override

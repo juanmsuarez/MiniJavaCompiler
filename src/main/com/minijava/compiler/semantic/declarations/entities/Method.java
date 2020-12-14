@@ -13,6 +13,7 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Method extends Callable {
     private Unit unit;
+    private int offset = -1;
 
     public Method(Form form, Type type, String name, Parameter... parameters) {
         super(form, type, name, parameters);
@@ -22,8 +23,20 @@ public class Method extends Callable {
         super(form, type, lexeme, parameters);
     }
 
+    public Unit getUnit() {
+        return unit;
+    }
+
     public void setUnit(Unit unit) {
         this.unit = unit;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     @Override
@@ -48,9 +61,12 @@ public class Method extends Callable {
 
     @Override
     public void checkSentences(Class currentClass) {
-        if (currentClass.getName().equals(unit.getName())) {
-            block.check(new Context(currentClass, this));
-        }
+        block.check(new Context(currentClass, this));
+    }
+
+    @Override
+    public String getLabel() {
+        return "METHOD_" + unit.name + '_' + name;
     }
 
     @Override
@@ -75,6 +91,7 @@ public class Method extends Callable {
                 "form=" + form +
                 ", type=" + type +
                 ", name='" + name + '\'' +
+                ", offset='" + offset + '\'' +
                 ", parameters=" + parameters +
                 ", block=" + block +
                 '}';

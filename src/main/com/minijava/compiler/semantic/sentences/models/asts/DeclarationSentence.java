@@ -5,6 +5,8 @@ import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.sentences.exceptions.DuplicateVariableNameException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class DeclarationSentence extends Sentence {
@@ -24,6 +26,11 @@ public class DeclarationSentence extends Sentence {
         } else {
             context.add(type, name);
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
     }
 
     @Override

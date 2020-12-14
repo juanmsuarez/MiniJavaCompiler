@@ -2,6 +2,8 @@ package com.minijava.compiler.semantic.sentences.models.asts;
 
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 public class EmptySentence extends Sentence {
     public EmptySentence() {
         super(null);
@@ -9,6 +11,11 @@ public class EmptySentence extends Sentence {
 
     @Override
     public void check(Context context) {
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

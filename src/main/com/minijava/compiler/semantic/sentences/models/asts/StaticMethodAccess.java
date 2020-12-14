@@ -9,15 +9,20 @@ import com.minijava.compiler.semantic.sentences.exceptions.ClassInStaticAccessNo
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidStaticMethodAccessException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
+import static com.minijava.compiler.semantic.declarations.entities.types.VoidType.VOID;
 
 public class StaticMethodAccess extends Access implements CallableAccess {
     private Lexeme classLexeme;
     private Lexeme methodLexeme;
     private List<Expression> arguments = new ArrayList<>();
+
+    private Method method;
 
     public StaticMethodAccess(Lexeme classLexeme, Lexeme methodLexeme) {
         super(classLexeme, methodLexeme);
@@ -40,7 +45,7 @@ public class StaticMethodAccess extends Access implements CallableAccess {
             throw new ClassInStaticAccessNotFoundException(classLexeme);
         }
 
-        Method method = accessedClass.getMethod(methodName);
+        method = accessedClass.getMethod(methodName);
         if (method == null || method.getForm() == Form.DYNAMIC) {
             throw new InvalidStaticMethodAccessException(methodLexeme);
         }
@@ -63,6 +68,29 @@ public class StaticMethodAccess extends Access implements CallableAccess {
     @Override
     public boolean isCallable() {
         return true;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        String currentReturnTypeName = method.getType().getName();
+        if (!currentReturnTypeName.equals(VOID)) {
+            codeGenerator.generate(
+                    ".CODE",
+                    "RMEM 1"
+            );
+        }
+
+        CallableAccess.translateArguments(arguments);
+
+        codeGenerator.generate(
+                ".CODE",
+                "PUSH " + method.getLabel(),
+                "CALL"
+        );
+
+        if (chainedAccess != null) {
+            chainedAccess.translate();
+        }
     }
 
     @Override

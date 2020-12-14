@@ -2,7 +2,7 @@ package com.minijava.compiler.semantic.sentences;
 
 import com.minijava.compiler.CompilerException;
 import com.minijava.compiler.ResourceReader;
-import com.minijava.compiler.filemanager.FileManager;
+import com.minijava.compiler.filemanagers.InputFileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
@@ -25,8 +25,8 @@ class SemanticSentencesTests extends ResourceReader {
     private static final String IO_ERROR = "No pudo realizarse el análisis: ocurrió un error durante la lectura del archivo fuente.";
 
     protected void runAnalyzer(String path) {
-        try (FileManager fileManager = new FileManager(path)) {
-            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
+        try (InputFileManager inputFileManager = new InputFileManager(path)) {
+            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(inputFileManager);
             SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
             symbolTable = new SymbolTable();
 

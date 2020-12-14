@@ -6,6 +6,8 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.DynamicAccessInStaticContextException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 public class ThisAccess extends Access {
     public ThisAccess(Lexeme lexeme) {
         super(lexeme, lexeme);
@@ -33,6 +35,11 @@ public class ThisAccess extends Access {
     @Override
     public boolean isCallable() {
         return false;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

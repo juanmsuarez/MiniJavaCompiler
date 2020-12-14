@@ -1,15 +1,15 @@
-package com.minijava.compiler.filemanager;
+package com.minijava.compiler.filemanagers;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class FileManager implements AutoCloseable {
+public class InputFileManager implements AutoCloseable {
     private BufferedReader reader;
     private String line = "";
     private int lineNumber = -1;
     private int charPosition = 0;
 
-    public FileManager(String path) throws FileNotFoundException {
+    public InputFileManager(String path) throws FileNotFoundException {
         File file = new File(path);
         InputStream inputStream = new FileInputStream(file);
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);

@@ -8,6 +8,7 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.ClassInConstructorAccessNotFoundException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +53,11 @@ public class ConstructorAccess extends Access implements CallableAccess {
     @Override
     public boolean isCallable() {
         return true;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
     }
 
     @Override

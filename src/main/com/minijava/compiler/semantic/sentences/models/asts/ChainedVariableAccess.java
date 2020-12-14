@@ -6,6 +6,8 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidChainedVariableAccessException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 public class ChainedVariableAccess extends ChainedAccess {
     public ChainedVariableAccess(Lexeme lexeme) {
         super(lexeme);
@@ -33,6 +35,12 @@ public class ChainedVariableAccess extends ChainedAccess {
     @Override
     public boolean isCallable() {
         return false;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
+        // TODO: pop el this en encadenados estáticos
     }
 
     @Override

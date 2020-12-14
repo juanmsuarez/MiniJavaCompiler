@@ -9,6 +9,8 @@ import com.minijava.compiler.semantic.sentences.exceptions.OperatorExpectedConfo
 import com.minijava.compiler.semantic.sentences.exceptions.OperatorExpectedIntegerException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 import static com.minijava.compiler.semantic.declarations.entities.types.IntType.INT;
 import static com.minijava.compiler.semantic.sentences.models.TokenGroups.*;
@@ -55,6 +57,11 @@ public class BinaryExpression extends Expression {
             }
             type = new BooleanType();
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
     }
 
     @Override

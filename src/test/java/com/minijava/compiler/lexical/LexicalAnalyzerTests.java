@@ -1,7 +1,7 @@
 package com.minijava.compiler.lexical;
 
 import com.minijava.compiler.ResourceReader;
-import com.minijava.compiler.filemanager.FileManager;
+import com.minijava.compiler.filemanagers.InputFileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.lexical.exceptions.LexicalException;
 import com.minijava.compiler.lexical.models.Token;
@@ -11,8 +11,8 @@ import java.io.IOException;
 
 class LexicalAnalyzerTests extends ResourceReader {
     protected void runAnalyzer(String path) throws LexicalException {
-        try (FileManager fileManager = new FileManager(path)) {
-            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
+        try (InputFileManager inputFileManager = new InputFileManager(path)) {
+            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(inputFileManager);
 
             Token currentToken;
             do {

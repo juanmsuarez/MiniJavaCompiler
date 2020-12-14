@@ -2,7 +2,7 @@ package com.minijava.compiler.syntactic;
 
 import com.minijava.compiler.MiniJavaCompiler;
 import com.minijava.compiler.ResourceReader;
-import com.minijava.compiler.filemanager.FileManager;
+import com.minijava.compiler.filemanagers.InputFileManager;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
@@ -16,9 +16,9 @@ class SyntacticAnalyzerTests extends ResourceReader {
     protected SyntacticAnalyzer syntacticAnalyzer;
 
     protected void runAnalyzer(String path) {
-        try (FileManager fileManager = new FileManager(path)) {
+        try (InputFileManager inputFileManager = new InputFileManager(path)) {
             MiniJavaCompiler.symbolTable = new SymbolTable();
-            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(fileManager);
+            LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(inputFileManager);
             syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
 
             syntacticAnalyzer.analyze();

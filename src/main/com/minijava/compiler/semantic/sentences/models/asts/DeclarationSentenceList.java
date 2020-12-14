@@ -5,6 +5,7 @@ import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.sentences.exceptions.VariableTypeNotFoundException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,11 @@ public class DeclarationSentenceList extends Sentence {
                 declarationSentence.check(context);
             }
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
     }
 
     @Override

@@ -4,6 +4,9 @@ import com.minijava.compiler.lexical.models.Token;
 import com.minijava.compiler.semantic.declarations.entities.types.*;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 import static com.minijava.compiler.semantic.declarations.entities.types.ReferenceType.NULL;
 
@@ -35,6 +38,64 @@ public class Literal extends Operand {
                 type = new ReferenceType(NULL);
                 break;
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        switch (literal.getName()) {
+            case STRING_LITERAL:
+                String stringLiteral = literal.getLexeme().getString().isEmpty() ? "" : "\"" + literal.getLexeme() + "\", ";
+                String label = "STRING_" + codeGenerator.newLabel();
+                codeGenerator.generate(
+                        ".DATA",
+                        label + ": DW " + stringLiteral + "0",
+                        ".CODE",
+                        "PUSH " + label
+                );
+                break;
+            case INT_LITERAL:
+                codeGenerator.generate(
+                        ".CODE",
+                        "PUSH " + literal.getLexeme()
+                );
+                break;
+            case CHAR_LITERAL:
+                codeGenerator.generate(
+                        ".CODE",
+                        "PUSH " + (int) decodeChar(literal.getLexeme().getString())
+                );
+                break;
+            case TRUE_KW:
+                codeGenerator.generate(
+                        ".CODE",
+                        "PUSH 1"
+                );
+                break;
+            case FALSE_KW:
+            case NULL_KW: // TODO: check null literal
+                codeGenerator.generate(
+                        ".CODE",
+                        "PUSH 0"
+                );
+                break;
+        }
+    }
+
+    private char decodeChar(String encodedChar) {
+        char firstChar = encodedChar.charAt(0);
+        if (firstChar == '\\') {
+            char escapedChar = encodedChar.charAt(1);
+            switch (escapedChar) {
+                case 'n':
+                    return '\n';
+                case 't':
+                    return '\t';
+                default:
+                    return escapedChar;
+            }
+        }
+
+        return firstChar;
     }
 
     @Override

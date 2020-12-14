@@ -8,6 +8,8 @@ import com.minijava.compiler.semantic.sentences.exceptions.OperatorExpectedBoole
 import com.minijava.compiler.semantic.sentences.exceptions.OperatorExpectedIntegerException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 import static com.minijava.compiler.semantic.declarations.entities.types.IntType.INT;
@@ -42,6 +44,11 @@ public class UnaryExpression extends Expression {
 
             type = new BooleanType();
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

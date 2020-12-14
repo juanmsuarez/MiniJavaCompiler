@@ -10,6 +10,8 @@ import com.minijava.compiler.semantic.sentences.exceptions.ClassInStaticAccessNo
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidStaticVariableAccessException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class StaticVariableAccess extends Access {
@@ -53,6 +55,11 @@ public class StaticVariableAccess extends Access {
     @Override
     public boolean isCallable() {
         return false;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

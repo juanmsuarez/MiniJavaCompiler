@@ -4,7 +4,11 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidCallException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
+import static com.minijava.compiler.semantic.declarations.entities.types.VoidType.VOID;
 
 public class CallSentence extends Sentence {
     private Access access;
@@ -24,6 +28,19 @@ public class CallSentence extends Sentence {
             }
         } catch (SemanticException exception) {
             symbolTable.throwLater(exception);
+        }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        access.translate();
+
+        String returnTypeName = access.type.getName();
+        if (!returnTypeName.equals(VOID)) {
+            codeGenerator.generate(
+                    ".CODE",
+                    "POP"
+            );
         }
     }
 

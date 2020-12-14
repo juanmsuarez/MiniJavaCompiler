@@ -2,6 +2,7 @@ package com.minijava.compiler.semantic.sentences.models.asts;
 
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,14 @@ public class Block extends Sentence {
         Context context = new Context(previousContext);
         for (Sentence sentence : sentences) {
             sentence.check(context);
+        }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending (manage variables)
+        for (Sentence sentence : sentences) {
+            sentence.translate();
         }
     }
 

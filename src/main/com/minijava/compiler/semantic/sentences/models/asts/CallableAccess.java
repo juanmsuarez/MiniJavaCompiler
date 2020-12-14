@@ -8,6 +8,7 @@ import com.minijava.compiler.semantic.sentences.exceptions.ArgumentsNumberMismat
 import com.minijava.compiler.semantic.sentences.exceptions.NonConformingArgumentException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface CallableAccess {
@@ -26,6 +27,12 @@ public interface CallableAccess {
             if (!argument.type.isSubtype(parameter.getType())) {
                 throw new NonConformingArgumentException(argument.leftLexeme, i, parameter.getType());
             }
+        }
+    }
+
+    static void translateArguments(List<Expression> arguments) throws IOException { // TODO: FIX para dinámicos vs estáticos (this)
+        for (Expression argument : arguments) {
+            argument.translate();
         }
     }
 }

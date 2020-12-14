@@ -7,6 +7,8 @@ import com.minijava.compiler.semantic.sentences.exceptions.InvalidReturnTypeExce
 import com.minijava.compiler.semantic.sentences.exceptions.MustReturnExpressionException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.types.VoidType.VOID;
 
@@ -36,6 +38,11 @@ public class ReturnSentence extends Sentence {
         } catch (SemanticException exception) {
             symbolTable.throwLater(exception);
         }
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

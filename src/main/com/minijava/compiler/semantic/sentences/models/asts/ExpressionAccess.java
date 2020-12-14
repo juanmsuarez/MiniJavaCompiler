@@ -4,6 +4,8 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 public class ExpressionAccess extends Access {
     private Expression expression;
 
@@ -32,6 +34,11 @@ public class ExpressionAccess extends Access {
     @Override
     public boolean isCallable() {
         return false;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

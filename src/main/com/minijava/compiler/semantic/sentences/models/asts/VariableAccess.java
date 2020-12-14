@@ -7,6 +7,8 @@ import com.minijava.compiler.semantic.sentences.exceptions.DynamicAccessInStatic
 import com.minijava.compiler.semantic.sentences.exceptions.VariableNotFoundException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
+
 public class VariableAccess extends Access { // variables, parameters or attributes
     private String name;
 
@@ -42,6 +44,11 @@ public class VariableAccess extends Access { // variables, parameters or attribu
     @Override
     public boolean isCallable() {
         return false;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

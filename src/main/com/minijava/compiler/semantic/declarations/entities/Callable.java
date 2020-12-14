@@ -6,8 +6,10 @@ import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.declarations.exceptions.DuplicateParameterException;
 import com.minijava.compiler.semantic.sentences.models.asts.Block;
 
+import java.io.IOException;
 import java.util.*;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public abstract class Callable {
@@ -96,6 +98,25 @@ public abstract class Callable {
     }
 
     public abstract void checkSentences(Class currentClass);
+
+    public void translate() throws IOException {
+        codeGenerator.generate(
+                ".CODE",
+                getLabel() + ": LOADFP",
+                "LOADSP",
+                "STOREFP"
+        );
+
+        block.translate();
+
+        codeGenerator.generate(
+                ".CODE",
+                "STOREFP",
+                "RET " + parameters.size()
+        );
+    }
+
+    public abstract String getLabel();
 
     @Override
     public boolean equals(Object o) {

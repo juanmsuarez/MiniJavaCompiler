@@ -20,6 +20,11 @@ public class Constructor extends Callable {
     }
 
     @Override
+    public String getLabel() {
+        return "CONSTRUCTOR_" + name;
+    }
+
+    @Override
     public String toString() {
         return "Constructor{" +
                 "name='" + name + '\'' +
@@ -27,5 +32,4 @@ public class Constructor extends Callable {
                 ", block=" + block +
                 '}';
     }
-
 }

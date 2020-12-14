@@ -1,6 +1,6 @@
 package com.minijava.compiler.lexical.analyzer;
 
-public class Lexeme {
+public class Lexeme implements Comparable<Lexeme> {
     private String string;
     private int lineNumber;
     private String line;
@@ -27,6 +27,14 @@ public class Lexeme {
 
     public int getLexemePosition() {
         return lexemePosition;
+    }
+
+    @Override
+    public int compareTo(Lexeme other) {
+        if (lineNumber == other.lineNumber) {
+            return Integer.compare(lexemePosition, other.lexemePosition);
+        }
+        return Integer.compare(lineNumber, other.lineNumber);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidChainedMethodAccessException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,12 @@ public class ChainedMethodAccess extends ChainedAccess implements CallableAccess
     @Override
     public boolean isCallable() {
         return true;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO pending
+        // TODO: pop el this en encadenados estáticos
     }
 
     @Override

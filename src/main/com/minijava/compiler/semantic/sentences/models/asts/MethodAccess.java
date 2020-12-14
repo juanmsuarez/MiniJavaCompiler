@@ -9,6 +9,7 @@ import com.minijava.compiler.semantic.sentences.exceptions.DynamicAccessInStatic
 import com.minijava.compiler.semantic.sentences.exceptions.MethodNotFoundException;
 import com.minijava.compiler.semantic.sentences.models.Context;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,11 @@ public class MethodAccess extends Access implements CallableAccess {
     @Override
     public boolean isCallable() {
         return true;
+    }
+
+    @Override
+    public void translate() throws IOException {
+        // TODO: pending
     }
 
     @Override

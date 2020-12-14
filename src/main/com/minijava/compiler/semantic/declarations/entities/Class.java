@@ -5,8 +5,11 @@ import com.minijava.compiler.semantic.declarations.entities.modifiers.Visibility
 import com.minijava.compiler.semantic.declarations.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.declarations.exceptions.*;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.PredefinedEntities.OBJECT;
 
@@ -16,6 +19,8 @@ public class Class extends Unit {
     private Constructor constructor;
     private List<Attribute> hiddenAttributes = new ArrayList<>();
     private Map<String, Attribute> attributes = new HashMap<>();
+
+    private int nextMethodOffset = 0;
 
     public Class() {
     }
@@ -173,12 +178,27 @@ public class Class extends Unit {
         for (Method method : parent.methods.values()) {
             consolidateMethod(method, parentType.getGenericType());
         }
+
+        generateMethodOffsets();
+    }
+
+    private void generateMethodOffsets() {
+        Class parent = symbolTable.getClass(parentType.getName());
+        nextMethodOffset = parent.nextMethodOffset;
+
+        for (Method method : methods.values()) {
+            if (method.getUnit() == this && method.getForm() == Form.DYNAMIC) { // TODO: CONSULTA Los métodos estáticos se resuelven estáticamente aunque se accedan mediante un objeto, cierto?
+                Method parentMethod = parent.methods.get(method.getName());
+                int offset = parentMethod != null ? parentMethod.getOffset() : nextMethodOffset++;
+                method.setOffset(offset);
+            }
+        }
     }
 
     private void checkInterfacesImplemented() {
         Collection<Method> methodsToImplement = validInterfacesMethods(interfaceNames);
 
-        for (Method methodToImplement : methodsToImplement) { // non-implemented methods aren't fixed (for now)
+        for (Method methodToImplement : methodsToImplement) { // non-implemented methods aren't fixed
             Method implementedMethod = methods.get(methodToImplement.getName());
 
             if (implementedMethod == null) {
@@ -193,7 +213,39 @@ public class Class extends Unit {
         constructor.checkSentences(this);
 
         for (Method method : methods.values()) {
-            method.checkSentences(this);
+            if (method.getUnit().name.equals(name)) {
+                method.checkSentences(this);
+            }
+        }
+    }
+
+    public void translate() throws IOException {
+        generateVirtualTables();
+
+        constructor.translate();
+
+        for (Method method : methods.values()) {
+            if (method.getUnit().name.equals(name)) {
+                method.translate();
+            }
+        }
+    }
+
+    private void generateVirtualTables() throws IOException {
+        List<Method> dynamicMethods = this.methods.values().stream()
+                .filter(method -> method.form == Form.DYNAMIC)
+                .collect(Collectors.toList());
+
+        codeGenerator.generate(".DATA");
+        if (dynamicMethods.isEmpty()) {
+            codeGenerator.generate("VT_" + name + ": NOP");
+        } else {
+            List<String> sortedMethodLabels = dynamicMethods.stream()
+                    .sorted(Comparator.comparing(Method::getOffset))
+                    .map(Method::getLabel)
+                    .collect(Collectors.toList());
+
+            codeGenerator.generate("VT_" + name + ": DW " + String.join(", ", sortedMethodLabels));
         }
     }
 

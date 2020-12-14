@@ -7,6 +7,7 @@ import com.minijava.compiler.semantic.declarations.exceptions.DuplicateUnitExcep
 import com.minijava.compiler.semantic.declarations.exceptions.MainMethodNotFoundException;
 import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,17 +121,24 @@ public class SymbolTable {
     }
 
     private void checkMainExists() {
-        boolean mainExists = false;
+        if (getMainMethod() == null) {
+            throwLater(new MainMethodNotFoundException());
+        }
+    }
+
+    public Method getMainMethod() {
+        Method main = null;
+
         for (Class aClass : classes.values()) {
             Method method = aClass.getMethod(MAIN.getName());
             if (MAIN.equals(method)) {
-                mainExists = true;
+                if (main == null || method.getLexeme().compareTo(main.getLexeme()) < 0) {
+                    main = method;
+                }
             }
         }
 
-        if (!mainExists) {
-            throwLater(new MainMethodNotFoundException());
-        }
+        return main;
     }
 
     public void consolidate() {
@@ -145,6 +153,12 @@ public class SymbolTable {
     public void checkSentences() {
         for (Class aClass : classes.values()) {
             aClass.checkSentences();
+        }
+    }
+
+    public void translate() throws IOException {
+        for (Class aClass : classes.values()) {
+            aClass.translate();
         }
     }
 

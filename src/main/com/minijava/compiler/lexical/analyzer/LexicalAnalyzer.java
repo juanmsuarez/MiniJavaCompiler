@@ -1,6 +1,6 @@
 package com.minijava.compiler.lexical.analyzer;
 
-import com.minijava.compiler.filemanager.FileManager;
+import com.minijava.compiler.filemanagers.InputFileManager;
 import com.minijava.compiler.lexical.exceptions.*;
 import com.minijava.compiler.lexical.models.Token;
 
@@ -11,7 +11,7 @@ import static com.minijava.compiler.lexical.analyzer.Lexemes.*;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 
 public class LexicalAnalyzer {
-    private FileManager fileManager;
+    private InputFileManager inputFileManager;
 
     private Character currentChar;
 
@@ -20,13 +20,13 @@ public class LexicalAnalyzer {
     private String lexemeStartLine;
     private int lexemeStartPosition;
 
-    public LexicalAnalyzer(FileManager fileManager) throws IOException {
-        this.fileManager = fileManager;
+    public LexicalAnalyzer(InputFileManager inputFileManager) throws IOException {
+        this.inputFileManager = inputFileManager;
         advanceCurrentChar();
     }
 
     private void advanceCurrentChar() throws IOException {
-        currentChar = fileManager.nextChar();
+        currentChar = inputFileManager.nextChar();
     }
 
     private void updateLexeme() {
@@ -50,9 +50,9 @@ public class LexicalAnalyzer {
 
     private void resetLexeme() {
         currentLexeme = "";
-        lexemeStartLineNumber = fileManager.getLineNumber();
-        lexemeStartLine = fileManager.getLine();
-        lexemeStartPosition = fileManager.getCharPosition();
+        lexemeStartLineNumber = inputFileManager.getLineNumber();
+        lexemeStartLine = inputFileManager.getLine();
+        lexemeStartPosition = inputFileManager.getCharPosition();
     }
 
     public Token nextToken() throws IOException, LexicalException {
