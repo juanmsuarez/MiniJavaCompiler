@@ -11,39 +11,40 @@ import java.util.Objects;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
-public class Attribute {
+public class Attribute extends Variable {
     private Visibility visibility;
     private Form form;
-    private Type type;
     private Lexeme lexeme;
-    private String name;
+
+    private Class classUnit;
+
+    private int offset = -1;
 
     public Attribute(Visibility visibility, Form form, Type type, Lexeme lexeme) {
+        super(type, lexeme.getString());
         this.visibility = visibility;
         this.form = form;
-        this.type = type;
         this.lexeme = lexeme;
-        this.name = lexeme.getString();
     }
 
     public Visibility getVisibility() {
         return visibility;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public Lexeme getLexeme() {
         return lexeme;
     }
 
-    public Type getType() {
-        return type;
-    }
-
     public Form getForm() {
         return form;
+    }
+
+    public Class getClassUnit() {
+        return classUnit;
+    }
+
+    public void setClassUnit(Class classUnit) {
+        this.classUnit = classUnit;
     }
 
     public boolean validDeclaration() {
@@ -52,6 +53,11 @@ public class Attribute {
             return false;
         }
 
+        return true;
+    }
+
+    @Override
+    public boolean isInstanceMember() {
         return true;
     }
 

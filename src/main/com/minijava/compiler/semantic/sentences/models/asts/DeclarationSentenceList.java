@@ -41,7 +41,6 @@ public class DeclarationSentenceList extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        // TODO pending
     }
 
     @Override

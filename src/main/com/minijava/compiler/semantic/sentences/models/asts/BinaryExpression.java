@@ -60,7 +60,7 @@ public class BinaryExpression extends Expression {
     }
 
     @Override
-    public void translate() throws IOException {
+    public void translate() throws IOException { // TODO: CONSULTA qué pasa si no implementabas logro de precedencia?
         // TODO pending
     }
 

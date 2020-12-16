@@ -55,7 +55,6 @@ public class ChainedMethodAccess extends ChainedAccess implements CallableAccess
 
     @Override
     public void translate() throws IOException {
-        // TODO: CONTROLAR
         if (method.getForm() == Form.STATIC) {
             codeGenerator.generate(
                     ".CODE",

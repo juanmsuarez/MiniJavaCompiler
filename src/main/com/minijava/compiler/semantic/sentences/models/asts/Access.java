@@ -4,6 +4,7 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 
 public abstract class Access extends Operand {
     protected ChainedAccess chainedAccess;
+    protected boolean leftSide = false;
 
     public Access(Lexeme leftLexeme, Lexeme lexeme) {
         super(leftLexeme, lexeme);
@@ -21,7 +22,15 @@ public abstract class Access extends Operand {
         return chainedAccess.getLastInChain();
     }
 
-    public abstract boolean isAssignable(); // específico a este acceso, mientras que tipo incluye encadenados
+    public void setLeftSide(boolean leftSide) { // includes chained accesses
+        this.leftSide = leftSide;
 
-    public abstract boolean isCallable();
+        if (chainedAccess != null) {
+            chainedAccess.setLeftSide(leftSide);
+        }
+    }
+
+    public abstract boolean isAssignable(); // specific to this access
+
+    public abstract boolean isCallable(); // specific to this access
 }

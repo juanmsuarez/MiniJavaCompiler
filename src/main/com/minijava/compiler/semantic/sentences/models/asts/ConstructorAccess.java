@@ -60,10 +60,9 @@ public class ConstructorAccess extends Access implements CallableAccess {
 
     @Override
     public void translate() throws IOException {
-        // TODO: CONTROLAR
         Class objectClass = symbolTable.getClass(classId);
 
-        int classInstanceRecordSize = objectClass.getNumberOfAttributes() + 1;
+        int classInstanceRecordSize = objectClass.getNumberOfInstanceAttributes() + 1;
         codeGenerator.generate( // creates CIR
                 ".CODE",
                 "RMEM 1",

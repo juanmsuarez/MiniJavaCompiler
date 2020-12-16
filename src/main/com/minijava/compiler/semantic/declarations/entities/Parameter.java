@@ -9,14 +9,11 @@ import java.util.Objects;
 
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
-public class Parameter {
-    private Type type;
+public class Parameter extends Variable {
     private Lexeme lexeme;
-    private String name;
 
     public Parameter(Type type, String name) {
-        this.type = type;
-        this.name = name;
+        super(type, name);
     }
 
     public Parameter(Type type, Lexeme lexeme) {
@@ -26,14 +23,6 @@ public class Parameter {
 
     public Lexeme getLexeme() {
         return lexeme;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Type getType() {
-        return type;
     }
 
     public boolean validDeclaration() {
@@ -47,6 +36,11 @@ public class Parameter {
 
     public Parameter instantiate(String newType) {
         return new Parameter(type.instantiate(newType), name);
+    }
+
+    @Override
+    public boolean isInstanceMember() {
+        return false;
     }
 
     @Override

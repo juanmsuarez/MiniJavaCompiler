@@ -43,6 +43,7 @@ public class ReturnSentence extends Sentence {
     @Override
     public void translate() throws IOException {
         // TODO: pending
+        // TODO: free memory
     }
 
     @Override

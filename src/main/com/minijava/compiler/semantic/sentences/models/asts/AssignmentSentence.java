@@ -46,7 +46,10 @@ public class AssignmentSentence extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        // TODO pending
+        expression.translate();
+
+        access.setLeftSide(true);
+        access.translate();
     }
 
     @Override

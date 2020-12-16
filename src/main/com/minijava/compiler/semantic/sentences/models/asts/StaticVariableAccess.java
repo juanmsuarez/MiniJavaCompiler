@@ -9,6 +9,7 @@ import com.minijava.compiler.semantic.declarations.exceptions.SemanticException;
 import com.minijava.compiler.semantic.sentences.exceptions.ClassInStaticAccessNotFoundException;
 import com.minijava.compiler.semantic.sentences.exceptions.InvalidStaticVariableAccessException;
 import com.minijava.compiler.semantic.sentences.models.Context;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 
@@ -59,10 +60,7 @@ public class StaticVariableAccess extends Access {
 
     @Override
     public void translate() throws IOException {
-        // TODO: pending
-        if (chainedAccess != null) {
-            chainedAccess.translate();
-        }
+        throw new NotImplementedException(); // Class Records are needed to implement class attributes
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.io.IOException;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
+
 public class ThisAccess extends Access {
     public ThisAccess(Lexeme lexeme) {
         super(lexeme, lexeme);
@@ -39,7 +41,11 @@ public class ThisAccess extends Access {
 
     @Override
     public void translate() throws IOException {
-        // TODO: pending
+        codeGenerator.generate(
+                ".CODE",
+                "LOAD 3"
+        );
+
         if (chainedAccess != null) {
             chainedAccess.translate();
         }

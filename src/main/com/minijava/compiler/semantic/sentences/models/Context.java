@@ -2,8 +2,9 @@ package com.minijava.compiler.semantic.sentences.models;
 
 import com.minijava.compiler.semantic.declarations.entities.Callable;
 import com.minijava.compiler.semantic.declarations.entities.Class;
+import com.minijava.compiler.semantic.declarations.entities.Variable;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
-import com.minijava.compiler.semantic.declarations.entities.types.Type;
+import com.minijava.compiler.semantic.sentences.models.entities.LocalVariable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +12,7 @@ import java.util.Map;
 public class Context {
     private Class currentClass;
     private Callable currentCallable;
-    private Map<String, Type> currentVariableTypes = new HashMap<>();
+    private Map<String, LocalVariable> currentLocalVariables = new HashMap<>();
 
     public Context(Class currentClass, Callable currentCallable) {
         this.currentClass = currentClass;
@@ -21,11 +22,12 @@ public class Context {
     public Context(Context other) {
         this.currentClass = other.currentClass;
         this.currentCallable = other.currentCallable;
-        this.currentVariableTypes = new HashMap<>(other.currentVariableTypes);
+        this.currentLocalVariables = new HashMap<>(other.currentLocalVariables);
     }
 
-    public void add(Type type, String variableName) {
-        currentVariableTypes.put(variableName, type);
+    public void add(LocalVariable localVariable) {
+        currentLocalVariables.put(localVariable.getName(), localVariable);
+        currentCallable.add(localVariable);
     }
 
     public Class getCurrentClass() {
@@ -41,7 +43,7 @@ public class Context {
     }
 
     private boolean isLocalVariable(String name) {
-        return currentVariableTypes.containsKey(name);
+        return currentLocalVariables.containsKey(name);
     }
 
     private boolean isParameter(String name) {
@@ -60,13 +62,13 @@ public class Context {
         return isMethodVariable(name) || isAttribute(name);
     }
 
-    public Type getTypeOfVariable(String name) {
+    public Variable getVariable(String name) {
         if (isLocalVariable(name)) {
-            return currentVariableTypes.get(name);
+            return currentLocalVariables.get(name);
         } else if (isParameter(name)) {
-            return currentCallable.getParameter(name).getType();
+            return currentCallable.getParameter(name);
         } else {
-            return currentClass.getAttribute(name).getType();
+            return currentClass.getAttribute(name);
         }
     }
 

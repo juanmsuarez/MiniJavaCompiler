@@ -20,7 +20,10 @@ public class Class extends Unit {
     private List<Attribute> hiddenAttributes = new ArrayList<>();
     private Map<String, Attribute> attributes = new HashMap<>();
 
-    private int nextMethodOffset = 0;
+    private Class parent;
+
+    private int nextInstanceAttributeOffset = 1;
+    private int nextDynamicMethodOffset = 0;
 
     public Class() {
     }
@@ -54,6 +57,7 @@ public class Class extends Unit {
         String name = attribute.getName();
 
         if (!attributes.containsKey(name)) {
+            attribute.setClassUnit(this);
             attributes.put(name, attribute);
         } else {
             symbolTable.throwLater(new DuplicateAttributeException(attribute));
@@ -90,8 +94,8 @@ public class Class extends Unit {
         return attributes.get(name);
     }
 
-    public int getNumberOfAttributes() {
-        return hiddenAttributes.size() + attributes.size(); // TODO: reemplazar con nextAttributeOffset?
+    public int getNumberOfInstanceAttributes() {
+        return nextInstanceAttributeOffset - 1; // TODO: CONTROLAR en output
     }
 
     public boolean validDeclaration() {
@@ -150,7 +154,7 @@ public class Class extends Unit {
             return;
         }
 
-        Class parent = symbolTable.getClass(parentType.getName());
+        parent = symbolTable.getClass(parentType.getName());
         parent.consolidate();
 
         consolidateAttributes();
@@ -161,8 +165,6 @@ public class Class extends Unit {
     }
 
     private void consolidateAttributes() {
-        Class parent = symbolTable.getClass(parentType.getName());
-
         hiddenAttributes.addAll(parent.hiddenAttributes);
 
         for (Attribute parentAttribute : parent.attributes.values()) {
@@ -174,11 +176,21 @@ public class Class extends Unit {
                 attributes.put(parentAttributeName, parentAttribute);
             }
         }
+
+        generateAttributeOffsets();
+    }
+
+    private void generateAttributeOffsets() { // TODO: CONTROLAR en output
+        nextInstanceAttributeOffset = parent.nextInstanceAttributeOffset;
+
+        for (Attribute attribute : attributes.values()) {
+            if (attribute.getClassUnit() == this && attribute.getForm() == Form.DYNAMIC) {
+                attribute.setOffset(nextInstanceAttributeOffset++);
+            }
+        }
     }
 
     private void consolidateMethods() {
-        Class parent = symbolTable.getClass(parentType.getName());
-
         for (Method method : parent.methods.values()) {
             consolidateMethod(method, parentType.getGenericType());
         }
@@ -187,13 +199,12 @@ public class Class extends Unit {
     }
 
     private void generateMethodOffsets() {
-        Class parent = symbolTable.getClass(parentType.getName());
-        nextMethodOffset = parent.nextMethodOffset;
+        nextDynamicMethodOffset = parent.nextDynamicMethodOffset;
 
         for (Method method : methods.values()) {
-            if (method.getUnit() == this && method.getForm() == Form.DYNAMIC) { // TODO: CONSULTA Los métodos estáticos se resuelven estáticamente aunque se accedan mediante un objeto, cierto?
+            if (method.getUnit() == this && method.getForm() == Form.DYNAMIC) {
                 Method parentMethod = parent.methods.get(method.getName());
-                int offset = parentMethod != null ? parentMethod.getOffset() : nextMethodOffset++;
+                int offset = parentMethod != null ? parentMethod.getOffset() : nextDynamicMethodOffset++;
                 method.setOffset(offset);
             }
         }
@@ -228,7 +239,7 @@ public class Class extends Unit {
     }
 
     public void translate() throws IOException {
-        generateVirtualTables();
+        generateVirtualTable();
 
         constructor.translate();
 
@@ -239,7 +250,7 @@ public class Class extends Unit {
         }
     }
 
-    private void generateVirtualTables() throws IOException {
+    private void generateVirtualTable() throws IOException {
         List<Method> dynamicMethods = this.methods.values().stream()
                 .filter(method -> method.form == Form.DYNAMIC)
                 .collect(Collectors.toList());

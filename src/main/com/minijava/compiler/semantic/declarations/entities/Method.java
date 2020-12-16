@@ -5,7 +5,6 @@ import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.types.ReferenceType;
 import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.declarations.exceptions.InvalidMethodTypeException;
-import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.util.Objects;
 
@@ -13,6 +12,7 @@ import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Method extends Callable {
     private Unit unit;
+
     private int offset = -1;
 
     public Method(Form form, Type type, String name, Parameter... parameters) {
@@ -57,11 +57,6 @@ public class Method extends Callable {
         }
 
         return instantiatedMethod;
-    }
-
-    @Override
-    public void checkSentences(Class currentClass) {
-        block.check(new Context(currentClass, this));
     }
 
     @Override

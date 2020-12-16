@@ -9,6 +9,8 @@ import java.util.List;
 public class Block extends Sentence {
     private List<Sentence> sentences = new ArrayList<>();
 
+    private Context context;
+
     public Block() {
         super(null);
     }
@@ -19,7 +21,7 @@ public class Block extends Sentence {
 
     @Override
     public void check(Context previousContext) {
-        Context context = new Context(previousContext);
+        context = new Context(previousContext);
         for (Sentence sentence : sentences) {
             sentence.check(context);
         }
@@ -27,7 +29,6 @@ public class Block extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        // TODO pending (manage variables)
         for (Sentence sentence : sentences) {
             sentence.translate();
         }

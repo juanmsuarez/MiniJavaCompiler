@@ -4,6 +4,7 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.sentences.exceptions.DuplicateVariableNameException;
 import com.minijava.compiler.semantic.sentences.models.Context;
+import com.minijava.compiler.semantic.sentences.models.entities.LocalVariable;
 
 import java.io.IOException;
 
@@ -24,13 +25,12 @@ public class DeclarationSentence extends Sentence {
         if (context.isMethodVariable(name)) {
             symbolTable.throwLater(new DuplicateVariableNameException(lexeme));
         } else {
-            context.add(type, name);
+            context.add(new LocalVariable(type, name));
         }
     }
 
     @Override
     public void translate() throws IOException {
-        // TODO pending
     }
 
     @Override

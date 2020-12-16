@@ -4,7 +4,9 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.types.Type;
 import com.minijava.compiler.semantic.declarations.exceptions.DuplicateParameterException;
+import com.minijava.compiler.semantic.sentences.models.Context;
 import com.minijava.compiler.semantic.sentences.models.asts.Block;
+import com.minijava.compiler.semantic.sentences.models.entities.LocalVariable;
 
 import java.io.IOException;
 import java.util.*;
@@ -17,11 +19,11 @@ public abstract class Callable {
     protected Type type;
     protected Lexeme lexeme;
     protected String name;
-
     protected List<Parameter> parameters = new ArrayList<>();
     private Set<String> parameterNames = new HashSet<>();
-
     protected Block block = new Block();
+
+    protected List<LocalVariable> localVariables = new ArrayList<>();
 
     public Callable(Form form, Type type, String name, Parameter... parameters) {
         this.form = form;
@@ -90,29 +92,57 @@ public abstract class Callable {
     public boolean validDeclaration() {
         parameters.removeIf(parameter -> !parameter.validDeclaration());
 
+        generateParameterOffsets();
+
         return true;
+    }
+
+    private void generateParameterOffsets() { // TODO: CONTROLAR en output
+        int parametersBase = (form == Form.DYNAMIC ? 3 : 2) + parameters.size();
+
+        for (int i = 0; i < parameters.size(); i++) {
+            parameters.get(i).setOffset(parametersBase - i);
+        }
     }
 
     public void setBlock(Block block) {
         this.block = block;
     }
 
-    public abstract void checkSentences(Class currentClass);
+    public void checkSentences(Class currentClass) {
+        block.check(new Context(currentClass, this));
+
+        generateVariableOffsets();
+    }
+
+    public void add(LocalVariable localVariable) {
+        localVariables.add(localVariable);
+    }
+
+    private void generateVariableOffsets() { // TODO: CONTROLAR en output // TODO: CONTROLAR usando if y while
+        for (int i = 0; i < localVariables.size(); i++) {
+            localVariables.get(i).setOffset(-i);
+            System.out.println(name + "." + localVariables.get(i).getName() + " -> " + (-i)); // TODO: BORRAR
+        }
+    }
 
     public void translate() throws IOException {
         codeGenerator.generate(
                 ".CODE",
                 getLabel() + ": LOADFP",
                 "LOADSP",
-                "STOREFP"
+                "STOREFP",
+                "RMEM " + localVariables.size() // TODO: CONTROLAR en output // TODO: CONTROLAR usando if y while // TODO: CONTROLAR método sin var locs?
         );
+        System.out.println(name + " reserva " + localVariables.size()); // TODO: BORRAR
 
         block.translate();
 
         codeGenerator.generate(
                 ".CODE",
+                "FMEM " + localVariables.size(),
                 "STOREFP",
-                "RET " + (form == Form.STATIC ? parameters.size() : parameters.size() + 1) // TODO: CONTROLAR atributos y this
+                "RET " + (form == Form.STATIC ? parameters.size() : parameters.size() + 1) // TODO: CONTROLAR en output
         );
     }
 
