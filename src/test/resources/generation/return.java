@@ -1,3 +1,11 @@
+class B {
+    public A a;
+
+    B(A aa) {
+        a = aa;
+    }
+}
+
 class A {
     private int i;
     public boolean b;
@@ -7,7 +15,7 @@ class A {
         b = true;
 
         System.printIln(fi());
-        System.printBln(fA().fA().b);
+        System.printBln(fB(this).a.b);
         System.printBln(fb());
         f1(true);
         f1(false);
@@ -22,8 +30,8 @@ class A {
         return i;
     }
 
-    static A fA() {
-        return new A();
+    static B fB(A a) {
+        return new B(a);
         System.printSln("unreachable");
         return null;
     }

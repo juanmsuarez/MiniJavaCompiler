@@ -30,4 +30,10 @@ public class Instructions {
                 put(LESS_OR_EQ, "LE");
                 put(GREATER_OR_EQ, "GE");
             }});
+
+    public static final Map<String, String> COMPOSITE_OPERATORS = Collections.unmodifiableMap(
+            new HashMap<String, String>() {{
+                put(ADD_ASSIGN, "ADD");
+                put(SUB_ASSIGN, "SUB");
+            }});
 }

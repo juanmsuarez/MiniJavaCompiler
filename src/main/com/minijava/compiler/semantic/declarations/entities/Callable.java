@@ -93,6 +93,7 @@ public abstract class Callable {
         parameters.removeIf(parameter -> !parameter.validDeclaration());
 
         generateParameterOffsets();
+        generateLabel();
 
         return true;
     }
@@ -154,7 +155,11 @@ public abstract class Callable {
         );
     }
 
-    public abstract String getLabel();
+    public String getLabel() {
+        return label;
+    }
+
+    protected abstract void generateLabel();
 
     @Override
     public boolean equals(Object o) {

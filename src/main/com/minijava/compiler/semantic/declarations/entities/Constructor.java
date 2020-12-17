@@ -16,11 +16,8 @@ public class Constructor extends Callable {
     }
 
     @Override
-    public String getLabel() {
-        if (label == null) {
-            label = "CONSTRUCTOR_" + name + '_' + codeGenerator.newLabelId();
-        }
-        return label;
+    protected void generateLabel() {
+        label = "CONSTRUCTOR_" + name + '_' + codeGenerator.newLabelId();
     }
 
     @Override

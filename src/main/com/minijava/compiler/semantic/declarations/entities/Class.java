@@ -107,6 +107,7 @@ public class Class extends Unit {
         }
 
         checkChildren();
+        generateVirtualTableLabel();
 
         return true;
     }
@@ -145,6 +146,10 @@ public class Class extends Unit {
 
         if (constructor == null || !constructor.validDeclaration()) {
             constructor = new Constructor(name);
+
+            if (!constructor.validDeclaration()) { // side effects are necessary for label generation
+                throw new IllegalStateException();
+            }
         }
 
         checkMethods();
@@ -235,13 +240,6 @@ public class Class extends Unit {
         }
     }
 
-    public String getVirtualTableLabel() {
-        if (virtualTableLabel == null) {
-            virtualTableLabel = "VT_" + name + '_' + codeGenerator.newLabelId();
-        }
-        return virtualTableLabel;
-    }
-
     public void translate() throws IOException {
         generateVirtualTable();
 
@@ -270,6 +268,14 @@ public class Class extends Unit {
 
             codeGenerator.generate(getVirtualTableLabel() + ": DW " + String.join(", ", sortedMethodLabels));
         }
+    }
+
+    public String getVirtualTableLabel() {
+        return virtualTableLabel;
+    }
+
+    private void generateVirtualTableLabel() {
+        virtualTableLabel = "VT_" + name + '_' + codeGenerator.newLabelId();
     }
 
     @Override

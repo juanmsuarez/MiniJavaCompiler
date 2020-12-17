@@ -50,6 +50,11 @@ public class Method extends Callable {
         return super.validDeclaration();
     }
 
+    @Override
+    protected void generateLabel() {
+        label = "METHOD_" + unit.name + '_' + name + '_' + codeGenerator.newLabelId();
+    }
+
     public Method instantiate(String newType) {
         Method instantiatedMethod = new Method(form, type.instantiate(newType), name);
 
@@ -58,14 +63,6 @@ public class Method extends Callable {
         }
 
         return instantiatedMethod;
-    }
-
-    @Override
-    public String getLabel() {
-        if (label == null) {
-            label = "METHOD_" + unit.name + '_' + name + '_' + codeGenerator.newLabelId();
-        }
-        return label;
     }
 
     @Override
