@@ -45,7 +45,7 @@ public class AssignmentSentence extends Sentence {
     }
 
     @Override
-    public void translate() throws IOException {
+    public void translate() throws IOException { // TODO: PENDING implementar composite assignment!!!
         expression.translate();
 
         access.setLeftSide(true);

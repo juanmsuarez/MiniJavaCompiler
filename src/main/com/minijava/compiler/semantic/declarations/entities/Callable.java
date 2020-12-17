@@ -132,7 +132,7 @@ public abstract class Callable {
                 getLabel() + ": LOADFP",
                 "LOADSP",
                 "STOREFP",
-                "RMEM " + localVariables.size() // TODO: CONTROLAR en output // TODO: CONTROLAR usando if y while // TODO: CONTROLAR método sin var locs?
+                "RMEM " + localVariables.size() // TODO: CONTROLAR en output // TODO: CONTROLAR usando if y while
         );
         System.out.println(name + " reserva " + localVariables.size()); // TODO: BORRAR
 

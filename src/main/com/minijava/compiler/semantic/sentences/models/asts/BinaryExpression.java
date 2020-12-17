@@ -1,5 +1,6 @@
 package com.minijava.compiler.semantic.sentences.models.asts;
 
+import com.minijava.compiler.generation.Instructions;
 import com.minijava.compiler.lexical.models.Token;
 import com.minijava.compiler.semantic.declarations.entities.types.BooleanType;
 import com.minijava.compiler.semantic.declarations.entities.types.IntType;
@@ -11,6 +12,7 @@ import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.io.IOException;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 import static com.minijava.compiler.semantic.declarations.entities.types.IntType.INT;
 import static com.minijava.compiler.semantic.sentences.models.TokenGroups.*;
@@ -60,8 +62,13 @@ public class BinaryExpression extends Expression {
     }
 
     @Override
-    public void translate() throws IOException { // TODO: CONSULTA qué pasa si no implementabas logro de precedencia?
-        // TODO pending
+    public void translate() throws IOException { // TODO: CONTROLAR todos los operadores
+        left.translate();
+        right.translate();
+
+        String operatorName = operator.getName();
+        String operatorInstruction = Instructions.BINARY_OPERATORS.get(operatorName);
+        codeGenerator.generate(".CODE", operatorInstruction);
     }
 
     @Override

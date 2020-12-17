@@ -1,5 +1,6 @@
 package com.minijava.compiler.semantic.sentences.models.asts;
 
+import com.minijava.compiler.generation.Instructions;
 import com.minijava.compiler.lexical.models.Token;
 import com.minijava.compiler.semantic.declarations.entities.types.BooleanType;
 import com.minijava.compiler.semantic.declarations.entities.types.IntType;
@@ -10,6 +11,7 @@ import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.io.IOException;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.lexical.models.TokenNames.*;
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 import static com.minijava.compiler.semantic.declarations.entities.types.IntType.INT;
@@ -47,8 +49,12 @@ public class UnaryExpression extends Expression {
     }
 
     @Override
-    public void translate() throws IOException {
-        // TODO: pending
+    public void translate() throws IOException { // TODO: CONTROLAR todos los operadores
+        operand.translate();
+
+        String operatorName = operator.getName();
+        String operatorInstruction = Instructions.UNARY_OPERATORS.get(operatorName);
+        codeGenerator.generate(".CODE", operatorInstruction);
     }
 
     @Override
