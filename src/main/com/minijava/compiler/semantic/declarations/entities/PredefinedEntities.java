@@ -4,7 +4,7 @@ import com.minijava.compiler.generation.PredefinedBlocks;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.types.*;
 
-public class PredefinedEntities { // TODO: controlar uso de system y object (new, herencia...)
+public class PredefinedEntities {
     public static final Class OBJECT = new Class("Object") {{
         add(new Constructor("Object"));
     }};

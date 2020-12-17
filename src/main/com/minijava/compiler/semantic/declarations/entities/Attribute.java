@@ -57,7 +57,7 @@ public class Attribute extends Variable {
     }
 
     @Override
-    public boolean isInstanceMember() {
+    public boolean isInstanceAttribute() {
         return true;
     }
 

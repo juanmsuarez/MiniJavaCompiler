@@ -9,7 +9,7 @@ class A {
     static void f(int i, char c, B b) {
         System.printIln(i);
         System.printCln(c);
-        System.printCln(b.x);
+        System.printIln(b.x);
     }
 
     dynamic void g(String s, boolean x) {
@@ -20,8 +20,9 @@ class A {
 
 class Main {
     static void main() {
-        new A().f();
+        B b; b = new B();
+        new A().f(1, 'a', b);
 
-        new A().g();
+        new A().g("asd", !true);
     }
 }

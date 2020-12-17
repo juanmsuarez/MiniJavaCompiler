@@ -9,7 +9,7 @@ public class LocalVariable extends Variable {
     }
 
     @Override
-    public boolean isInstanceMember() {
+    public boolean isInstanceAttribute() {
         return false;
     }
 }

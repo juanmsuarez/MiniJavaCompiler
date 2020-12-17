@@ -98,7 +98,7 @@ public abstract class Callable {
         return true;
     }
 
-    private void generateParameterOffsets() { // TODO: CONTROLAR en output
+    private void generateParameterOffsets() {
         int parametersBase = (form == Form.DYNAMIC ? 3 : 2) + parameters.size();
 
         for (int i = 0; i < parameters.size(); i++) {
@@ -120,7 +120,7 @@ public abstract class Callable {
         localVariables.add(localVariable);
     }
 
-    private void generateVariableOffsets() { // TODO: CONTROLAR en output
+    private void generateVariableOffsets() {
         for (int i = 0; i < localVariables.size(); i++) {
             localVariables.get(i).setOffset(-i);
         }
@@ -140,7 +140,7 @@ public abstract class Callable {
                 getLabel() + ": LOADFP",
                 "LOADSP",
                 "STOREFP",
-                "RMEM " + localVariables.size() // TODO: CONTROLAR en output
+                "RMEM " + localVariables.size()
         );
     }
 
@@ -151,7 +151,7 @@ public abstract class Callable {
                 ".CODE",
                 "FMEM " + localVariables.size(),
                 "STOREFP",
-                "RET " + upperFrameSize // TODO: CONTROLAR en output
+                "RET " + upperFrameSize
         );
     }
 

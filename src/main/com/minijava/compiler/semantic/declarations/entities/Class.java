@@ -96,7 +96,7 @@ public class Class extends Unit {
     }
 
     public int getNumberOfInstanceAttributes() {
-        return nextInstanceAttributeOffset - 1; // TODO: CONTROLAR en output
+        return nextInstanceAttributeOffset - 1;
     }
 
     public boolean validDeclaration() {
@@ -186,7 +186,7 @@ public class Class extends Unit {
         generateAttributeOffsets();
     }
 
-    private void generateAttributeOffsets() { // TODO: CONTROLAR en output
+    private void generateAttributeOffsets() {
         nextInstanceAttributeOffset = parent.nextInstanceAttributeOffset;
 
         for (Attribute attribute : attributes.values()) {

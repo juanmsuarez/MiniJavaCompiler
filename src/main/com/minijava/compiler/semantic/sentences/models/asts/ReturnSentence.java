@@ -54,7 +54,7 @@ public class ReturnSentence extends Sentence {
             int returnOffset = 3 + (callable.getForm() == Form.DYNAMIC ? 1 : 0) + callable.parametersSize();
             codeGenerator.generate(
                     ".CODE",
-                    "STORE " + returnOffset // TODO: CONTROLAR en output
+                    "STORE " + returnOffset
             );
         }
 

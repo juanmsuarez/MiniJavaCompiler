@@ -53,9 +53,9 @@ public class VariableAccess extends Access { // variables, parameters or attribu
     }
 
     @Override
-    public void translate() throws IOException { // TODO: CONTROLAR en output
+    public void translate() throws IOException {
         codeGenerator.generate(".CODE");
-        if (variable.isInstanceMember()) {
+        if (variable.isInstanceAttribute()) {
             codeGenerator.generate("LOAD 3");
             if (leftSide && chainedAccess == null) {
                 codeGenerator.generate(

@@ -29,5 +29,5 @@ public abstract class Variable {
         this.offset = offset;
     }
 
-    public abstract boolean isInstanceMember();
+    public abstract boolean isInstanceAttribute();
 }

@@ -1,3 +1,16 @@
+class MySystem extends System {
+	static void printCln(char c) {
+		printS("MySystem ");
+		System.printCln(c);
+	}
+}
+
+class MyObject extends Object {
+	static void f() {
+		System.printSln("MyObject.f")
+	}
+}
+
 class A {
 	static void main() {
 		System.printB(true);
@@ -23,5 +36,8 @@ class A {
 		System.printSln("asd");
 
 		System.printI(System.read());
+
+		MySystem.printCln('a');
+		MyObject.f();
 	}
 }

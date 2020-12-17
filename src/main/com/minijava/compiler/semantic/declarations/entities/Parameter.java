@@ -39,7 +39,7 @@ public class Parameter extends Variable {
     }
 
     @Override
-    public boolean isInstanceMember() {
+    public boolean isInstanceAttribute() {
         return false;
     }
 
