@@ -45,7 +45,7 @@ public class Literal extends Operand {
         switch (literal.getName()) {
             case STRING_LITERAL:
                 String stringLiteral = literal.getLexeme().getString().isEmpty() ? "" : "\"" + literal.getLexeme() + "\", ";
-                String label = "STRING_" + codeGenerator.newLabel();
+                String label = "STRING_" + codeGenerator.newLabelId();
                 codeGenerator.generate(
                         ".DATA",
                         label + ": DW " + stringLiteral + "0",

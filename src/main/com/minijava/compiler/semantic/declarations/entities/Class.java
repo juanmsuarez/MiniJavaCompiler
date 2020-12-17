@@ -24,6 +24,7 @@ public class Class extends Unit {
 
     private int nextInstanceAttributeOffset = 1;
     private int nextDynamicMethodOffset = 0;
+    private String virtualTableLabel;
 
     public Class() {
     }
@@ -235,7 +236,10 @@ public class Class extends Unit {
     }
 
     public String getVirtualTableLabel() {
-        return "VT_" + name;
+        if (virtualTableLabel == null) {
+            virtualTableLabel = "VT_" + name + '_' + codeGenerator.newLabelId();
+        }
+        return virtualTableLabel;
     }
 
     public void translate() throws IOException {
@@ -264,7 +268,7 @@ public class Class extends Unit {
                     .map(Method::getLabel)
                     .collect(Collectors.toList());
 
-            codeGenerator.generate("VT_" + name + ": DW " + String.join(", ", sortedMethodLabels));
+            codeGenerator.generate(getVirtualTableLabel() + ": DW " + String.join(", ", sortedMethodLabels));
         }
     }
 

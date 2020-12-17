@@ -58,7 +58,7 @@ public class CodeGenerator {
         );
     }
 
-    public String newLabel() {
+    public String newLabelId() {
         String label = "ID_" + labelNumber;
         labelNumber++;
         return label;

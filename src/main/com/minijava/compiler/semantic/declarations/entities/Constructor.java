@@ -4,6 +4,8 @@ import com.minijava.compiler.lexical.analyzer.Lexeme;
 import com.minijava.compiler.semantic.declarations.entities.modifiers.Form;
 import com.minijava.compiler.semantic.declarations.entities.types.VoidType;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
+
 public class Constructor extends Callable {
     public Constructor(String name) {
         super(Form.DYNAMIC, new VoidType(), name);
@@ -15,7 +17,10 @@ public class Constructor extends Callable {
 
     @Override
     public String getLabel() {
-        return "CONSTRUCTOR_" + name;
+        if (label == null) {
+            label = "CONSTRUCTOR_" + name + '_' + codeGenerator.newLabelId();
+        }
+        return label;
     }
 
     @Override

@@ -24,12 +24,12 @@ public abstract class Callable {
     protected Block block = new Block();
 
     protected List<LocalVariable> localVariables = new ArrayList<>();
+    protected String label;
 
     public Callable(Form form, Type type, String name, Parameter... parameters) {
         this.form = form;
         this.type = type;
         this.name = name;
-
         for (Parameter parameter : parameters) {
             this.parameterNames.add(parameter.getName());
             this.parameters.add(parameter);
@@ -126,6 +126,14 @@ public abstract class Callable {
     }
 
     public void translate() throws IOException {
+        translateEntry();
+
+        block.translate();
+
+        translateReturn();
+    }
+
+    private void translateEntry() throws IOException {
         codeGenerator.generate(
                 ".CODE",
                 getLabel() + ": LOADFP",
@@ -133,14 +141,16 @@ public abstract class Callable {
                 "STOREFP",
                 "RMEM " + localVariables.size() // TODO: CONTROLAR en output
         );
+    }
 
-        block.translate();
+    public void translateReturn() throws IOException {
+        int upperFrameSize = (form == Form.DYNAMIC ? 1 : 0) + parameters.size();
 
         codeGenerator.generate(
                 ".CODE",
                 "FMEM " + localVariables.size(),
                 "STOREFP",
-                "RET " + (form == Form.STATIC ? parameters.size() : parameters.size() + 1) // TODO: CONTROLAR en output
+                "RET " + upperFrameSize // TODO: CONTROLAR en output
         );
     }
 

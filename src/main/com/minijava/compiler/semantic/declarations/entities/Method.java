@@ -8,6 +8,7 @@ import com.minijava.compiler.semantic.declarations.exceptions.InvalidMethodTypeE
 
 import java.util.Objects;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 public class Method extends Callable {
@@ -61,7 +62,10 @@ public class Method extends Callable {
 
     @Override
     public String getLabel() {
-        return "METHOD_" + unit.name + '_' + name;
+        if (label == null) {
+            label = "METHOD_" + unit.name + '_' + name + '_' + codeGenerator.newLabelId();
+        }
+        return label;
     }
 
     @Override

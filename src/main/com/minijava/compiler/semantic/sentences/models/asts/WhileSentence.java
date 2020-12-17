@@ -44,8 +44,8 @@ public class WhileSentence extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        String startLabel = "WHILE_START_" + codeGenerator.newLabel();
-        String endLabel = "WHILE_END_" + codeGenerator.newLabel();
+        String startLabel = "WHILE_START_" + codeGenerator.newLabelId();
+        String endLabel = "WHILE_END_" + codeGenerator.newLabelId();
 
         codeGenerator.generate(".CODE", startLabel + ": NOP");
         condition.translate();

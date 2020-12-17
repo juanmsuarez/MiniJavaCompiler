@@ -54,8 +54,8 @@ public class IfElseSentence extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        String elseLabel = "ELSE_" + codeGenerator.newLabel();
-        String endLabel = "IF_END_" + codeGenerator.newLabel();
+        String elseLabel = "ELSE_" + codeGenerator.newLabelId();
+        String endLabel = "IF_END_" + codeGenerator.newLabelId();
 
         condition.translate();
         codeGenerator.generate(".CODE", "BF " + elseLabel);
