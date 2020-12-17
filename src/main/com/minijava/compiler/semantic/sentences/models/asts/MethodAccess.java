@@ -13,9 +13,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
+
 public class MethodAccess extends Access implements CallableAccess {
     private String name;
     private List<Expression> arguments = new ArrayList<>();
+
+    private Method method;
 
     public MethodAccess(Lexeme lexeme) {
         super(lexeme, lexeme);
@@ -34,7 +38,7 @@ public class MethodAccess extends Access implements CallableAccess {
             throw new MethodNotFoundException(lexeme);
         }
 
-        Method method = currentClass.getMethod(name);
+        method = currentClass.getMethod(name);
         if (context.isStatic() && method.getForm() == Form.DYNAMIC) {
             throw new DynamicAccessInStaticContextException(lexeme);
         }
@@ -61,7 +65,18 @@ public class MethodAccess extends Access implements CallableAccess {
 
     @Override
     public void translate() throws IOException {
-        // TODO: pending
+        if (method.getForm() == Form.DYNAMIC) {
+            codeGenerator.generate(
+                    ".CODE",
+                    "LOAD 3"
+            );
+        }
+        CallableAccess.reserveMemoryForReturnTypeIfNeeded(method.getType(), method.getForm());
+
+        CallableAccess.translateArguments(arguments, method.getForm());
+
+        CallableAccess.call(method);
+
         if (chainedAccess != null) {
             chainedAccess.translate();
         }

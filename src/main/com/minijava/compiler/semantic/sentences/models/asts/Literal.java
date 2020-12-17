@@ -72,7 +72,7 @@ public class Literal extends Operand {
                 );
                 break;
             case FALSE_KW:
-            case NULL_KW: // TODO: check null literal
+            case NULL_KW:
                 codeGenerator.generate(
                         ".CODE",
                         "PUSH 0"

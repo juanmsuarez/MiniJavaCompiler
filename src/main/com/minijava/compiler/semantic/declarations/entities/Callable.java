@@ -119,10 +119,9 @@ public abstract class Callable {
         localVariables.add(localVariable);
     }
 
-    private void generateVariableOffsets() { // TODO: CONTROLAR en output // TODO: CONTROLAR usando if y while
+    private void generateVariableOffsets() { // TODO: CONTROLAR en output
         for (int i = 0; i < localVariables.size(); i++) {
             localVariables.get(i).setOffset(-i);
-            System.out.println(name + "." + localVariables.get(i).getName() + " -> " + (-i)); // TODO: BORRAR
         }
     }
 
@@ -132,9 +131,8 @@ public abstract class Callable {
                 getLabel() + ": LOADFP",
                 "LOADSP",
                 "STOREFP",
-                "RMEM " + localVariables.size() // TODO: CONTROLAR en output // TODO: CONTROLAR usando if y while
+                "RMEM " + localVariables.size() // TODO: CONTROLAR en output
         );
-        System.out.println(name + " reserva " + localVariables.size()); // TODO: BORRAR
 
         block.translate();
 

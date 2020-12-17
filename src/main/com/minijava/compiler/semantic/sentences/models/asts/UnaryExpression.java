@@ -49,7 +49,7 @@ public class UnaryExpression extends Expression {
     }
 
     @Override
-    public void translate() throws IOException { // TODO: CONTROLAR todos los operadores
+    public void translate() throws IOException {
         operand.translate();
 
         String operatorName = operator.getName();

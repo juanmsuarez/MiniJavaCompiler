@@ -1,6 +1,6 @@
 class A {
     static void f() {
-
+        System.println();
     }
 
     dynamic void g() {
@@ -31,6 +31,7 @@ class A {
 
         char c; c = 'a';
         System.printCln(c);
+        System.println();
     }
 }
 
@@ -39,12 +40,17 @@ class B extends A {
         if (false) {
             int a, b, c;
             a = 1; b = 2; c = 3;
+            System.printIln(a);
+            System.printIln(b);
+            System.printIln(c);
         }
+        System.println();
     }
 
     dynamic void g() {
         boolean b; b = true;
         System.printBln(b);
+        System.println();
     }
 }
 
@@ -54,6 +60,7 @@ class Main {
         x = 1; y = 2;
         System.printIln(x);
         System.printIln(y);
+        System.println();
 
         A a; a = new A();
         a.f();

@@ -62,7 +62,7 @@ public class BinaryExpression extends Expression {
     }
 
     @Override
-    public void translate() throws IOException { // TODO: CONTROLAR todos los operadores
+    public void translate() throws IOException {
         left.translate();
         right.translate();
 

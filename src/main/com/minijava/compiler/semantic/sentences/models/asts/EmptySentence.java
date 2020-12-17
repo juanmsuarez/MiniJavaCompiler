@@ -15,7 +15,6 @@ public class EmptySentence extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        // TODO: pending
     }
 
     @Override
