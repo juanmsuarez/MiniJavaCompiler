@@ -7,6 +7,7 @@ import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.io.IOException;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 
@@ -43,7 +44,20 @@ public class WhileSentence extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        // TODO: pending
+        String startLabel = "WHILE_START_" + codeGenerator.newLabel();
+        String endLabel = "WHILE_END_" + codeGenerator.newLabel();
+
+        codeGenerator.generate(".CODE", startLabel + ": NOP");
+        condition.translate();
+        codeGenerator.generate(".CODE", "BF " + endLabel);
+
+        body.translate();
+
+        codeGenerator.generate(
+                ".CODE",
+                "JUMP " + startLabel,
+                endLabel + ": NOP"
+        );
     }
 
     @Override

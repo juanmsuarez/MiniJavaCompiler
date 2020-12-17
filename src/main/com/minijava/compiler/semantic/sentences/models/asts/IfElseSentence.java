@@ -7,6 +7,7 @@ import com.minijava.compiler.semantic.sentences.models.Context;
 
 import java.io.IOException;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 import static com.minijava.compiler.semantic.declarations.entities.types.BooleanType.BOOLEAN;
 
@@ -53,7 +54,20 @@ public class IfElseSentence extends Sentence {
 
     @Override
     public void translate() throws IOException {
-        // TODO: pending
+        String elseLabel = "ELSE_" + codeGenerator.newLabel();
+        String endLabel = "IF_END_" + codeGenerator.newLabel();
+
+        condition.translate();
+        codeGenerator.generate(".CODE", "BF " + elseLabel);
+
+        mainBody.translate();
+        codeGenerator.generate(".CODE", "JUMP " + endLabel);
+
+        codeGenerator.generate(elseLabel + ": NOP");
+        if (elseBody != null) {
+            elseBody.translate();
+        }
+        codeGenerator.generate(".CODE", endLabel + ": NOP");
     }
 
     @Override
