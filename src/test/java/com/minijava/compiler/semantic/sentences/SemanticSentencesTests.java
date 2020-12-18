@@ -3,6 +3,8 @@ package com.minijava.compiler.semantic.sentences;
 import com.minijava.compiler.CompilerException;
 import com.minijava.compiler.ResourceReader;
 import com.minijava.compiler.filemanagers.InputFileManager;
+import com.minijava.compiler.filemanagers.OutputFileManager;
+import com.minijava.compiler.generation.CodeGenerator;
 import com.minijava.compiler.lexical.analyzer.LexicalAnalyzer;
 import com.minijava.compiler.semantic.SymbolTable;
 import com.minijava.compiler.syntactic.analyzer.SyntacticAnalyzer;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.minijava.compiler.MiniJavaCompiler.codeGenerator;
 import static com.minijava.compiler.MiniJavaCompiler.symbolTable;
 
 class SemanticSentencesTests extends ResourceReader {
@@ -25,10 +28,14 @@ class SemanticSentencesTests extends ResourceReader {
     private static final String IO_ERROR = "No pudo realizarse el análisis: ocurrió un error durante la lectura del archivo fuente.";
 
     protected void runAnalyzer(String path) {
-        try (InputFileManager inputFileManager = new InputFileManager(path)) {
+        try (
+                InputFileManager inputFileManager = new InputFileManager(path);
+                OutputFileManager outputFileManager = new OutputFileManager(".temp.out");
+        ) {
             LexicalAnalyzer lexicalAnalyzer = new LexicalAnalyzer(inputFileManager);
             SyntacticAnalyzer syntacticAnalyzer = new SyntacticAnalyzer(lexicalAnalyzer);
             symbolTable = new SymbolTable();
+            codeGenerator = new CodeGenerator(outputFileManager);
 
             syntacticAnalyzer.analyze();
             boolean syntacticSuccess = syntacticAnalyzer.getExceptions().isEmpty();

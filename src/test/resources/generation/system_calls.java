@@ -7,7 +7,7 @@ class MySystem extends System {
 
 class MyObject extends Object {
 	static void f() {
-		System.printSln("MyObject.f")
+		System.printSln("MyObject.f");
 	}
 }
 
